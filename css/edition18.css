@@ -32,7 +32,6 @@ html[data-effects="off"] *{scroll-behavior:auto!important;animation-duration:.01
 @media(max-width:390px){.header-tools{gap:5px}.tool-btn{padding:8px}.chapter-illustration{height:140px}}
 @media(prefers-reduced-motion:reduce){#fxStage{display:none!important}.chapter-list .chapter-card{transition:none}}
 
-
 /* Chapter selection gallery — bespoke miniature key art for all eight scenarios. */
 .chapter-list .chapter-card{min-height:112px;overflow:hidden;padding-left:142px;position:relative}
 .chapter-card .chapter-thumb{position:absolute;inset:8px auto 8px 8px;width:121px;overflow:hidden;border:1px solid #806247;background:#0b0e0e;box-shadow:inset 0 0 15px #000}

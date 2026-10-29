@@ -1,3 +1,12 @@
+# Verificación v2.6
+
+- Pruebas Node ejecutadas localmente en ZIP v2.6: **76/76 correctas**.
+- La rama de GitHub debe superar CI antes de ser fusionada.
+- Cada desenlace dispone de dos decisiones y evita reentrada hasta resolverlo.
+- Guardados v4 compatibles, sin prometer validación de dispositivos físicos o partidas humanas.
+
+---
+
 # QA de DEAD CABIN 404 v2.3 (29-10-2026)
 
 **Alcance:** pruebas automatizadas reproducibles en el entorno, sin afirmar experiencia humana certificada.

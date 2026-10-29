@@ -1,0 +1,9 @@
+/* 2.4 · Cada expediente comunica su amenaza y la contramedida posible. */
+.chapter-forecast{display:flex;gap:13px;align-items:center;padding:13px 16px;margin:0 0 17px;border:1px solid #7b6c4b;background:linear-gradient(105deg,#212b28,#1c211f);box-shadow:inset 0 1px #e4d69b18;color:#dfd8c2}
+.chapter-forecast-mark{flex:none;display:grid;place-items:center;width:38px;height:38px;border:1px solid #a98b59;border-radius:50%;font-size:25px;color:#e6cb91}
+.chapter-forecast strong{display:block;font-size:11px;color:#e9c98f;letter-spacing:.13em}
+.chapter-forecast p{margin:3px 0 0;font-size:13px;line-height:1.45;color:#d6cebc}
+.chapter-forecast.urgent{border-color:#d97762;background:linear-gradient(105deg,#432a26,#2b211f)}
+.chapter-forecast.urgent strong{color:#ffd09b}
+@media(max-width:600px){.chapter-forecast{padding:12px;gap:10px}.chapter-forecast-mark{width:33px;height:33px;font-size:21px}.chapter-forecast p{font-size:12px}}
+@media(prefers-reduced-motion:reduce){.chapter-forecast{transition:none}}

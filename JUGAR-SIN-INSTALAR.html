@@ -325,6 +325,22 @@ body{background:radial-gradient(ellipse 75% 45% at 40% 0%,#37413a44,transparent 
 @media(max-width:390px){.mobile-tactical-actions{grid-template-columns:repeat(2,minmax(0,1fr))}.mobile-tactical-actions button{font-size:12px;min-height:46px}.mobile-tactical-head span{font-size:11px}}
 @media(prefers-reduced-motion:reduce){.mobile-tactical *{scroll-behavior:auto}}
 
+/* 2.4 · Cada expediente comunica su amenaza y la contramedida posible. */
+.chapter-forecast{display:flex;gap:13px;align-items:center;padding:13px 16px;margin:0 0 17px;border:1px solid #7b6c4b;background:linear-gradient(105deg,#212b28,#1c211f);box-shadow:inset 0 1px #e4d69b18;color:#dfd8c2}
+.chapter-forecast-mark{flex:none;display:grid;place-items:center;width:38px;height:38px;border:1px solid #a98b59;border-radius:50%;font-size:25px;color:#e6cb91}
+.chapter-forecast strong{display:block;font-size:11px;color:#e9c98f;letter-spacing:.13em}
+.chapter-forecast p{margin:3px 0 0;font-size:13px;line-height:1.45;color:#d6cebc}
+.chapter-forecast.urgent{border-color:#d97762;background:linear-gradient(105deg,#432a26,#2b211f)}
+.chapter-forecast.urgent strong{color:#ffd09b}
+@media(max-width:600px){.chapter-forecast{padding:12px;gap:10px}.chapter-forecast-mark{width:33px;height:33px;font-size:21px}.chapter-forecast p{font-size:12px}}
+@media(prefers-reduced-motion:reduce){.chapter-forecast{transition:none}}
+
+/* v2.5 - explicit tactical consequences of narrative choices */
+.echo-preview{margin:12px 0 0;padding:12px 14px;border-left:3px solid #d9b676;background:linear-gradient(100deg,#27352b,#1c221f);color:#f2e1c4;line-height:1.55}
+.echo-preview strong{color:#f3cf89;letter-spacing:.05em}
+.chapter-forecast:has(+ *){min-width:0}
+@media(max-width:600px){.echo-preview{font-size:12px;padding:12px}}
+
 </style>
 </head>
 <body>
@@ -332,7 +348,7 @@ body{background:radial-gradient(ellipse 75% 45% at 40% 0%,#37413a44,transparent 
 <header class="site-header">
   <div class="header-art" aria-hidden="true"><div class="moon"></div><div class="horizon"></div><div class="cabin-roof"></div><div class="cabin-body"></div><div class="cabin-window"></div></div>
   <div class="header-inner">
-    <div class="brand"><span class="brand-emblem" aria-hidden="true">✥</span><div><span class="overline">AN OCCULT TABLETOP NIGHTMARE · 1984</span><h1>DEAD <span>CABIN</span> 404</h1><p>LA NOCHE DEL UMBRAL <span class="header-divider">◆</span> EDICIÓN PREMIUM TÁCTICA 2.3</p></div></div>
+    <div class="brand"><span class="brand-emblem" aria-hidden="true">✥</span><div><span class="overline">AN OCCULT TABLETOP NIGHTMARE · 1984</span><h1>DEAD <span>CABIN</span> 404</h1><p>LA NOCHE DEL UMBRAL <span class="header-divider">◆</span> EDICIÓN PREMIUM TÁCTICA 2.4</p></div></div>
     <nav class="header-tools" aria-label="Menú principal">
       <div class="header-group primary-nav" role="group" aria-label="Modos de juego">
         <button id="campaignBtn" class="tool-btn accent" type="button">◈ <span>CAMPAÑA</span></button>
@@ -353,6 +369,7 @@ body{background:radial-gradient(ellipse 75% 45% at 40% 0%,#37413a44,transparent 
 <main class="game-layout">
   <section class="board-column" aria-label="Zona de juego">
     <div class="chapter-bar"><div><div class="eyebrow"><span class="red-dot"></span> EXPEDIENTE <span id="chapterNumber">01 / 08</span></div><h2 id="chapterTitle">El libro que respira</h2><p id="chapterSubtitle">La llegada</p></div><div class="night-clock"><span>LA NOCHE AVANZA</span><strong id="turnDisplay">TURNO 01</strong></div></div>
+    <section class="chapter-forecast" id="chapterForecast" aria-live="polite" aria-atomic="true"><div class="chapter-forecast-mark" aria-hidden="true">◈</div><div><strong id="forecastLabel">EL LIBRO ESCUCHA</strong><p id="forecastText">La casa espera tu siguiente acción.</p></div></section>
     <div class="board-frame"><div class="board-topline"><span>PLANO DE LA CABAÑA</span><span class="serial">D-C/404 — SECTOR 05 × 05</span></div>
       <div class="board-border"><div class="board-mat"><div id="board" class="board" role="group" aria-label="Tablero interactivo: cinco columnas y cinco filas"></div></div></div>
       <div class="board-bottomline"><span>✥ <b>NO ABRAS EL LIBRO</b> ✥</span><span>✥ LAS PAREDES RECUERDAN ✥</span></div>
@@ -419,7 +436,7 @@ body{background:radial-gradient(ellipse 75% 45% at 40% 0%,#37413a44,transparent 
   <button type="button" id="mobileGuardBtn" aria-label="Defender">⛨ <span>DEFENDER</span></button>
   <button type="button" id="mobileTurnBtn" class="primary" aria-label="Finalizar turno">➜ <span>TURNO</span></button>
 </div>
-<footer class="site-footer"><span>DEAD CABIN 404 <i>✥</i> UNA NOCHE NO ES SUFICIENTE</span><span>V2.3 · EQUILIBRIO · ACCESIBILIDAD · GUARDADOS SEGUROS</span></footer>
+<footer class="site-footer"><span>DEAD CABIN 404 <i>✥</i> UNA NOCHE NO ES SUFICIENTE</span><span>V2.4 · OCHO EXPEDIENTES · TENSIÓN · DECISIONES</span></footer>
 <div id="fxStage" aria-hidden="true"></div>
 <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
 <div id="modal" class="modal-backdrop hidden" role="presentation"><section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><button id="modalClose" class="modal-close" type="button" aria-label="Cerrar diálogo">×</button><div class="modal-kicker" id="modalKicker">ARCHIVO 404</div><h2 id="modalTitle">Reglamento</h2><div id="modalContent" class="modal-content"></div><div id="modalActions" class="modal-actions"></div></section></div>
@@ -520,7 +537,20 @@ const STORY_BEATS={
  {name:'Las vetas del corazón',text:'Bajo la primera grieta hay un trozo de madera caliente que palpita al ritmo de tu pulso.',options:[{label:'LLEVARLO CONTIGO',effect:'stash',description:'Consigues provisiones; el corazón te siente.'},{label:'DESTRUIRLO',effect:'cleanse',description:'La casa retrocede.'}]},
  {name:'La voz detrás de todas las voces',text:'El Corazón muere y la cabaña te ofrece ocupar su lugar para que nadie más vuelva a entrar.',options:[{label:'RECHAZAR EL TRATO',effect:'sanity',description:'Recuerdas quién eres.'},{label:'ESCUCHAR SU CONFESIÓN',effect:'insight',description:'Conoces un secreto que duele.'}]}]
 };
-const ALL_ENCOUNTERS=[...ENCOUNTERS,...Object.entries(STORY_BEATS).flatMap(([chapter,beats])=>beats.map((b,i)=>({id:`c${chapter}-${i}`,chapter:Number(chapter),...b})))];
+// Eight playable finales: triggered at the EXIT, after all ordinary objectives.
+// Existing v4 storyBeats records whether a finale has already been resolved.
+const CHAPTER_FINALES={
+ 1:{name:'La última página',text:'La salida se abre, pero el libro pronuncia tu nombre. La hoja final exige una respuesta.',options:[{label:'CONSERVAR LA PÁGINA',effect:'finale_archive',description:'Recuperas una pista para la próxima expedición.'},{label:'QUEMAR LA PÁGINA',effect:'finale_burn',description:'Apagas un peligro inmediato a costa de un recuerdo.'}]},
+ 2:{name:'El tejado sin cielo',text:'Un relámpago inmóvil divide el umbral. El bosque ofrece un refugio imposible.',options:[{label:'CRUZAR BAJO LA LLUVIA',effect:'finale_storm',description:'Sales herido, pero conservas provisiones para mañana.'},{label:'APAGAR EL RAYO',effect:'finale_burn',description:'Pierdes un recuerdo para reducir la oscuridad.'}]},
+ 3:{name:'La cacería invertida',text:'Los arañazos de las paredes escriben una dirección: la de tu próximo refugio.',options:[{label:'SEGUIR LAS HUELLAS',effect:'finale_hunt',description:'Sacrificas calma por munición para el siguiente episodio.'},{label:'CERRAR LAS PUERTAS',effect:'finale_calm',description:'Recobras la compostura; no llevas ninguna pista contigo.'}]},
+ 4:{name:'La máscara vacía',text:'La máscara del Guardián cae al suelo. Detrás no había un rostro, sino una ventana.',options:[{label:'MIRAR A TRAVÉS',effect:'finale_mask',description:'Aprendes a protegerte en la próxima expedición.'},{label:'ROMPER EL CRISTAL',effect:'finale_burn',description:'Alejas el último eco a costa de cordura.'}]},
+ 5:{name:'La puerta de cinco esquinas',text:'La salida se curva alrededor de ti. Dos corredores llevan al mismo lugar, pero no al mismo tiempo.',options:[{label:'MEMORIZAR EL PLANO',effect:'finale_map',description:'Obtienes ventaja en la siguiente noche.'},{label:'NEGAR LA CASA',effect:'finale_calm',description:'Deshaces la ilusión y recuperas la calma.'}]},
+ 6:{name:'La emisión final',text:'La radio emite tu propia voz, grabada mañana, rogándote que no apagues el aparato.',options:[{label:'GUARDAR LA FRECUENCIA',effect:'finale_radio',description:'Conservas una protección para el capítulo siguiente.'},{label:'DEJARLA EN SILENCIO',effect:'finale_calm',description:'Recuperas la cordura ahora.'}]},
+ 7:{name:'El cuarto nombre',text:'La última voz no es humana. Ofrece pronunciar el nombre que faltará en el ritual definitivo.',options:[{label:'MEMORIZAR EL NOMBRE',effect:'finale_name',description:'Llegas mejor preparado al último capítulo.'},{label:'OLVIDAR EL NOMBRE',effect:'finale_burn',description:'Alejas la oscuridad al coste de una memoria.'}]},
+ 8:{name:'La página en blanco',text:'El Corazón está muerto. La casa se derrumba, pero en el umbral queda una página vacía que aún respira.',options:[{label:'ESCRIBIR «FIN»',effect:'finale_end',description:'Aceptas lo vivido y cierras la historia.'},{label:'DEJAR LA PÁGINA EN BLANCO',effect:'finale_open',description:'Sales con una inquietante última pregunta.'}]}
+};
+const FINAL_ENCOUNTERS=Object.entries(CHAPTER_FINALES).map(([chapter,scene])=>({id:`finale-${chapter}`,chapter:Number(chapter),...scene}));
+const ALL_ENCOUNTERS=[...ENCOUNTERS,...FINAL_ENCOUNTERS,...Object.entries(STORY_BEATS).flatMap(([chapter,beats])=>beats.map((b,i)=>({id:`c${chapter}-${i}`,chapter:Number(chapter),...b})))];
 const ACHIEVEMENTS=[{id:'first',label:'Primera luz',desc:'Completa un capítulo.'},{id:'mid',label:'La mitad del libro',desc:'Completa el capítulo 4.'},{id:'end',label:'La última página',desc:'Completa el capítulo 8.'},{id:'hard',label:'Sin misericordia',desc:'Gana un capítulo en Pesadilla.'},{id:'long',label:'Hasta el amanecer',desc:'Alcanza el turno 15 en Supervivencia infinita.'},{id:'clean',label:'Pulso firme',desc:'Gana con 8 o más puntos de vida.'},{id:'stories',label:'Elige tu pesadilla',desc:'Resuelve cuatro encuentros en una partida.'}];
 function neighbors(i){return [i-5,i+5,i%5?i-1:-1,i%5<4?i+1:-1].filter(x=>x>=0&&x<25)}
 function dist(a,b){return Math.abs(Math.floor(a/5)-Math.floor(b/5))+Math.abs(a%5-b%5)}
@@ -531,6 +561,22 @@ function shuffle(s,list){let a=list.slice();for(let i=a.length-1;i>0;i--){let j=
 function addLog(s,text,kind='narration'){s.log.unshift({turn:s.turn,text,kind});s.log.length=Math.min(s.log.length,90)}
 function currentChapter(s){return CHAPTERS[s.chapter-1]||CHAPTERS[0]}
 function currentObjective(s){return SIDE_OBJECTIVES[s.chapter]}
+function chapterForecast(s){
+ if(s.mode==='endless')return {label:'NOCHE SIN FIN',message:s.turn<12?'Resiste hasta el turno 12 para poder evacuar.':'Ya puedes evacuar desde la Entrada o seguir arriesgándote.',danger:s.doom>=doomLimit(s)-5};
+ const remaining=currentObjective(s).target-s.objectiveCount;
+ switch(s.chapter){
+ case 1:return {label:'EL LIBRO ESCUCHA',message:remaining>0?'Busca la página perdida antes de regresar a la Entrada.':'Página recuperada. Cierra las grietas restantes y vuelve a casa.',danger:false};
+ case 2:return {label:'EL TEMPORAL',message:remaining>0?`Quedan ${remaining} pararrayos. La tormenta sumará oscuridad cada 3 turnos.`:'Pararrayos reparados: los próximos embates no añadirán oscuridad.',danger:remaining>0&&s.turn%3===0};
+ case 3:return {label:'LOS CAZADORES',message:remaining>0?`Quedan ${remaining} acechadores por eliminar. Se refuerzan cada 5 turnos.`:'Has cazado a los tres acechadores requeridos. No bajes la guardia.',danger:s.turn%5===0};
+ case 4:return {label:'EL GUARDIÁN',message:s.bossKilled?'El Guardián ha caído. Regresa a la Entrada.':s.bossSummoned?'Espera a que termine su barrido ritual para aprovechar su vulnerabilidad.':'Cerrar la última grieta despertará al Guardián.',danger:s.bossSummoned&&!s.bossKilled&&s.turn%3===0};
+ case 5:return {label:'GEOMETRÍA ENFERMA',message:remaining>0?`Purifica ${remaining} salas marcadas. Cada 3 turnos puede enfermar otra habitación.`:'Purificación concluida. La casa aún puede corromper nuevas habitaciones.',danger:s.turn%3===0};
+ case 6:return {label:'EL ECO',message:remaining>0?`Recupera ${remaining} señales de radio. Descansar puede fallar: valora usar un talismán.`:'Mensajes recibidos. Cada cuatro turnos el silencio seguirá robando cordura.',danger:s.turn%4===0};
+ case 7:return {label:'CUATRO NOMBRES',message:`Sellos ${s.seals}/4. La pérdida ritual de cordura llega cada 4 turnos.` ,danger:s.turn%4===0};
+ case 8:return {label:'LA ÚLTIMA NOCHE',message:s.bossKilled?'El Corazón está destruido. Huye por la Entrada.':s.bossSummoned?'El pulso del Corazón se amplía en fase II. Busca la ventana de exposición.':`Sellos ${s.seals}/4: destrúyelos antes de afrontar al Corazón.`,danger:s.turn%3===0||s.turn%4===0};
+ default:return {label:'EXPEDIENTE',message:currentChapter(s).description,danger:false};
+ }
+}
+
 function bossThreat(s){
  const e=s.enemies.find(x=>x.type==='boss'||x.type==='heart');if(!e)return null;
  const stats=ENEMY_TYPES[e.type],frenzy=e.hp<=Math.ceil(stats.hp/2),ritual=s.turn%3===0;
@@ -549,7 +595,7 @@ function createGame(chapter=1,seed,options={}){
   mode,difficulty,survivor,turn:1,ap:3,pos:ENTRANCE,hp:hero.hp,sanity:hero.sanity,ammo:hero.ammo,medkits:hero.medkits,wards:hero.wards,flares:hero.flares,scrap:0,doom:0,seals:0,totalSeals:0,
   sealSpots:[],sealed:[],revealed:[ENTRANCE],searched:[],enemies:[],nextId:1,deck:[],discard:[],lastEvent:null,lastRoll:null,lastAction:'',log:[],cursed:[],barricades:[],
   bossSummoned:false,bossKilled:false,ended:false,won:false,progressGranted:false,scenarioNote:'',abilityTurn:0,score:0,kills:0,killedStalkers:0,
-  objectiveSpots:[],objectiveDone:[],objectiveCount:0,encounterSpots:[],encounterSeen:[],encounterChoices:[],pendingChoice:null,storyBeats:[],blessings:[],turnsSurvived:0,guard:0};
+  objectiveSpots:[],objectiveDone:[],objectiveCount:0,encounterSpots:[],encounterSeen:[],encounterChoices:[],pendingChoice:null,storyBeats:[],blessings:[],turnsSurvived:0,guard:0,legacy:null};
  const pool=Array.from({length:25},(_,i)=>i).filter(i=>i!==ENTRANCE&&dist(i,ENTRANCE)>=3);
  s.sealSpots=mode==='endless'?shuffle(s,pool).slice(0,4):shuffle(s,pool).slice(0,spec.seals);
  const other=shuffle(s,pool.filter(i=>!s.sealSpots.includes(i)));
@@ -561,6 +607,11 @@ function createGame(chapter=1,seed,options={}){
  s.encounterSpots=shuffle(s,other.filter(i=>!s.objectiveSpots.includes(i))).slice(0,4);
  s.encounterPool=shuffle(s,ENCOUNTERS.map(e=>e.id));
  refillDeck(s);
+ // A single legacy travels to the NEXT chapter only, never to endless mode or replayed chapters.
+ if(mode==='campaign'&&chapter>1&&options.legacy&&options.legacy.from===chapter-1){
+  const gifts={archive:['ward',1],storm:['medkit',1],hunt:['ammo',2],mask:['ward',1],map:['flare',1],radio:['ward',1],name:['medkit',1]};
+  const gift=gifts[options.legacy.kind];if(gift){const keys={ward:'wards',medkit:'medkits',ammo:'ammo',flare:'flares'};s[keys[gift[0]]]+=gift[1];addLog(s,`HERENCIA DEL CAPÍTULO ${chapter-1}: ${gift[1]} ${gift[0]} adicional.`,'story')}
+ }
  if(difficulty==='story'){s.ammo+=2;s.medkits++;s.wards++;s.flares++}
  if(difficulty==='nightmare'){s.sanity=Math.max(1,s.sanity-1);s.doom=2}
  addLog(s,mode==='endless'?'MODO INFINITO: sobrevive cuanto puedas. A partir del turno 12 puedes huir con tu puntuación.':`CAPÍTULO ${chapter}: ${spec.name}. ${spec.description}`,'story');
@@ -605,6 +656,8 @@ function objectiveAction(s){if(!canUse(s)||s.mode==='endless'||!s.objectiveSpots
  if(o.type==='repair'){s.doom=Math.max(0,s.doom-3)}
  if(o.type==='relic'){s.wards++;s.scrap++}
  if(o.type==='radio'){s.flares++;s.doom=Math.max(0,s.doom-1)}
+ if(s.chapter===1&&s.objectiveCount===1){s.sanity=Math.min(MAX_SANITY,s.sanity+1);addLog(s,'La página revela una salida posible: recuperas 1 cordura.','loot')}
+ if(s.chapter===6){s.ammo++;addLog(s,'La radio apunta hacia un escondite: +1 cartucho.','loot')}
  addLog(s,`${o.name}: ${s.objectiveCount}/${o.target}. ${ROOM_NAMES[s.pos]}.`,'story');s.lastAction='Objetivo secundario';if(s.objectiveCount>=o.target)storyBeat(s,'objective');return true}
 function hasShot(s,target){if(dist(s.pos,target)>2)return false;if(s.pos!==target&&Math.floor(s.pos/5)!==Math.floor(target/5)&&s.pos%5!==target%5)return false;
  let step=target===s.pos?0:Math.floor(s.pos/5)===Math.floor(target/5)?(target>s.pos?1:-1):(target>s.pos?5:-5);
@@ -613,6 +666,7 @@ function attack(s,id,weapon='axe'){if(!canUse(s)||!['axe','shotgun'].includes(we
  const inRange=weapon==='axe'?dist(s.pos,e.pos)<=1:hasShot(s,e.pos);if(!inRange||(weapon==='shotgun'&&!s.ammo))return false;
  spend(s);if(weapon==='shotgun')s.ammo--;const d=roll(s),crit=d===6,hit=d>=(weapon==='axe'?4:3);let dealt=hit?(weapon==='shotgun'?2:1)+(crit?1:0):0;
  if(hit&&(e.type==='boss'||e.type==='heart')&&e.exposedUntil===s.turn){dealt++;addLog(s,'VENTANA DE ATAQUE: el ritual dejó al jefe expuesto. +1 daño.','combat')}
+ if(hit&&e.type==='boss'&&useEcho(s,'echo-guardian','Reconoces la debilidad del Guardián: +1 daño.'))dealt++;
  if(hit&&s.scrap>=3){dealt++;s.scrap-=3;addLog(s,'Arma reforzada: gastas 3 piezas, +1 daño.','combat')}
  e.hp-=dealt;s.lastRoll={value:d,hit,crit,weapon,damage:dealt};addLog(s,`${weapon==='axe'?'Hachazo':'Disparo'} contra ${ENEMY_TYPES[e.type].label}: dado ${d} · ${hit?`${dealt} daño${crit?' (crítico)':''}`:'fallo'}.`,hit?'combat':'danger');
  if(e.hp<=0){s.enemies=s.enemies.filter(x=>x.id!==id);s.kills++;s.score+=e.type==='boss'||e.type==='heart'?150:25;addLog(s,`${ENEMY_TYPES[e.type].label} eliminado.`,'loot');
@@ -642,6 +696,7 @@ function rest(s){if(!canUse(s)||s.sanity===MAX_SANITY)return false;spend(s);
  s.lastAction='Descanso';check(s);return true}
 function seal(s){if(!canUse(s)||!s.sealSpots.includes(s.pos)||s.sealed.includes(s.pos)||s.enemies.some(e=>e.pos===s.pos))return false;
  spend(s);s.sealed.push(s.pos);s.seals++;s.totalSeals++;s.sanity=Math.max(0,s.sanity-1);s.doom=Math.max(0,s.doom-3);s.score+=55;addLog(s,`Sello cerrado (${s.seals}/${s.sealSpots.length}). −1 cordura, −3 oscuridad.`,'story');s.lastAction='Ritual de cierre';
+ if(s.mode==='campaign'&&s.chapter===7&&s.seals===2){s.doom=Math.max(0,s.doom-2);addLog(s,'Dos nombres resuenan al unísono: −2 oscuridad adicionales.','story')}
  if(s.mode==='endless'&&s.seals===s.sealSpots.length){const places=shuffle(s,Array.from({length:25},(_,i)=>i).filter(i=>i!==ENTRANCE)).slice(0,4);s.sealSpots=places;s.sealed=[];s.seals=0;addLog(s,'Has cerrado un círculo de cuatro grietas. Nacen cuatro grietas nuevas.','danger')}
  if(s.mode==='campaign'&&s.seals===currentChapter(s).seals&&['boss','final'].includes(currentChapter(s).pressure)&&!s.bossSummoned){const spots=s.revealed.filter(i=>i!==s.pos&&dist(i,s.pos)>=2);
   if(spawn(s,s.chapter===8?'heart':'boss',spots.length?pick(s,spots):undefined)){s.bossSummoned=true;addLog(s,'Un cuerpo inmenso emerge de las vigas. Destrúyelo antes de escapar.','danger')}}
@@ -649,9 +704,34 @@ function seal(s){if(!canUse(s)||!s.sealSpots.includes(s.pos)||s.sealed.includes(
 function objectivesComplete(s){return s.mode==='endless'?s.turn>=12:s.seals===currentChapter(s).seals&&s.objectiveCount>=currentObjective(s).target&&(currentObjective(s).type!=='boss'||s.bossKilled)}
 function escape(s){if(s.ended||s.pendingChoice||s.pos!==ENTRANCE||!objectivesComplete(s))return false;
  if(s.mode==='endless')finish(s,true,`EXTRACCIÓN · Escapaste en el turno ${s.turn} con ${s.score} puntos.`);
- else {const epilogue=s.encounterChoices.length>=3&&s.sanity>=5?'Las voces dejan de perseguirte. Una página del libro se ha quedado en blanco.':currentChapter(s).epilogue;finish(s,true,`VICTORIA · Capítulo ${s.chapter} completado. ${epilogue}`)}return true}
+ else {if(!s.storyBeats.includes('finale')){s.pendingChoice=`finale-${s.chapter}`;addLog(s,`CLÍMAX · ${CHAPTER_FINALES[s.chapter].name}: ${CHAPTER_FINALES[s.chapter].text}`,'story');s.lastAction='El umbral exige una última decisión';return true}
+ const epilogue=s.encounterChoices.length>=3&&s.sanity>=5?'Las voces dejan de perseguirte. Una página del libro se ha quedado en blanco.':currentChapter(s).epilogue;finish(s,true,`VICTORIA · Capítulo ${s.chapter} completado. ${epilogue}`)}return true}
+// Chapter-specific consequences use the existing v4 blessings array (save compatible).
+const CHAPTER_ECHOES={
+1:{id:'echo-page',name:'Página memorizada',effect:'La próxima carta que quite cordura perderá 1 de potencia.'},
+2:{id:'echo-storm',name:'Refugio contra la tormenta',effect:'El próximo temporal no añadirá oscuridad.'},
+3:{id:'echo-hunt',name:'Rastro borrado',effect:'La próxima oleada de acechadores se evita.'},
+4:{id:'echo-guardian',name:'Armadura agrietada',effect:'Tu primer ataque acertado al Guardián causa +1 daño.'},
+5:{id:'echo-geometry',name:'Plano imposible',effect:'La próxima mutación de una estancia queda anulada.'},
+6:{id:'echo-silence',name:'Frecuencia anclada',effect:'El próximo eco del silencio no reduce la cordura.'},
+7:{id:'echo-ritual',name:'Nombre protegido',effect:'El próximo cuarto nombre no reduce la cordura.'},
+8:{id:'echo-heart',name:'Latido anticipado',effect:'El próximo pulso del Corazón se reduce en 1 cordura.'}};
+function useEcho(s,id,message){if(!s.blessings.includes(id))return false;s.blessings=s.blessings.filter(x=>x!==id);addLog(s,`ECO DE TU DECISIÓN · ${message}`,'story');return true}
 function choose(s,option){if(s.ended||!s.pendingChoice||!Number.isInteger(option)||option<0||option>1)return false;
  const scene=ALL_ENCOUNTERS.find(e=>e.id===s.pendingChoice);if(!scene)return false;const choice=scene.options[option];s.encounterChoices.push(`${scene.id}:${option}`);s.pendingChoice=null;s.score+=20;
+ if(scene.id===`finale-${s.chapter}`){
+  // No action points, and no defeat imposed AFTER objectives have already been completed.
+  const legacyKinds={finale_archive:'archive',finale_storm:'storm',finale_hunt:'hunt',finale_mask:'mask',finale_map:'map',finale_radio:'radio',finale_name:'name'};
+  s.legacy=legacyKinds[choice.effect]?{from:s.chapter,kind:legacyKinds[choice.effect]}:null;
+  if(choice.effect==='finale_hunt')s.sanity=Math.max(1,s.sanity-1);
+  if(choice.effect==='finale_storm')s.hp=Math.max(1,s.hp-1);
+  if(choice.effect==='finale_burn'){s.sanity=Math.max(1,s.sanity-1);s.doom=Math.max(0,s.doom-2)}
+  if(choice.effect==='finale_calm')s.sanity=Math.min(MAX_SANITY,s.sanity+2);
+  if(choice.effect==='finale_end')s.score+=100;
+  if(choice.effect==='finale_open')s.score+=50;
+  s.storyBeats.push('finale');addLog(s,`DESENLACE · ${scene.name}: ${choice.label}. ${choice.description}`,'story');
+  s.lastAction='El umbral vuelve a abrirse. Pulsa ESCAPAR para terminar el capítulo.';return true;
+ }
  switch(choice.effect){case 'insight':{hurtMind(s,1,'Revelación');let options=neighbors(s.pos).filter(i=>!s.revealed.includes(i));if(options.length){s.revealed.push(pick(s,options));s.score+=3}break}
  case 'supply':s.ammo+=2;s.scrap++;break;case 'heal':s.hp=Math.min(MAX_HP,s.hp+3);s.doom++;break;
  case 'ward':s.wards++;s.doom++;break;case 'secret':s.flares++;s.doom+=2;break;
@@ -659,13 +739,14 @@ function choose(s,option){if(s.ended||!s.pendingChoice||!Number.isInteger(option
  case 'stash':s.medkits++;spawn(s,s.chapter>3?'wraith':'possessed');break;
  case 'cleanse':s.doom=Math.max(0,s.doom-2);hurtMind(s,1,'Cenizas rituales');break;
  case 'barricade':if(!s.barricades.includes(s.pos))s.barricades.push(s.pos);break}
+ if(s.mode==='campaign'&&scene.id===`c${s.chapter}-0`&&option===0){const echo=CHAPTER_ECHOES[s.chapter];if(echo&&!s.blessings.includes(echo.id)){s.blessings.push(echo.id);addLog(s,`RESONANCIA · ${echo.name}: ${echo.effect}`,'loot')}}
  addLog(s,`DECISIÓN · ${scene.name}: ${choice.label}. ${choice.description}`,'story');s.lastAction=`Decisión: ${choice.label}`;check(s);return true}
 function applyCard(s){
  if(!s.deck.length)refillDeck(s);
  const id=s.deck.pop(),c=CARDS.find(x=>x.id===id);s.discard.push(id);
  const before={hp:s.hp,sanity:s.sanity,doom:s.doom,ammo:s.ammo,medkits:s.medkits,wards:s.wards,flares:s.flares,scrap:s.scrap,enemies:s.enemies.length};
  addLog(s,`CARTA · ${c.name}. ${c.flavor}`,'card');
- switch(c.type){case 'sanity':s.sanity=Math.min(MAX_SANITY,Math.max(0,s.sanity+c.value));break;
+ switch(c.type){case 'sanity':{let delta=c.value;if(delta<0&&useEcho(s,'echo-page','La página amortigua una perturbación mental.'))delta=Math.min(0,delta+1);s.sanity=Math.min(MAX_SANITY,Math.max(0,s.sanity+delta));break}
  case 'damage':damage(s,c.value,'Evento');break;case 'hope':s.sanity=Math.min(MAX_SANITY,s.sanity+c.value);break;
  case 'ammo':s.ammo+=c.value;break;case 'medkit':s.medkits+=c.value;break;case 'ward':s.wards+=c.value;break;case 'flare':s.flares+=c.value;break;case 'scrap':s.scrap+=c.value;break;
  case 'doom':s.doom=Math.max(0,s.doom+c.value);break;
@@ -688,7 +769,7 @@ function enemyPhase(s){for(const e of s.enemies){if(s.ended)break;if(e.stunnedUn
  if((e.type==='boss'||e.type==='heart')&&s.turn%3===0){
   const frenzy=e.hp<=Math.ceil(stats.hp/2),d=dist(e.pos,s.pos);
   if(e.type==='heart'&&d<=(frenzy?2:1)){
-   let mind=frenzy?2:1;s.doom++;
+   let mind=frenzy?2:1;s.doom++;if(useEcho(s,'echo-heart','Anticipas el latido del Corazón.'))mind=Math.max(0,mind-1);
    if(s.guard===1){mind=Math.max(0,mind-1);s.guard=0;addLog(s,'DEFENSA: amortiguas el pulso de la casa.','combat')}
    if(mind)hurtMind(s,mind,'Pulso del Corazón');
    addLog(s,`PULSO RITUAL · Radio ${frenzy?2:1}: +1 oscuridad. El Corazón queda expuesto hasta el próximo turno.`,'danger');
@@ -716,11 +797,11 @@ function endTurn(s){if(s.ended||s.pendingChoice)return false;
  if(s.turn%3===0&&!s.enemies.some(e=>e.type==='boss'||e.type==='heart'))spawn(s,s.mode==='endless'&&s.turn>=12?'wraith':s.chapter>=3?'stalker':'possessed');
  if(s.mode==='campaign'){
  const p=currentChapter(s).pressure;
- if(p==='storm'&&s.turn%3===0){s.doom+=s.objectiveCount>=2?0:2;addLog(s,'El temporal desata su furia. Repara los pararrayos para protegerte.','danger')}
- if(p==='hunters'&&s.turn%5===0)spawn(s,'stalker');
- if(p==='shifting'&&s.turn%3===0){const options=s.revealed.filter(x=>x!==ENTRANCE);if(options.length){const i=pick(s,options);if(!s.cursed.includes(i))s.cursed.push(i);addLog(s,`La habitación ${ROOM_NAMES[i]} se retuerce y queda maldita.`,'danger');if(s.pos===i)hurtMind(s,1,'Habitación maldita')}}
- if(p==='silence'&&s.turn%4===0)hurtMind(s,1,'El eco del silencio');
- if(p==='ritual'&&s.turn%4===0)hurtMind(s,1,'El cuarto nombre');
+ if(p==='storm'&&s.turn%3===0){const shelter=useEcho(s,'echo-storm','La tormenta se desvía de tu refugio.');s.doom+=shelter||s.objectiveCount>=2?0:2;addLog(s,'El temporal desata su furia. Repara los pararrayos para protegerte.','danger')}
+ if(p==='hunters'&&s.turn%5===0&&!useEcho(s,'echo-hunt','Los acechadores pierden el rastro.'))spawn(s,'stalker');
+ if(p==='shifting'&&s.turn%3===0&&!useEcho(s,'echo-geometry','El plano contiene la mutación.')){const options=s.revealed.filter(x=>x!==ENTRANCE);if(options.length){const i=pick(s,options);if(!s.cursed.includes(i))s.cursed.push(i);addLog(s,`La habitación ${ROOM_NAMES[i]} se retuerce y queda maldita.`,'danger');if(s.pos===i)hurtMind(s,1,'Habitación maldita')}}
+ if(p==='silence'&&s.turn%4===0&&!useEcho(s,'echo-silence','La frecuencia preservada cancela el silencio.'))hurtMind(s,1,'El eco del silencio');
+ if(p==='ritual'&&s.turn%4===0&&!useEcho(s,'echo-ritual','El nombre protegido contiene el ritual.'))hurtMind(s,1,'El cuarto nombre');
  if(p==='final'&&s.turn%4===0){s.doom++;addLog(s,'El corazón late. +1 oscuridad.','danger')}
  }else if(s.turn%5===0){spawn(s,s.turn>=16?'brute':'leech');s.doom=Math.max(0,s.doom-2)}
  check(s);if(!s.ended)enemyPhase(s);
@@ -742,6 +823,7 @@ function validate(s){
  if(!plain(s)||s.version!==VERSION||!num(s.chapter,1,8)||!num(s.pos,0,24)||!num(s.rng,-2147483648,4294967295)||!num(s.turn,1,10000000)||!num(s.ap,0,3)||!Object.hasOwn(SURVIVORS,s.survivor)||!Object.hasOwn(DIFFICULTIES,s.difficulty)||!['campaign','endless'].includes(s.mode))return false;
  for(const k of ['hp','sanity','ammo','medkits','wards','flares','scrap','doom','seals','totalSeals','nextId','score','kills','killedStalkers','objectiveCount','abilityTurn'])if(!num(s[k]))return false;
  if(s.hp>MAX_HP||s.sanity>MAX_SANITY||s.nextId<1||s.abilityTurn>s.turn||!num(s.turnsSurvived)||!(s.guard===undefined||num(s.guard,0,1)))return false;
+ if(s.legacy!==undefined&&s.legacy!==null&&(!plain(s.legacy)||!num(s.legacy.from,1,8)||!['archive','storm','hunt','mask','map','radio','name'].includes(s.legacy.kind)||s.legacy.from!==s.chapter))return false;
  for(const k of ['bossSummoned','bossKilled','ended','won'])if(!bool(s[k]))return false;
  if(s.recorded!==undefined&&!bool(s.recorded))return false;
  if(!txt(s.lastAction,2000)||!txt(s.scenarioNote,2000))return false;
@@ -777,7 +859,7 @@ function migrateLegacy(g){if(!g||g.version!==1||!Number.isInteger(g.pos)||g.pos<
  s.enemies=(Array.isArray(g.enemies)?g.enemies:[]).filter(e=>Number.isInteger(e.pos)&&s.revealed.includes(e.pos)).slice(0,9).map(e=>({id:s.nextId++,type:'possessed',pos:e.pos,hp:Math.max(1,Math.min(2,Math.floor(Number(e.hp)||2)))}));s.ended=Boolean(g.ended);s.won=Boolean(g.won);
  s.objectiveCount=s.seals===3?1:0;s.log=[];addLog(s,'Partida v0.2 importada: posición y recursos conservados.','help');return validate(s)?s:null}
 function achievementsFor(s){const found=[];if(s.won&&s.mode==='campaign')found.push('first');if(s.won&&s.chapter===4)found.push('mid');if(s.won&&s.chapter===8)found.push('end');if(s.won&&s.difficulty==='nightmare')found.push('hard');if(s.mode==='endless'&&s.turn>=15)found.push('long');if(s.won&&s.hp>=8)found.push('clean');if(s.encounterChoices.length>=4)found.push('stories');return found}
-return {VERSION,CHAPTERS,STORY_BEATS,ALL_ENCOUNTERS,ROOM_NAMES,ROOM_TYPES,ENEMY_TYPES,CARDS,SURVIVORS,DIFFICULTIES,ENCOUNTERS,ACHIEVEMENTS,SIDE_OBJECTIVES,ENTRANCE,MAX_HP,MAX_SANITY,SIZE,neighbors,dist,createGame,dispatch,validate,upgradeV3,migrateLegacy,currentChapter,currentObjective,bossThreat,doomLimit,objectivesComplete,hasShot,achievementsFor};
+return {CHAPTER_FINALES,CHAPTER_ECHOES,chapterForecast,VERSION,CHAPTERS,STORY_BEATS,ALL_ENCOUNTERS,ROOM_NAMES,ROOM_TYPES,ENEMY_TYPES,CARDS,SURVIVORS,DIFFICULTIES,ENCOUNTERS,ACHIEVEMENTS,SIDE_OBJECTIVES,ENTRANCE,MAX_HP,MAX_SANITY,SIZE,neighbors,dist,createGame,dispatch,validate,upgradeV3,migrateLegacy,currentChapter,currentObjective,bossThreat,doomLimit,objectivesComplete,hasShot,achievementsFor};
 });
 
 </script>
@@ -1260,9 +1342,10 @@ function renderObjectives(){const c=E.currentChapter(game),o=E.currentObjective(
  $('objectives').innerHTML=objectives.map(x=>`<div class="objective${x.done?' done':''}"><span class="objective-check">${x.done?'✓':'·'}</span><span>${escapeHtml(x.text)}</span></div>`).join('')}
 
 function renderHistory(){$('history').innerHTML=game.log.slice(0,14).map(e=>`<div class="entry ${escapeHtml(e.kind||'narration')}"><time>TURNO ${format(e.turn)}</time><p>${escapeHtml(e.text)}</p></div>`).join('')}
-function render(){if(!E.validate(game)){showToast('Error: estado de partida inválido.');return}renderBoard();renderRoomScene();renderVitals();renderActions();renderDie();renderCard();renderObjectives();renderHistory()}
+function renderForecast(){const f=E.chapterForecast(game);if(game.mode==='campaign'&&E.objectivesComplete(game)&&game.pos===E.ENTRANCE&&!game.storyBeats.includes('finale')){f.label='EL UMBRAL ESPERA';f.message='Todos los objetivos están completos. ESCAPAR abrirá el desenlace exclusivo de este capítulo.';f.danger=false;}$('forecastLabel').textContent=f.label;$('forecastText').textContent=f.message+(game.blessings||[]).map(id=>Object.values(E.CHAPTER_ECHOES).find(e=>e.id===id)).filter(Boolean).map(e=>` · ECO ACTIVO: ${e.name}`).join('');$('chapterForecast').classList.toggle('urgent',f.danger)}
+function render(){if(!E.validate(game)){showToast('Error: estado de partida inválido.');return}renderBoard();renderRoomScene();renderVitals();renderActions();renderDie();renderCard();renderObjectives();renderHistory();renderForecast()}
 function maybeEncounter(){if(!game.pendingChoice||game.ended)return;const scene=E.ALL_ENCOUNTERS.find(x=>x.id===game.pendingChoice);if(!scene)return;
- showModal({kicker:'ENCUENTRO · DECISIÓN IRREVERSIBLE',title:scene.name,lock:true,content:`<p class="modal-callout">${escapeHtml(scene.text)}</p><p>Tu elección modificará los recursos o los peligros de esta partida.</p>`,
+ showModal({kicker:'ENCUENTRO · DECISIÓN IRREVERSIBLE',title:scene.name,lock:true,content:`<p class="modal-callout">${escapeHtml(scene.text)}</p><p>Tu elección modificará los recursos o los peligros de esta partida.</p>${scene.id===`c${game.chapter}-0`&&E.CHAPTER_ECHOES[game.chapter]?`<p class="echo-preview"><strong>CONSECUENCIA ESPECIAL:</strong> La primera elección activa «${escapeHtml(E.CHAPTER_ECHOES[game.chapter].name)}». ${escapeHtml(E.CHAPTER_ECHOES[game.chapter].effect)}</p>`:''}`,
  actions:scene.options.map((x,i)=>({label:x.label+' · '+x.description,primary:i===0,run:()=>act({type:'CHOOSE',option:i})}))})}
 function afterAction(type,before){persist();render();F.play(type,before,game);const result=game.lastRoll;
  switch(type){case 'ATTACK':S.effect(result&&result.hit?'hit':'roll');break;case 'MOVE':S.effect(game.revealed.length>before.revealed?'explore':'move');break;
@@ -1280,7 +1363,7 @@ function showEnding(){const win=game.won,c=E.currentChapter(game),isEndless=game
  <p>Turnos: <b>${game.turn}</b> · Grietas: <b>${game.totalSeals}</b> · Enemigos derrotados: <b>${game.kills}</b> · Decisiones: <b>${game.encounterChoices.length}</b></p>
  <p class="final-score">PUNTUACIÓN FINAL: <b>${game.score.toLocaleString('es-ES')}</b></p>
  ${win&&!isEndless&&game.chapter<8?'<p>Se ha desbloqueado el siguiente capítulo.</p>':''}${win&&!isEndless&&game.chapter===8?'<p>Has completado los ocho expedientes. El archivo sigue abierto para nuevas dificultades y personajes.</p>':''}`;
- let actions=[];if(win&&!isEndless&&game.chapter<8)actions.push({label:'SIGUIENTE CAPÍTULO',primary:true,run:()=>startNew(game.chapter+1,{survivor:game.survivor,difficulty:game.difficulty,mode:'campaign'})});
+ let actions=[];if(win&&!isEndless&&game.chapter<8)actions.push({label:'SIGUIENTE CAPÍTULO',primary:true,run:()=>startNew(game.chapter+1,{survivor:game.survivor,difficulty:game.difficulty,mode:'campaign',legacy:game.legacy})});
  actions.push({label:'REINTENTAR',run:()=>startNew(game.chapter,{survivor:game.survivor,difficulty:game.difficulty,mode:game.mode})});actions.push({label:'ARCHIVO DE LOGROS',run:showRecords});actions.push({label:'CAMPAÑA',run:showCampaign});
  showModal({kicker:win?'HAS ESCAPADO · POR AHORA':'EL FINAL DE TU HISTORIA',title:win?'Sobreviviste a la noche':'La casa ha ganado',content,actions})}
 

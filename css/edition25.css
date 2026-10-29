@@ -1,0 +1,5 @@
+/* v2.5 - explicit tactical consequences of narrative choices */
+.echo-preview{margin:12px 0 0;padding:12px 14px;border-left:3px solid #d9b676;background:linear-gradient(100deg,#27352b,#1c221f);color:#f2e1c4;line-height:1.55}
+.echo-preview strong{color:#f3cf89;letter-spacing:.05em}
+.chapter-forecast:has(+ *){min-width:0}
+@media(max-width:600px){.echo-preview{font-size:12px;padding:12px}}

@@ -30,7 +30,7 @@ test('Controles agrupados, acciones rápidas y punto de entrada estable',()=>{
  for(const id of ['combat','explore','ritual'])assert.ok(html.includes(`action-group-${id}`),id);
  for(const id of ['primary-nav','support-nav','settings-nav'])assert.ok(html.includes(id),id);
  assert.ok(js.includes('syncQuickButtons()'));
- assert.match(read('sw.js'),/dead-cabin-404-v2-3-0/);
+ assert.match(read('sw.js'),/dead-cabin-404-v2-6-0/);
  const head=html.indexOf('js/card-ui.js'),app=head>0?html.indexOf('js/app.js'):-1;assert.ok(head>0&&app>head);
 });
 test('Guarda y motor siguen en la versión 4 y no se altera el esquema',()=>{
