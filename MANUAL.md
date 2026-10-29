@@ -1,4 +1,4 @@
-# DEAD CABIN 404 — Reglamento oficial de la edición 1.0
+# DEAD CABIN 404 — Reglamento oficial — edición 1.8
 
 **Título:** La noche del umbral · **Género:** juego de mesa de terror táctico en solitario · **Jugadores:** uno · **Idioma:** español · **Duración orientativa por expediente:** 25–60 minutos, según velocidad, decisiones y dificultad. Esta duración es una estimación de diseño, no un tiempo cronometrado con jugadores.
 
@@ -136,3 +136,8 @@ La partida se guarda automáticamente tras cada acción y puede guardarse/restau
 Existe un importador de partidas v0.3 y v0.1–0.2 en el mismo origen, con conversión de recursos y objetivos. El archivo único funciona sin instalación; si abres el juego mediante `file://`, algunos navegadores pueden tratar el guardado como almacenamiento efímero o aislarlo por archivo. Para persistencia más fiable, usa un servidor estático o GitHub Pages.
 
 **Nota de equilibrio:** las reglas están cubiertas por pruebas técnicas y simulaciones automáticas, pero no hay evidencia de una campaña completa probada manualmente por jugadores humanos, ni verificación física en Safari iOS. El modo Pesadilla y los capítulos finales están diseñados para ser difíciles. Antes de una publicación comercial debería hacerse una ronda de pruebas externas de balance y accesibilidad.
+
+
+## Edición cinematográfica 1.8
+
+Ocho ilustraciones SVG originales aparecen al comenzar cada capítulo y en la galería. Los impactos, fallos y sellos muestran breves avisos que no bloquean controles. El botón **EFECTOS ON/OFF** desactiva animaciones y guarda la preferencia localmente. Para el proyecto modular, usa **INICIAR-WINDOWS.bat** o **INICIAR-LINUX.sh** (requieren Python 3) y el juego abrirá en un servidor privado `127.0.0.1`. El sonido sigue siendo opcional. No cambian reglas, victorias ni guardados.

@@ -1,12 +1,21 @@
 # DEAD CABIN 404 — La noche del umbral
 
-**Versión 1.0.0 · Edición digital solitaria · Juego original de terror táctico · En español**
+**Versión 1.8.0 · Edición digital solitaria · Juego original de terror táctico · En español**
 
 Un juego de mesa digital completo de un jugador ambientado en una cabaña imposible: tablero modular ilustrado, habitaciones ocultas, 24 cartas de acontecimientos, 7 tipos de enemigo, dados d6, gestión de recursos, 8 expedientes de campaña, encuentros de dos decisiones, modo supervivencia y logros.
 
+## Novedades comprobadas de v1.8
+
+- Ocho ilustraciones originales de capítulo, incluidas en la selección de campaña, introducciones y finales.
+- Feedback de impacto, fallo, ritual y daño con botón accesible **EFECTOS ON/OFF**; no bloquea los clics.
+- Corregido un softlock: los jefes se invocan incluso con diez enemigos en el tablero.
+- Lanzadores Windows y Linux; servidor Python 3 privado en 127.0.0.1 y puerto libre.
+- 38 tests Node, 100 partidas adversariales, Chromium escritorio y móvil emulado.
+- Guardados compatibles con los existentes en formato v4.
+
 ## Jugar inmediatamente
 
-- **Solo un archivo:** abre `JUGAR-SIN-INSTALAR.html`. Incluye interfaz, motor de juego, cartas, ilustraciones y audio en un HTML. No necesitas instalar nada. También se entrega como `DEAD-CABIN-404-v1.0-JUGAR.html` fuera del ZIP.
+- **Solo un archivo:** abre `JUGAR-SIN-INSTALAR.html`. Incluye interfaz, motor de juego, cartas, ilustraciones y audio en un HTML. No necesitas instalar nada. También se entrega como `DEAD-CABIN-404-v1.8-JUGAR.html` fuera del ZIP.
 - **Proyecto modular:** descomprime el ZIP completo y abre `index.html` (conservando las carpetas `css`, `js`, `assets`). Si tu navegador restringe el guardado desde `file://`, usa el servidor opcional.
 - **Servidor local:** desde esta carpeta, `python -m http.server 8000`; abre `http://localhost:8000`.
 - **Instalación PWA y sin conexión:** mediante HTTPS o localhost el sitio registra un *service worker* con recursos locales y puede funcionar sin conexión tras la primera carga. El archivo único no necesita PWA.
@@ -24,6 +33,10 @@ Un juego de mesa digital completo de un jugador ambientado en una cabaña imposi
 - **Guardado local automático**, migración 0.3 y antiguas v0.1–0.2, controles de teclado/táctiles, animaciones de dados, efectos opcionales Web Audio sintetizados, diseño adaptable y preferencia de movimiento reducido.
 
 Para reglas completas, consulta [MANUAL.md](MANUAL.md). No son necesarias cuentas, bibliotecas externas, anuncios ni peticiones a servidores de terceros.
+
+### Lanzadores locales
+
+Windows: doble clic en **INICIAR-WINDOWS.bat**. Linux: `chmod +x INICIAR-LINUX.sh && ./INICIAR-LINUX.sh`. Requieren Python 3. No necesitan permisos de administrador ni publican el servidor fuera del equipo.
 
 ## Arquitectura
 
@@ -66,7 +79,7 @@ python tests/browser_smoke.py
 
 La prueba UI incluye inyección local del HTML debido a las restricciones de URL del entorno original; no demuestra que un GitHub Pages público esté desplegado. El test del motor usa Node.js estándar y no requiere paquetes externos.
 
-Para publicar en GitHub Pages, sube **el contenido de esta carpeta** a la raíz de un repositorio y configura `Settings → Pages → Source: GitHub Actions`. El workflow ejecuta `npm test`, genera el HTML único y publica solo si esos pasos terminan correctamente. **No se ha creado ni publicado automáticamente un repositorio desde este paquete.**
+Para publicar en GitHub Pages, sube **el contenido de esta carpeta** a la raíz de un repositorio y configura `Settings → Pages → Source: GitHub Actions`. El workflow ejecuta `npm test`, genera el HTML único y publica solo si esos pasos terminan correctamente. Repositorio oficial: https://github.com/ivan7800/DEAD-CABIN-404. Verifica el despliegue de Pages por separado.
 
 ## Privacidad y guardados
 
