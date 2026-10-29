@@ -16,7 +16,7 @@ try:
             assert response.status==200,(asset,response.status)
             assert len(body)>100,(asset,len(body))
             assert response.headers.get('X-Content-Type-Options')=='nosniff'
-    print('PASS: Windows/Linux launcher server — HTTP 200, localhost-only and all 2.1 assets')
+    print('PASS: Windows/Linux launcher server — HTTP 200, localhost-only and all 2.2 assets')
 finally:
     proc.terminate()
     try:proc.communicate(timeout=3)

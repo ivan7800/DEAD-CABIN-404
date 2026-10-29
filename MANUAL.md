@@ -1,4 +1,4 @@
-# DEAD CABIN 404 — Reglamento oficial · edición 2.1 (reglas de campaña 1.0)
+# DEAD CABIN 404 — Reglamento oficial · edición 2.2 (reglas de campaña v4)
 
 **Título:** La noche del umbral · **Género:** juego de mesa de terror táctico en solitario · **Jugadores:** uno · **Idioma:** español · **Duración orientativa por expediente:** 25–60 minutos, según velocidad, decisiones y dificultad. Esta duración es una estimación de diseño, no un tiempo cronometrado con jugadores.
 
@@ -62,7 +62,7 @@ Cuando finalizas el turno:
 
 1. Aumenta la oscuridad base conforme a la dificultad (Historia alterna 1 y 0; Normal +1; Pesadilla +2).
 2. Roba **una carta** del mazo. Puede alterar salud, cordura, oscuridad, recursos o aparición de enemigos.
-3. En cada tercer turno (`3, 6, 9, ...`) aparece un enemigo adicional. Determinados capítulos convocan más monstruos.
+3. En cada tercer turno (`3, 6, 9, ...`) aparece un enemigo adicional, salvo que haya un jefe activo en el tablero. Determinados capítulos convocan más monstruos; en el capítulo 3 llega un acechador adicional cada cuarto turno.
 4. Se activan las reglas exclusivas del expediente, que pueden provocar más oscuridad, corrupción o ataques a la mente.
 5. Cada enemigo vivo mueve hacia el superviviente, ataca si comparte habitación, y lanza un dado de seis caras. Si tiene éxito, causa daño según su tipo.
 6. Comprueba las condiciones de derrota y, si sigues vivo, avanza el contador de turnos y recupera 3 PA.
@@ -70,6 +70,14 @@ Cuando finalizas el turno:
 **Mazo:** 24 cartas diferentes; una carta no vuelve a aparecer hasta agotar el mazo y barajarlo de nuevo. Algunos eventos son positivos, otros peligrosos.
 
 **Apariciones:** los monstruos suelen aparecer en salas ya reveladas, fuera de tu ubicación si es posible. Hasta diez enemigos pueden permanecer simultáneamente en el tablero; si la casa intenta superar ese máximo, el nuevo monstruo no aparece.
+
+### Defensa y rituales de jefes (v2.2)
+
+- **Defender:** 1 PA, reduce en 1 el daño de salud y cordura del primer ataque que acierte durante la fase del mal; después expira. Frente a los barridos del Guardián y los pulsos del Corazón protege también su efecto especial.
+- **Guardián:** en los turnos divisibles por 3 realiza un ataque de barrido si termina junto al superviviente (distancia 1). En su misma sala realiza su ataque de contacto reforzado. A la mitad de su vida entra en fase II y mueve dos salas por turno.
+- **Corazón:** en el turno 3, 6, 9… emite un pulso si termina a una sala del superviviente; en fase II alcanza dos. Inflige 1 de cordura (2 en fase II) y +1 oscuridad. Si estás dentro del radio, sustituye su ataque de contacto por el pulso.
+- **Contraataque:** tras descargar un ritual, el jefe queda expuesto durante el siguiente turno del jugador. Cada ataque acertado en esa ventana hace +1 daño. Observa el panel para decidir entre huir, defenderte o contraatacar.
+- **Salvar y restaurar:** la partida se guarda automáticamente en localStorage (esquema v4). Los botones Exportar e Importar crean una copia JSON y permiten restaurarla después de validarla y confirmarla. No es almacenamiento en la nube.
 
 ## 4. Enemigos
 
