@@ -1,0 +1,34 @@
+/* 1.7: miniaturas 2.5D, salas detalladas y efectos táctiles legibles */
+.tile .room-weathering{mix-blend-mode:normal;pointer-events:none}
+.tile.revealed .room-art{filter:brightness(1.02) saturate(1.08) contrast(1.14)}
+.tile.revealed:hover .room-art{filter:brightness(1.18) saturate(1.22) contrast(1.14)}
+.tile .token-row{inset:6% 0 17%;gap:0;pointer-events:none}
+.tile .token{width:45%;max-width:72px;aspect-ratio:1;border:0;background:transparent;box-shadow:none;text-shadow:none;filter:drop-shadow(0 4px 4px #000c);overflow:visible}
+.tile .token.hero{border:0;background:none;color:inherit;filter:drop-shadow(0 2px 5px #d9bb7b99)}
+.tile .token.enemy{border:0;background:none;box-shadow:none;filter:drop-shadow(0 2px 5px #b43e3e77)}
+.tile .token svg{display:block;width:100%;height:100%;overflow:visible}
+.tile .token.boss{width:54%;max-width:86px}
+.tile.just-revealed .room-art{animation:roomReveal .42s ease-out both}
+@keyframes roomReveal{0%{filter:brightness(.18) saturate(.3)}55%{filter:brightness(1.34) saturate(1.1)}100%{filter:brightness(1.02) saturate(1.08)}}
+.tile.reachable:focus-visible{outline:3px solid #f3dc9c;outline-offset:-3px}
+.tile.revealed:not(.reachable):not(.attackable):disabled{opacity:1;cursor:default}
+.tile .room-label{background:linear-gradient(90deg,#0c1110cf,#0b100ee8 30%,#0b100ee8 70%,#0c1110cf);text-shadow:0 1px 2px #000,0 0 4px #000}
+@media(max-width:520px){.tile .token{width:53%;max-width:54px}.tile .token-row{inset:11% 0 18%}}
+@media(prefers-reduced-motion:reduce){.tile.just-revealed .room-art{animation:none}}
+
+/* Ilustración ampliada de la habitación actual, útil aunque el resto siga bajo niebla. */
+.cinematic-room{margin:14px 0 12px;display:grid;grid-template-columns:190px minmax(0,1fr);min-height:184px;background:linear-gradient(120deg,#1d2522,#1d1b1b 70%,#25231e);border:1px solid #7a624a;box-shadow:inset 0 0 0 3px #121615,0 8px 25px #0007;overflow:hidden}
+.cinematic-room-visual{position:relative;min-height:184px;background:#131918;border-right:2px solid #856747;overflow:hidden}
+.cinematic-room-visual:after{content:"";pointer-events:none;position:absolute;inset:0;box-shadow:inset 0 0 42px #03060590;background:linear-gradient(100deg,transparent,#090d0d30)}
+.cinematic-room-visual>.room-art{width:100%;height:100%;display:block;position:absolute;inset:0;filter:brightness(1.17) saturate(.9) contrast(1.11)}
+.cinematic-room-visual.threat{box-shadow:inset 0 0 22px #b23d3a66}
+.cinematic-room-visual.haunted{filter:hue-rotate(335deg)}
+.scene-creature{position:absolute;inset:15px 25px 0;display:grid;place-items:center;filter:drop-shadow(0 8px 9px #000);z-index:2;pointer-events:none}
+.scene-creature .miniature-art{height:155px;width:145px}
+.cinematic-room-caption{padding:23px 22px;display:flex;flex-direction:column;justify-content:center;gap:7px;min-width:0;position:relative}
+.cinematic-room-caption:before{content:"✥";position:absolute;right:18px;top:10px;color:#b39c7644;font:70px Georgia,serif}
+.cinematic-room-caption small{position:relative;font-size:9px;letter-spacing:.19em;color:#ad9979;font-weight:900}
+.cinematic-room-caption h3{position:relative;font:700 clamp(17px,2.2vw,24px)/1.2 var(--font-title);color:#e8d4ac;margin:0;letter-spacing:.025em}
+.cinematic-room-caption p{position:relative;font:italic 13px/1.55 Georgia,serif;color:#c5baa4;max-width:420px;margin:0}
+.cinematic-room-tag{font-size:9px;font-weight:800;letter-spacing:.16em;color:#cd9875;border-top:1px solid #70573f;padding-top:8px;margin-top:5px}
+@media(max-width:550px){.cinematic-room{grid-template-columns:120px minmax(0,1fr);min-height:140px}.cinematic-room-visual{min-height:140px}.cinematic-room-caption{padding:12px;gap:5px}.cinematic-room-caption h3{font-size:17px}.cinematic-room-caption p{font-size:11px}.cinematic-room-caption:before{font-size:40px}.scene-creature .miniature-art{width:105px;height:115px}}
