@@ -79,3 +79,13 @@ Arte SVG ilustrado original y tablero de estética **terror gótico ochentero / 
 ## Limitaciones honestas
 
 El motor y la UI se han probado automáticamente en Chromium, pero no hay pruebas de usuario final a lo largo de los ocho expedientes, ni certificación de compatibilidad de Safari iOS o auditoría externa de accesibilidad. El equilibrio y el contenido narrativo pueden ampliarse. La etiqueta 1.0 significa que el conjunto de sistemas y escenarios definido para este lanzamiento está implementado; no garantiza ausencia de errores ni calidad comercial validada por jugadores.
+
+### Actualización 1.7 · La cabaña cobra vida
+
+La edición Premium 1.7 presenta miniaturas SVG originales con relieve 2.5D, las 25 habitaciones diferenciadas por marcas, sangre, moho, runas, grietas y luces, una ventana de exploración con vista ampliada y un nuevo sistema de audio procedural dinámico. Se mantienen las reglas, las partidas y los 8 expedientes de la edición 1.0.
+
+**Audio**: comienza silenciado; actívalo con SONIDO. Sintetiza drones, viento y efectos en Web Audio; no reproduce grabaciones ni necesita internet.
+
+**Calidad**: es una versión jugable y probada automáticamente, no un juego comercial con pruebas de aceptación completas. La representación de miniaturas es **2.5D vectorial**, no 3D real. Navegación de Safari en dispositivos físicos y balance humano todavía por verificar.
+
+Para validar localmente: `npm test`, `python tests/browser_smoke.py` (requiere Chromium y Playwright) y `npm run build:single`.

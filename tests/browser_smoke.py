@@ -4,10 +4,10 @@ from playwright.sync_api import sync_playwright
 import re
 p=Path(__file__).resolve().parents[1]
 source=(p/'index.html').read_text()
-source=re.sub(r'<link rel="stylesheet" href="css/style.css">','',source)
-source=re.sub(r'<script src="js/[a-z]+.js" defer></script>','',source)
-source=source.replace('</head>','<style>'+ (p/'css/style.css').read_text() +'</style></head>')
-scripts=[(p/'js'/name).read_text() for name in ['engine.js','art.js','audio.js','app.js']]
+source=re.sub(r'<link rel="stylesheet" href="css/[^"]+">','',source)
+source=re.sub(r'<script src="js/[^"]+" defer></script>','',source)
+source=source.replace('</head>','<style>'+ (p/'css/style.css').read_text() + (p/'css/illustration.css').read_text() +'</style></head>')
+scripts=[(p/'js'/name).read_text() for name in ['engine.js','art.js','premium-art.js','audio.js','app.js']]
 def boot(page,storage=None):
     page.set_content(source,wait_until='load')
     page.evaluate("""(data) => {window.__storage={...data};Object.defineProperty(window,'localStorage',{configurable:true,value:{getItem:k=>window.__storage[k]??null,setItem:(k,v)=>{window.__storage[k]=String(v)},removeItem:k=>{delete window.__storage[k]}}})}""",storage or {})
@@ -21,6 +21,8 @@ with sync_playwright() as playwright:
     assert page.locator('#modalTitle').inner_text()=='El libro que respira'
     page.get_by_role('button',name='ENTRAR EN LA CABAÑA').click()
     assert page.locator('.tile').count()==25
+    assert page.locator('.miniature-art').count()==1
+    assert page.locator('.room-weathering').count()==2
     assert page.locator('.tile.revealed').count()==1
     assert page.locator('#apText').inner_text()=='3 / 3'
     page.locator('#toast').wait_for(state='hidden',timeout=6000)
@@ -28,6 +30,8 @@ with sync_playwright() as playwright:
     # Uso de interfaz y movimiento
     page.locator('[data-pos="17"]').click()
     assert page.locator('#apText').inner_text()=='2 / 3'
+    assert page.locator('.room-weathering').count()==3
+    assert page.locator('#roomSceneName').inner_text()=='SÓTANO SELLADO'
     assert page.locator('.tile.revealed').count()==2
     page.locator('#endBtn').click()
     assert page.locator('#turnDisplay').inner_text()=='TURNO 02'
@@ -53,6 +57,7 @@ with sync_playwright() as playwright:
     page.evaluate('''() => {const s=window.__deadCabin.state;s.enemies=[{id:41,type:'possessed',pos:17,hp:2}];s.nextId=42;s.ap=3;s.sanity=8;s.revealed=[22,17]}''')
     page.evaluate('window.__deadCabin.act({type:"REST"})')
     assert page.locator('#axeBtn').is_enabled()
+    assert page.locator('.miniature-art').count()==2
     page.locator('#axeBtn').click()
     assert 'attackable' in page.locator('[data-pos="17"]').get_attribute('class')
     page.locator('[data-pos="17"]').click()
@@ -92,6 +97,12 @@ with sync_playwright() as playwright:
     page.evaluate('window.__deadCabin.act({type:"ESCAPE"})')
     assert page.locator('#modalTitle').inner_text()=='Sobreviviste a la noche'
     assert page.evaluate('window.__deadCabin.records.bestTurn')==12
+    page.locator('#modalClose').click()  # cerrar pantalla final antes de probar sonido
+    # Activación y parada del audio mediante interacción real
+    page.locator('#soundBtn').click()
+    assert page.locator('#soundBtn').get_attribute('aria-pressed')=='true'
+    page.locator('#soundBtn').click()
+    assert page.locator('#soundBtn').get_attribute('aria-pressed')=='false'
     # Responsive y experiencia táctil
     for width in [390,320]:
         mobile=browser.new_page(viewport={'width':width,'height':844},device_scale_factor=1,is_mobile=True,has_touch=True)
