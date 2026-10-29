@@ -41,6 +41,7 @@ function action(s,step){
 function play(chapter,difficulty,seed,survivor){const s=E.createGame(chapter,seed,{difficulty,survivor});let steps=0,invalid=0;
  while(!s.ended&&steps<900&&s.turn<90){const a=action(s,steps);const ok=E.dispatch(s,a);if(!ok){invalid++; E.dispatch(s,{type:'END_TURN'})}if(!E.validate(s))throw Error('Invalid state chapter '+chapter+' seed '+seed+' step '+steps+' action '+JSON.stringify(a));steps++}
  return {chapter,difficulty,survivor,seed,win:s.won,turn:s.turn,steps,hp:s.hp,sanity:s.sanity,doom:s.doom,objective:s.objectiveCount,needed:E.currentObjective(s).target,seals:s.seals,limit:E.doomLimit(s),invalid,reason:s.lastAction};}
+if(require.main===module){
 const survivors=['scout','medic','occultist'];
 for(let chapter=1;chapter<=8;chapter++)for(const difficulty of difficulties)for(const survivor of survivors)for(let trial=0;trial<16;trial++)rows.push(play(chapter,difficulty,100000+chapter*10000+difficulties.indexOf(difficulty)*1000+survivors.indexOf(survivor)*100+trial,survivor));
 if(rows.some(x=>x.invalid))throw Error('Acciones rechazadas durante simulaciones');
@@ -48,3 +49,6 @@ const stats=[];for(let chapter=1;chapter<=8;chapter++)for(const difficulty of di
 const fs=require('fs');fs.writeFileSync('qa/audit-balance-1152.json',JSON.stringify({samples:rows.length,overallWin:rows.filter(x=>x.win).length,stats,rows},null,2));
 console.table(stats.filter(x=>x.survivor==='scout'));
 console.log('samples:',rows.length,'wins:',rows.filter(x=>x.win).length,'invalid:',rows.reduce((n,x)=>n+x.invalid,0));
+
+}
+module.exports={action,play};
