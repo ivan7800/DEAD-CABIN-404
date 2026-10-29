@@ -1,8 +1,17 @@
-# DEAD CABIN 404 — Premium UX 2.1
+# DEAD CABIN 404 — Premium Táctica 2.2
 
 **Juego de mesa táctico de terror para un jugador, original y totalmente local.** Ocho capítulos, tres supervivientes, tres dificultades, 25 salas, 24 cartas de acontecimiento, 7 variantes de enemigo, modo infinito, encuentros narrativos y progreso guardado.
 
-## Qué cambia en 2.1
+## Qué cambia en 2.2
+
+- **Jefes con dos fases diferentes:** el Guardián hace barridos a salas contiguas; el Corazón emite un pulso radial de cordura y oscuridad. En fase II son más peligrosos. El panel de estado muestra salud, fase, próximo ritual y ventana de vulnerabilidad (+1 daño al acertar tras cada ritual).
+- **Misión 5 corregida:** los dos objetivos de purificación son habitaciones malditas desde el inicio, aunque no se revelan antes de explorarlas. Las partidas 2.1 cargadas siguen siendo compatibles y se corrigen al entrar a la sala pendiente.
+- **Equilibrio:** la probabilidad de una aparición espontánea al explorar baja de 17 % a 13 %; los cazadores extra del capítulo 3 se convocan cada cuatro turnos (además de las apariciones normales) y durante un combate contra jefe no aparece el refuerzo periódico genérico. El mazo de 24 cartas no cambia.
+- **Seguridad del guardado:** Exportar/Importar JSON de progreso local con comprobación de estado, límite de 1 MB y confirmación antes de sustituir la partida activa. El formato interno de partida sigue siendo **v4**.
+- **PWA:** navegación con prioridad a red y fallback offline; la galería de cartas se almacena en caché.
+- **QA:** 55 pruebas Node, Chromium de escritorio y móvil (320/390px), exportación/importación real, 192 simulaciones heurísticas con acciones reales del motor, lanzadores y HTML único comprobados. No equivale a ocho sesiones humanas.
+
+## Mejoras heredadas de 2.1
 
 - **24 acontecimientos rediseñados** con 24 ilustraciones SVG propias. Una carta tiene categoría, nombre, texto narrativo y **efecto mecánico explícito**, calculado desde el catálogo real del motor (sin alterar reglas o datos guardados).
 - **Nueva composición de carta** con ilustración amplia, estructura flexible, pie legible y marcos diferenciados para amenaza, perturbación, alivio y suministros.
@@ -25,7 +34,7 @@ El audio está desactivado inicialmente. No hay publicidad, analítica, cuentas,
 
 Tienes 3 PA por turno. Muévete por el mapa de 5 × 5, investiga, cierra las grietas y cumple el objetivo particular de cada capítulo para regresar a la Entrada. La fase del mal roba una carta, aumenta la presión y resuelve enemigos. Las cartas ahora explican su efecto, además de su relato.
 
-La sección **Tutorial** incluye un entrenamiento guiado; el **Reglamento** y `MANUAL.md` documentan acciones, enemigos, capítulos y dificultades. El botón **Defender** consume 1 PA y mitiga el siguiente ataque enemigo; el Guardián y el Corazón tienen golpes reforzados cada tercera noche.
+La sección **Tutorial** incluye un entrenamiento guiado; el **Reglamento** y `MANUAL.md` documentan acciones, enemigos, capítulos y dificultades. El botón **Defender** consume 1 PA y mitiga el siguiente ataque enemigo; el Guardián y el Corazón tienen rituales distintos cada tercera noche y quedan expuestos después de ejecutarlos.
 
 ## Arquitectura
 
@@ -37,9 +46,10 @@ La sección **Tutorial** incluye un entrenamiento guiado; el **Reglamento** y `M
 | `js/card-ui.js` | Clasificación, efectos mecánicos y 24 ilustraciones de carta SVG **sin modificar el motor** |
 | `js/art.js`, `js/premium-art.js`, `js/chapter-art.js` | Arte original de salas, miniaturas y ocho capítulos |
 | `js/audio.js`, `js/feedback.js`, `js/cinematic.js` | Audio y FX opcionales |
-| `css/edition21.css` | Diseño de cartas, acciones, inventario, navegación y responsive |
+| `css/edition21.css`, `css/edition22.css` | Rediseño de cartas/interfaz y panel de fase/telemetría de jefes |
 | `css/style.css` y capas `premium`, `cinematic`, `illustration`, `edition18`, `edition20` | Estilos heredados y gráficos |
 | `sw.js`, `manifest.webmanifest`, `assets/` | PWA offline e iconos |
+| `scripts/balance-sim.js` | Ejecuta una campaña heurística de 192 casos: no mide satisfacción humana |
 | `scripts/build-single.js` | Genera `JUGAR-SIN-INSTALAR.html` y exportación independiente |
 | `scripts/serve-local.py`, `INICIAR-*.bat/sh` | Lanzadores locales |
 | `tests/` | Suite Node, pruebas Chromium, prueba del lanzador y galería artística |
@@ -53,6 +63,7 @@ python3 tests/test_launcher.py
 python3 tests/browser_smoke.py
 python3 tests/render_card_gallery.py
 python3 tests/test_gallery.py
+node scripts/balance-sim.js
 ```
 
 Las pruebas de navegador requieren Playwright Python y Chromium. El paquete no los instala ni los necesita para jugar. Abre `CARTAS-24.html` para inspeccionar y filtrar todas las cartas; `tests/cards-24-gallery.png` es una captura de QA que puedes regenerar.
@@ -61,7 +72,7 @@ Las pruebas de navegador requieren Playwright Python y Chromium. El paquete no l
 
 - No hemos realizado todavía ocho partidas humanas completas ni pruebas de equilibrio con público.
 - El test automático con Playwright carga e inyecta módulos en Chromium en este entorno; por sí solo **no certifica** Safari ni la instalación real en todos los dispositivos.
-- La versión 2.1 mejora cartas y usabilidad, **no convierte** los SVG en arte hiperrealista o modelos 3D.
+- La versión 2.2 mejora cartas, usabilidad y tácticas de jefes, pero **no convierte** los SVG en arte hiperrealista o modelos 3D.
 - La barra rápida móvil comparte el estado de las acciones normales; no añade nuevas mecánicas.
 
 Proyecto original. **Licencia MIT** en `LICENSE`. Para cambios por versión, véase `CHANGELOG.md`. Para evidencia y pruebas pendientes, véase `QA.md`.

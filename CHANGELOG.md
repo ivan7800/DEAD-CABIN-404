@@ -1,3 +1,15 @@
+## 2.2.0 — Consolidación táctica y QA ampliado (29-10-2026)
+- Guardián: barrido adyacente con tirada cada tercer turno; segunda fase más móvil y peligrosa.
+- Corazón: pulso radial cada tercer turno; radio 1 en fase I, radio 2 en fase II; defendiéndose se mitiga el daño mental.
+- Ambos jefes quedan expuestos el siguiente turno tras ejecutar un ritual: los impactos del superviviente infligen +1 daño.
+- Nuevo panel visible con barras de vida, fase, aviso ritual, contador y debilidad temporal, sin cambiar el formato de guardado (v4).
+- Misión del capítulo 5: salas de purificación genuinamente malditas y no reveladas al jugador; compatibilidad con v2.1.
+- Menos apariciones espontáneas (13 % en vez de 17 %); invocación adicional de acechadores cada cuatro turnos en el capítulo 3; sin refuerzo periódico genérico durante un encuentro con jefe.
+- Exportar e importar partidas JSON con validación y confirmación; no se borra la partida activa si el archivo es inválido.
+- Cache PWA v2-2-0, navegación network-first con reserva offline, catálogo de cartas disponible en caché.
+- 55 pruebas de Node, Chromium a 1440/390/320 px, importación/exportación, lanzadores y empaquetado independiente.
+- Balance exploratorio reproducible: 192 casos de estrategia heurística sin alteración artificial del estado. No sustituye a partidas humanas.
+
 ## 2.1.0 — Rediseño de cartas e interfaz (29-10-2026)
 - 24 ilustraciones vectoriales originales de cartas, con composiciones específicas para cada evento.
 - Efectos del motor mostrados en lenguaje claro y separados del texto de ambientación.

@@ -6,7 +6,7 @@ p=Path(__file__).resolve().parents[1]
 source=(p/'index.html').read_text()
 source=re.sub(r'<link rel="stylesheet" href="css/[^"]+">','',source)
 source=re.sub(r'<script src="js/[^"]+" defer></script>','',source)
-source=source.replace('</head>','<style>'+ ''.join((p/'css'/name).read_text() for name in ['style.css','premium.css','cinematic.css','illustration.css','edition18.css','edition20.css','edition21.css']) +'</style></head>')
+source=source.replace('</head>','<style>'+ ''.join((p/'css'/name).read_text() for name in ['style.css','premium.css','cinematic.css','illustration.css','edition18.css','edition20.css','edition21.css','edition22.css']) +'</style></head>')
 scripts=[(p/'js'/name).read_text() for name in ['engine.js','art.js','premium-art.js','chapter-art.js','audio.js','feedback.js','card-ui.js','app.js','cinematic.js']]
 def boot(page,storage=None):
     page.set_content(source,wait_until='load')
@@ -172,7 +172,42 @@ with sync_playwright() as playwright:
         assert mobile.locator('#dieDisplay').is_visible()
         assert mobile.locator('#mobileAttackBtn').get_attribute('aria-pressed')=='false'
         mobile.close()
+    # 2.2: boss telegraph visible, phase II and deterministic danger during runtime.
+    boss=browser.new_page(viewport={'width':1280,'height':900},accept_downloads=True)
+    boss.on('pageerror',lambda e:errors.append(str(e)))
+    boot(boss)
+    boss.get_by_role('button',name='ENTRAR EN LA CABAÑA').click()
+    boss.evaluate('''() => {const s=window.__deadCabin.state;s.enemies=[{id:99,type:'heart',pos:17,hp:4}];s.revealed=[22,17];s.turn=3;s.sanity=8;s.nextId=100;}''')
+    boss.evaluate('window.__deadCabin.act({type:"REST"})')
+    assert boss.locator('#bossPanel').is_visible()
+    assert 'FASE II' in boss.locator('#bossPhase').inner_text()
+    assert '¡RITUAL ESTA NOCHE!' in boss.locator('#bossIntent').inner_text()
+    assert 'radio' in boss.locator('#bossDetail').inner_text().lower() or 'Onda' in boss.locator('#bossDetail').inner_text()
+    boss.screenshot(path=str(p/'tests'/'boss-phase2.png'),full_page=True)
+    # Restore to a safe state, then test actual download/upload confirmation.
+    boss.locator('#campaignBtn').click()
+    boss.locator('.chapter-card[data-chapter="1"]').click()
+    boss.get_by_role('button',name='COMENZAR PARTIDA').click()
+    boss.get_by_role('button',name='ENTRAR EN LA CABAÑA').click()
+    with boss.expect_download() as dl:
+        boss.locator('#exportBtn').click()
+    download=dl.value
+    payload=Path(download.path()).read_bytes()
+    assert b'dead-cabin-404-backup-v1' in payload
+    boss.evaluate('window.__deadCabin.act({type:"MOVE",to:17})')
+    assert boss.evaluate('window.__deadCabin.state.pos')==17
+    boss.locator('#importFile').set_input_files({'name':'partida.json','mimeType':'application/json','buffer':payload})
+    boss.locator('#modalTitle').filter(has_text='¿Importar esta partida?').wait_for(state='visible',timeout=5000)
+    boss.get_by_role('button',name='RESTAURAR COPIA').click()
+    assert boss.evaluate('window.__deadCabin.state.pos')==22
+    assert boss.locator('#bossPanel').is_hidden()
+    # A malformed save cannot replace the active game.
+    boss.locator('#importFile').set_input_files({'name':'partida.json','mimeType':'application/json','buffer':b'{"format":"dead-cabin-404-backup-v1","game":{}}'})
+    assert boss.evaluate('window.__deadCabin.state.pos')==22
+    boss.locator('#toast').filter(has_text='dañada').wait_for(state='visible',timeout=4000)
+    boss.close()
     assert not errors,errors
+    print('PASS: Chromium v2.2 — jefe fase II y ritual, exportar/importar copia JSON, rechazo de partida corrupta')
     print('PASS: Chromium desktop — movement, combat d6, 24-card deck, config, campaign, encounter, ending, achievements, saves and endless')
     print('PASS: Chromium touch — 390px and 320px; no horizontal overflow')
     print('PASS: 0 JavaScript runtime errors')

@@ -5,7 +5,7 @@
 const SIZE=5, ENTRANCE=22, MAX_HP=12, MAX_SANITY=10, VERSION=4;
 const CHAPTERS=[
  {id:1,name:'El libro que respira',subtitle:'La llegada',description:'Encuentra las grietas y vuelve a la entrada. El bosque no permite marcharse.',seals:3,limit:26,pressure:'normal',epilogue:'Una voz te llama por tu nombre desde el interior del libro.'},
- {id:2,name:'La tormenta negra',subtitle:'Lluvia sobre el tejado',description:'Una tormenta antinatural oscurece la casa. Cada cuatro noches, el cielo se cierra.',seals:3,limit:28,pressure:'storm',epilogue:'La lluvia escribe una advertencia en el barro: NO BAJES.'},
+ {id:2,name:'La tormenta negra',subtitle:'Lluvia sobre el tejado',description:'Una tormenta antinatural oscurece la casa. Cada tres turnos, el cielo se cierra.',seals:3,limit:28,pressure:'storm',epilogue:'La lluvia escribe una advertencia en el barro: NO BAJES.'},
  {id:3,name:'Los que arañan',subtitle:'El bosque se acerca',description:'Los acechadores han aprendido a seguir tus pasos. Cuidado con las habitaciones abiertas.',seals:3,limit:29,pressure:'hunters',epilogue:'Bajo las uñas de los muertos descubres tierra recién removida.'},
  {id:4,name:'El guardián del sótano',subtitle:'Primer enfrentamiento',description:'Sellar las grietas despertará al Guardián. Derrótalo antes de huir.',seals:3,limit:31,pressure:'boss',epilogue:'El guardián cae. Su sombra señala un pasillo que no existía.'},
  {id:5,name:'La casa imposible',subtitle:'Habitaciones enfermas',description:'La geometría está contaminada. Una habitación revelada se corrompe periódicamente.',seals:3,limit:31,pressure:'shifting',epilogue:'La arquitectura tiembla, como si algo enorme respirase bajo las tablas.'},
@@ -19,10 +19,10 @@ const ENEMY_TYPES={
  possessed:{label:'Poseído',symbol:'☠',hp:2,steps:1,damage:1,hit:4,description:'Avanza una sala y causa 1 herida.'},
  stalker:{label:'Acechador',symbol:'✣',hp:2,steps:2,damage:1,hit:4,description:'Puede avanzar dos salas por turno.'},
  brute:{label:'Abominación',symbol:'♱',hp:4,steps:1,damage:2,hit:4,description:'Resiste cuatro heridas y golpea con fuerza.'},
- boss:{label:'El Guardián',symbol:'◆',hp:8,steps:1,damage:2,hit:3,description:'Jefe de ocho vidas; frenesí bajo cuatro de vida y golpe ritual cada tercera noche.'},
+ boss:{label:'El Guardián',symbol:'◆',hp:8,steps:1,damage:2,hit:3,description:'Jefe de ocho vidas: carga más deprisa al 50 % de salud y ejecuta un barrido de alcance 1 cada tercer turno. Después del ritual queda expuesto.'},
  wraith:{label:'Espectro',symbol:'◈',hp:3,steps:1,damage:0,hit:4,mind:2,description:'Atraviesa cualquier pared y roba cordura.'},
  leech:{label:'Parásito',symbol:'✺',hp:1,steps:1,damage:1,hit:5,doom:2,description:'Parásito: ataque débil, pero acelera la oscuridad.'},
- heart:{label:'Corazón de la casa',symbol:'♥',hp:9,steps:1,damage:1,hit:4,mind:1,description:'Jefe de 9 vidas; golpe ritual cada tercera noche, anuncia su ataque.'}
+ heart:{label:'Corazón de la casa',symbol:'♥',hp:9,steps:1,damage:1,hit:4,mind:1,description:'Jefe de nueve vidas: cada tercer turno emite una onda de cordura y oscuridad; su radio aumenta al 50 % de salud. Queda expuesto tras el pulso.'}
 };
 const CARDS=[
  {id:'steps',name:'Pasos sobre el techo',flavor:'Algo arrastra muebles donde no existe un piso superior.',type:'spawn',value:1,art:'claw'},
@@ -104,6 +104,14 @@ function shuffle(s,list){let a=list.slice();for(let i=a.length-1;i>0;i--){let j=
 function addLog(s,text,kind='narration'){s.log.unshift({turn:s.turn,text,kind});s.log.length=Math.min(s.log.length,90)}
 function currentChapter(s){return CHAPTERS[s.chapter-1]||CHAPTERS[0]}
 function currentObjective(s){return SIDE_OBJECTIVES[s.chapter]}
+function bossThreat(s){
+ const e=s.enemies.find(x=>x.type==='boss'||x.type==='heart');if(!e)return null;
+ const stats=ENEMY_TYPES[e.type],frenzy=e.hp<=Math.ceil(stats.hp/2),ritual=s.turn%3===0;
+ const range=e.type==='heart'?(frenzy?2:1):1;
+ const label=e.type==='heart'?'PULSO DEL CORAZÓN':'BARRIDO DEL GUARDIÁN';
+ const detail=e.type==='heart'?`Onda a ${range} ${range===1?'sala':'salas'}: pierde ${frenzy?2:1} de cordura y +1 oscuridad. Defender reduce la pérdida mental.`:'Impacta en salas contiguas. El Guardián puede moverse '+(frenzy?'2':'1')+' salas. Defender reduce el daño.';
+ return {id:e.id,type:e.type,name:stats.label,hp:e.hp,maxHp:stats.hp,phase:frenzy?2:1,phaseLabel:frenzy?'FASE II · FRENESÍ':'FASE I · ACECHO',ritual,turnsUntil:(3-s.turn%3)%3,range,label,detail,exposed:e.exposedUntil===s.turn};
+}
 function doomLimit(s){return s.mode==='endless'?30:Math.max(12,currentChapter(s).limit+DIFFICULTIES[s.difficulty].doomBonus)}
 function createGame(chapter=1,seed,options={}){
  if(!Number.isInteger(chapter)||chapter<1||chapter>8)chapter=1;
@@ -120,6 +128,8 @@ function createGame(chapter=1,seed,options={}){
  const other=shuffle(s,pool.filter(i=>!s.sealSpots.includes(i)));
  const o=currentObjective(s);
  if(mode==='campaign'&&['relic','repair','radio','purify'].includes(o.type)){s.objectiveSpots=other.slice(0,o.target)}
+ // En el capítulo 5, las salas que hay que purificar están realmente malditas desde el inicio.
+ if(mode==='campaign'&&o.type==='purify')s.cursed=s.objectiveSpots.slice();
  // El hallazgo narrativo es opcional, no bloquea permanentemente acciones salvo mientras se elige.
  s.encounterSpots=shuffle(s,other.filter(i=>!s.objectiveSpots.includes(i))).slice(0,4);
  s.encounterPool=shuffle(s,ENCOUNTERS.map(e=>e.id));
@@ -152,10 +162,12 @@ function storyBeat(s,when){if(s.mode!=='campaign'||s.ended||s.pendingChoice||s.s
  s.storyBeats.push(when);s.pendingChoice=id;addLog(s,`CRÓNICA DE CAPÍTULO · ${scene.name}: ${scene.text}`,'story')}
 function discover(s,i){if(s.revealed.includes(i))return;s.revealed.push(i);s.score+=5;addLog(s,`Exploras ${ROOM_NAMES[i]}.`,'story');
  if(s.sealSpots.includes(i)){addLog(s,'Una grieta roja palpita bajo los tablones. Puedes sellarla aquí.','danger');hurtMind(s,1,'Visión de la grieta')}
- else if(rand(s)<.17){spawn(s,s.chapter>=5&&rand(s)<.2?'wraith':rand(s)<.22?'stalker':'possessed',i)}
+ else if(rand(s)<.13){spawn(s,s.chapter>=5&&rand(s)<.2?'wraith':rand(s)<.22?'stalker':'possessed',i)}
  if(s.objectiveSpots.includes(i)&&!s.objectiveDone.includes(i))addLog(s,`HALLAZGO · ${currentObjective(s).name}. Usa «Investigar» aquí.`,'story');
  if(s.cursed.includes(i))hurtMind(s,1,'La habitación deformada');check(s);if(!s.ended)triggerEncounter(s,i)}
-function move(s,to){if(!canUse(s)||!Number.isInteger(to)||!neighbors(s.pos).includes(to))return false;spend(s);const known=s.revealed.includes(to);s.pos=to;discover(s,to);if(!s.ended)triggerEncounter(s,to);
+function move(s,to){if(!canUse(s)||!Number.isInteger(to)||!neighbors(s.pos).includes(to))return false;spend(s);const known=s.revealed.includes(to);s.pos=to;
+ if(s.mode==='campaign'&&s.chapter===5&&s.objectiveSpots.includes(to)&&!s.objectiveDone.includes(to)&&!s.cursed.includes(to))s.cursed.push(to);
+ discover(s,to);if(!s.ended)triggerEncounter(s,to);
  if(known&&s.cursed.includes(to))hurtMind(s,1,'Las paredes deformadas');if(s.enemies.some(e=>e.pos===to))addLog(s,'Has entrado en una habitación infestada.','danger');s.lastAction='Movimiento a '+ROOM_NAMES[to];check(s);return true}
 function search(s){if(!canUse(s)||s.searched.includes(s.pos)||s.enemies.some(e=>e.pos===s.pos))return false;spend(s);s.searched.push(s.pos);let r=rand(s);
  if(r<.21){s.ammo+=2;addLog(s,'Entre los escombros: +2 cartuchos.','loot')}else if(r<.40){s.medkits++;addLog(s,'Encuentras un botiquín.','loot')}else if(r<.56){s.wards++;addLog(s,'Encuentras sal consagrada (+1 talismán).','loot')}else if(r<.72){s.flares++;addLog(s,'Encuentras una bengala.','loot')}else if(r<.87){s.scrap++;addLog(s,'Recoges piezas de hierro (+1 chatarra).','loot')}else{s.sanity=Math.min(MAX_SANITY,s.sanity+2);addLog(s,'Un retrato familiar te reconforta: +2 cordura.','loot')}
@@ -173,6 +185,7 @@ function hasShot(s,target){if(dist(s.pos,target)>2)return false;if(s.pos!==targe
 function attack(s,id,weapon='axe'){if(!canUse(s)||!['axe','shotgun'].includes(weapon))return false;const e=s.enemies.find(e=>e.id===id);if(!e)return false;
  const inRange=weapon==='axe'?dist(s.pos,e.pos)<=1:hasShot(s,e.pos);if(!inRange||(weapon==='shotgun'&&!s.ammo))return false;
  spend(s);if(weapon==='shotgun')s.ammo--;const d=roll(s),crit=d===6,hit=d>=(weapon==='axe'?4:3);let dealt=hit?(weapon==='shotgun'?2:1)+(crit?1:0):0;
+ if(hit&&(e.type==='boss'||e.type==='heart')&&e.exposedUntil===s.turn){dealt++;addLog(s,'VENTANA DE ATAQUE: el ritual dejó al jefe expuesto. +1 daño.','combat')}
  if(hit&&s.scrap>=3){dealt++;s.scrap-=3;addLog(s,'Arma reforzada: gastas 3 piezas, +1 daño.','combat')}
  e.hp-=dealt;s.lastRoll={value:d,hit,crit,weapon,damage:dealt};addLog(s,`${weapon==='axe'?'Hachazo':'Disparo'} contra ${ENEMY_TYPES[e.type].label}: dado ${d} · ${hit?`${dealt} daño${crit?' (crítico)':''}`:'fallo'}.`,hit?'combat':'danger');
  if(e.hp<=0){s.enemies=s.enemies.filter(x=>x.id!==id);s.kills++;s.score+=e.type==='boss'||e.type==='heart'?150:25;addLog(s,`${ENEMY_TYPES[e.type].label} eliminado.`,'loot');
@@ -234,6 +247,25 @@ function enemyPhase(s){for(const e of s.enemies){if(s.ended)break;if(e.stunnedUn
   if(e.type==='wraith'){const old=e.pos;const options=s.revealed.filter(x=>dist(x,s.pos)<dist(old,s.pos));if(options.length){options.sort((a,b)=>dist(a,s.pos)-dist(b,s.pos));e.pos=options[0]}}else nextMove(s,e);
   if(s.barricades.includes(e.pos)){s.barricades=s.barricades.filter(x=>x!==e.pos);addLog(s,`La barricada de ${ROOM_NAMES[e.pos]} ha detenido a ${stats.label}.`,'combat');e.blocked=true;break}}
  if(e.blocked){e.blocked=false;continue}
+ // Los rituales se anuncian por turno, no dependen de azar y dejan una respuesta táctica.
+ if((e.type==='boss'||e.type==='heart')&&s.turn%3===0){
+  const frenzy=e.hp<=Math.ceil(stats.hp/2),d=dist(e.pos,s.pos);
+  if(e.type==='heart'&&d<=(frenzy?2:1)){
+   let mind=frenzy?2:1;s.doom++;
+   if(s.guard===1){mind=Math.max(0,mind-1);s.guard=0;addLog(s,'DEFENSA: amortiguas el pulso de la casa.','combat')}
+   if(mind)hurtMind(s,mind,'Pulso del Corazón');
+   addLog(s,`PULSO RITUAL · Radio ${frenzy?2:1}: +1 oscuridad. El Corazón queda expuesto hasta el próximo turno.`,'danger');
+   e.exposedUntil=s.turn+1;check(s);continue;
+  }
+  if(e.type==='boss'&&d===1){
+   const r=roll(s),hit=r>=Math.max(2,4+DIFFICULTIES[s.difficulty].hitShift);
+   addLog(s,`BARRIDO DEL GUARDIÁN · dado ${r}${hit?' · impacto a distancia':' · falló'}.`,'danger');
+   if(hit){let harm=frenzy?2:1;if(s.guard===1){harm=Math.max(0,harm-1);s.guard=0;addLog(s,'DEFENSA: resistes el barrido.','combat')}
+    if(harm)damage(s,harm,'Barrido del Guardián')}
+   e.exposedUntil=s.turn+1;check(s);continue;
+  }
+  if(d===0)e.exposedUntil=s.turn+1;
+ }
  if(e.pos===s.pos){const r=roll(s),hit=r>=Math.max(2,stats.hit+DIFFICULTIES[s.difficulty].hitShift);
   addLog(s,`${stats.label} ataca: dado ${r}${hit?' · impacto':' · falló'}.`,hit?'danger':'combat');
   if(hit){const ritual=(e.type==='boss'||e.type==='heart')&&s.turn%3===0;
@@ -244,11 +276,11 @@ function enemyPhase(s){for(const e of s.enemies){if(s.ended)break;if(e.stunnedUn
 function endTurn(s){if(s.ended||s.pendingChoice)return false;
  s.doom+=s.difficulty==='nightmare'?2:s.difficulty==='story'&&s.turn%2===0?0:1;
  addLog(s,'La casa respira. La oscuridad avanza.','phase');applyCard(s);
- if(s.turn%3===0)spawn(s,s.mode==='endless'&&s.turn>=12?'wraith':s.chapter>=3?'stalker':'possessed');
+ if(s.turn%3===0&&!s.enemies.some(e=>e.type==='boss'||e.type==='heart'))spawn(s,s.mode==='endless'&&s.turn>=12?'wraith':s.chapter>=3?'stalker':'possessed');
  if(s.mode==='campaign'){
  const p=currentChapter(s).pressure;
  if(p==='storm'&&s.turn%3===0){s.doom+=s.objectiveCount>=2?0:2;addLog(s,'El temporal desata su furia. Repara los pararrayos para protegerte.','danger')}
- if(p==='hunters'&&s.turn%3===0)spawn(s,'stalker');
+ if(p==='hunters'&&s.turn%4===0)spawn(s,'stalker');
  if(p==='shifting'&&s.turn%3===0){const options=s.revealed.filter(x=>x!==ENTRANCE);if(options.length){const i=pick(s,options);if(!s.cursed.includes(i))s.cursed.push(i);addLog(s,`La habitación ${ROOM_NAMES[i]} se retuerce y queda maldita.`,'danger');if(s.pos===i)hurtMind(s,1,'Habitación maldita')}}
  if(p==='silence'&&s.turn%4===0)hurtMind(s,1,'El eco del silencio');
  if(p==='ritual'&&s.turn%4===0)hurtMind(s,1,'El cuarto nombre');
@@ -288,5 +320,5 @@ function migrateLegacy(g){if(!g||g.version!==1||!Number.isInteger(g.pos)||g.pos<
  s.enemies=(Array.isArray(g.enemies)?g.enemies:[]).filter(e=>Number.isInteger(e.pos)&&s.revealed.includes(e.pos)).slice(0,9).map(e=>({id:s.nextId++,type:'possessed',pos:e.pos,hp:Math.max(1,Math.min(2,Math.floor(Number(e.hp)||2)))}));s.ended=Boolean(g.ended);s.won=Boolean(g.won);
  s.objectiveCount=s.seals===3?1:0;s.log=[];addLog(s,'Partida v0.2 importada: posición y recursos conservados.','help');return validate(s)?s:null}
 function achievementsFor(s){const found=[];if(s.won&&s.mode==='campaign')found.push('first');if(s.won&&s.chapter===4)found.push('mid');if(s.won&&s.chapter===8)found.push('end');if(s.won&&s.difficulty==='nightmare')found.push('hard');if(s.mode==='endless'&&s.turn>=15)found.push('long');if(s.won&&s.hp>=8)found.push('clean');if(s.encounterChoices.length>=4)found.push('stories');return found}
-return {VERSION,CHAPTERS,STORY_BEATS,ALL_ENCOUNTERS,ROOM_NAMES,ROOM_TYPES,ENEMY_TYPES,CARDS,SURVIVORS,DIFFICULTIES,ENCOUNTERS,ACHIEVEMENTS,SIDE_OBJECTIVES,ENTRANCE,MAX_HP,MAX_SANITY,SIZE,neighbors,dist,createGame,dispatch,validate,upgradeV3,migrateLegacy,currentChapter,currentObjective,doomLimit,objectivesComplete,hasShot,achievementsFor};
+return {VERSION,CHAPTERS,STORY_BEATS,ALL_ENCOUNTERS,ROOM_NAMES,ROOM_TYPES,ENEMY_TYPES,CARDS,SURVIVORS,DIFFICULTIES,ENCOUNTERS,ACHIEVEMENTS,SIDE_OBJECTIVES,ENTRANCE,MAX_HP,MAX_SANITY,SIZE,neighbors,dist,createGame,dispatch,validate,upgradeV3,migrateLegacy,currentChapter,currentObjective,bossThreat,doomLimit,objectivesComplete,hasShot,achievementsFor};
 });

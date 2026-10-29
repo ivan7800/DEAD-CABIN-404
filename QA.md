@@ -1,37 +1,47 @@
-# QA — DEAD CABIN 404 Premium UX 2.1
+# QA — DEAD CABIN 404 v2.2 · Evidencia reproducible
 
-## Alcance y resultados de la entrega
+## Comprobaciones ejecutadas
 
-| Área | Procedimiento | Resultado |
+| Área | Prueba | Resultado |
 |---|---|---|
-| Motor + UI estática | `npm test` (Node 22; suite engine, assets, edition 1.8/2.0/2.1) | 47/47 aprobadas |
-| 24 cartas | Validación de 24 IDs, textos de efecto, categoría, icono y SVG únicos sin dependencias remotas | 24/24 aprobadas |
-| Galería de cartas | Render real en Chromium, 24 SVG y textos legibles; screenshot `tests/cards-24-gallery.png` | Aprobada |
-| Filtros del catálogo | Botones de categorías en `CARTAS-24.html` comprobados en Chromium | Aprobada |
-| UI escritorio | `tests/browser_smoke.py` con eventos DOM reales para los controles ejercitados, guardados, campaña, final y nuevo render de cartas | Aprobada |
-| Móvil emulado | Chromium con pantalla táctil a 390/320 px, sin overflow; dock de búsqueda, defensa y fin de turno | Aprobada |
-| Errores JS | Listener `pageerror` durante pruebas mencionadas | 0 observados |
-| Lanzador local | `python3 tests/test_launcher.py`, comprobación HTTP del servidor limitado a localhost | Aprobada |
-| Build autónomo | `npm run build:single`; comprobación de scripts y estilos integrados | Aprobada |
-| PWA | Tests de listado precache y caché `dead-cabin-404-v2-1-0` | Aprobada estáticamente |
+| Motor, reglas y UI estática | `npm test` | **55/55** |
+| Regresión motor | 100 simulaciones de secuencias aleatorias, ocho rutas sintéticas de victoria, validación de estado | Aprobado |
+| Dos jefes y fases | Tests sobre barrido, radio de pulso, Defensa, fase II, exposición, compatibilidad de guardados | Aprobado |
+| Capítulo 5 | Dos salas de objetivo malditas y purificación comprobada | Aprobado |
+| Cartas | 24 SVG específicos, efectos/categorías y filtro Chromium | Aprobado |
+| Chromium escritorio | `python3 tests/browser_smoke.py`: acciones, cartas, capítulo, tutorial, combate, final, jefes y exportar/importar JSON | Aprobado |
+| Chromium móvil emulado | Pantalla táctil 390 px y 320 px, sin desbordamiento horizontal; acciones rápidas | Aprobado |
+| Consola JS | `pageerror` de Playwright en rutas probadas | 0 errores observados |
+| Lanzadores | `python3 tests/test_launcher.py` | Servidor local HTTP correcto |
+| HTML autónomo | `npm run build:single` | Generado y comprobada presencia de recursos |
+| Galería | `python3 tests/test_gallery.py` | 24 cartas y filtros correctos |
+| 192 partidas heurísticas | `node scripts/balance-sim.js`: 8 capítulos × 3 dificultades × 8 semillas; acciones despachadas al motor sin forzar victoria | 192 estados finales válidos, **0 acciones rechazadas** |
+| PWA | `sw.js` con caché `dead-cabin-404-v2-2-0`, network-first de navegación, caché offline, test estático | Aprobado estáticamente |
 
-Las 47 pruebas incluyen 100 simulaciones de acciones aleatorias y la ruta sintética de victoria para cada uno de los ocho capítulos. Estas comprobaciones **no sustituyen** sesiones jugadas completas ni miden diversión.
+## Resultado orientativo de las 192 simulaciones
 
-## Limitaciones y pendientes
+La estrategia programada explora y prioriza objetivos, cura heridas, usa recursos y combate según una regla sencilla, **sin conocimiento futuro del RNG**. No representa cómo jugaría una persona experta.
 
-- Prueba humana de los 8 capítulos y estudios de equilibrio en Historia, Supervivencia y Pesadilla.
-- Comprobación visual en Safari iPhone, Firefox y Linux Mint reales, y prueba con lector de pantalla.
-- Evaluación de rendimiento sostenido en dispositivos de gama baja, CPU y memoria de sesiones prolongadas.
-- Auditoría de contraste automática de cada estado de control; la inspección visual de capturas no basta para certificar WCAG.
-- La prueba de navegador usa inyección de archivos de código en Chromium debido a restricciones de acceso local del entorno de pruebas; no equivale a una prueba con red de GitHub Pages.
-- No certificar como fotorrealistas los SVG 2.5D ni como totalmente validado el juego comercial.
+| Capítulo | Historia | Supervivencia | Pesadilla |
+|---|---:|---:|---:|
+| 1 · El libro | 8/8 | 8/8 | 3/8 |
+| 2 · Tormenta | 8/8 | 6/8 | 2/8 |
+| 3 · Cazadores | 7/8 | 3/8 | 0/8 |
+| 4 · Guardián | 7/8 | 5/8 | 3/8 |
+| 5 · Casa imposible | 8/8 | 5/8 | 0/8 |
+| 6 · Silencio | 7/8 | 4/8 | 2/8 |
+| 7 · Cuatro nombres | 7/8 | 4/8 | 1/8 |
+| 8 · Corazón | 7/8 | 2/8 | 0/8 |
 
-## Resultados por control nuevo
+**Interpretación:** los capítulos 3 y 8 y la dificultad Pesadilla siguen siendo especialmente duros para esta estrategia. Se necesitan muestras más amplias, varios perfiles de juego y datos de jugadores para medir el balance real. No se ha declarado el juego 9,5/10 ni «totalmente terminado».
 
-- **Tarjeta de evento:** categoría, icono, título, flavor y efecto actualizados al resolver un turno; comprobado en navegador.
-- **Acciones:** 3 grupos visuales; IDs funcionales conservados; todos los controles clásicos se mantienen en la aplicación.
-- **Dock móvil:** búsqueda y defensa despachadas desde controles táctiles y botón de finalizar turno probado; ataque directo con hacha requiere enemigo válido y se prueba en una ruta adicional cuando está presente.
-- **Inventario:** conserva los ID y manejadores; nuevo CSS en tarjetas.
-- **Cabecera:** mismos botones y handlers; nueva agrupación semántica.
+## Pendientes antes de certificar experiencia completa
 
-**Veredicto:** APTO CON RESERVAS para publicar como actualización visual y continuar las pruebas humanas.
+- Sesiones jugadas humanas completas de los ocho capítulos, incluyendo muerte y carga, sin instrumentos de QA.
+- Safari en iPhone real, Steam Deck, Linux Mint y Windows reales; Chromium emulado no certifica estos dispositivos.
+- WCAG y lector de pantalla: test formal de contraste, tabulación en modales, lectura de cartas y teclado asistivo.
+- Rendimiento y consumo sostenido en móviles modestos y PWA instalada con conectividad variable.
+- Equilibrio con jugadores reales en las tres dificultades; revisar especialmente capítulo 8 y Pesadilla.
+- Auditoría de seguridad, restauración de datos y pruebas de regresión tras cada cambio.
+
+**Veredicto técnico:** candidato estable para publicación y pruebas externas, sin garantía de experiencia perfecta ni certificación de accesibilidad.
