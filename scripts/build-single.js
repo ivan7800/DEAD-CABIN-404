@@ -1,0 +1,20 @@
+'use strict';
+/* Construye un único HTML ejecutable en file:// sin servidor ni dependencias. */
+const fs=require('node:fs');const path=require('node:path');
+const root=path.resolve(__dirname,'..');
+let source=fs.readFileSync(path.join(root,'index.html'),'utf8');
+const style=fs.readFileSync(path.join(root,'css/style.css'),'utf8');
+const js=['engine.js','art.js','audio.js','app.js'].map(name=>fs.readFileSync(path.join(root,'js',name),'utf8'));
+source=source.replace('<link rel="stylesheet" href="css/style.css">',`<style>\n${style}\n</style>`);
+source=source.replace(/\s*<script src="js\/[a-z]+\.js" defer><\/script>/g,'');
+source=source.replace(/\s*<link rel="manifest" href="manifest\.webmanifest">/,'');
+source=source.replace(/\s*<link rel="apple-touch-icon" href="assets\/icon-180\.png">/,'');
+const icon=fs.readFileSync(path.join(root,'assets/icon.svg')).toString('base64');
+source=source.replace('<link rel="icon" href="assets/icon.svg" type="image/svg+xml">',`<link rel="icon" href="data:image/svg+xml;base64,${icon}" type="image/svg+xml">`);
+source=source.replace(/<script>if \("serviceWorker" in navigator.*?<\/script>/s,'');
+const all=js.map(x=>`<script>\n${x.replace(/<\/script/gi,'<\\/script')}\n</script>`).join('\n');
+source=source.replace('</body>',all+'\n</body>');
+const output=path.resolve(root,'JUGAR-SIN-INSTALAR.html');fs.writeFileSync(output,source);
+const release=path.resolve(root,'..','DEAD-CABIN-404-v1.0-JUGAR.html');fs.writeFileSync(release,source);
+console.log('Creado:',output,'('+Buffer.byteLength(source)+' bytes)');
+console.log('Creado:',release);

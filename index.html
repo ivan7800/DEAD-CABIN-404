@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#100f12">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="assets/icon-180.png">
+  <meta name="description" content="DEAD CABIN 404: juego de mesa de terror táctico para una persona. Explora, sobrevive y sella las grietas de la cabaña.">
+  <title>DEAD CABIN 404 | Edición definitiva 1.0</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/engine.js" defer></script>
+  <script src="js/art.js" defer></script>
+  <script src="js/audio.js" defer></script>
+  <script src="js/app.js" defer></script>
+</head>
+<body>
+<div class="noise" aria-hidden="true"></div>
+<header class="site-header">
+  <div class="header-art" aria-hidden="true"><div class="moon"></div><div class="horizon"></div><div class="cabin-roof"></div><div class="cabin-body"></div><div class="cabin-window"></div></div>
+  <div class="header-inner">
+    <div class="brand"><span class="brand-emblem" aria-hidden="true">✥</span><div><span class="overline">AN OCCULT TABLETOP NIGHTMARE · 1984</span><h1>DEAD <span>CABIN</span> 404</h1><p>LA NOCHE DEL UMBRAL <span class="header-divider">◆</span> EDICIÓN DEFINITIVA 1.0</p></div></div>
+    <div class="header-tools"><button id="soundBtn" class="tool-btn" type="button" aria-pressed="false" title="Activar o desactivar audio">♫ <span>SONIDO OFF</span></button><button id="guideBtn" class="tool-btn" type="button">ⓘ <span>REGLAMENTO</span></button><button id="campaignBtn" class="tool-btn accent" type="button">◈ <span>CAMPAÑA</span></button><button id="endlessBtn" class="tool-btn" type="button">∞ <span>INFINITO</span></button><button id="recordsBtn" class="tool-btn" type="button">✧ <span>LOGROS</span></button></div>
+  </div>
+</header>
+<main class="game-layout">
+  <section class="board-column" aria-label="Zona de juego">
+    <div class="chapter-bar"><div><div class="eyebrow"><span class="red-dot"></span> EXPEDIENTE <span id="chapterNumber">01 / 08</span></div><h2 id="chapterTitle">El libro que respira</h2><p id="chapterSubtitle">La llegada</p></div><div class="night-clock"><span>LA NOCHE AVANZA</span><strong id="turnDisplay">TURNO 01</strong></div></div>
+    <div class="board-frame"><div class="board-topline"><span>PLANO DE LA CABAÑA</span><span class="serial">D-C/404 — SECTOR 05 × 05</span></div>
+      <div class="board-border"><div class="board-mat"><div id="board" class="board" role="group" aria-label="Tablero interactivo: cinco columnas y cinco filas"></div></div></div>
+      <div class="board-bottomline"><span>✥ <b>NO ABRAS EL LIBRO</b> ✥</span><span>✥ LAS PAREDES RECUERDAN ✥</span></div>
+    </div>
+    <div class="board-key"><span><i class="key-dot player"></i> Superviviente</span><span><i class="key-dot foe"></i> Enemigos</span><span><i class="key-dot rift"></i> Grietas</span><span><i class="key-dot reachable"></i> Casilla accesible</span><span><i class="key-dot cursed"></i> Habitación maldita</span><span><i class="key-dot clue"></i> Pista de misión</span></div>
+    <div id="roomInfo" class="room-strip" aria-live="polite">Selecciona una habitación vecina para explorarla.</div>
+    <div class="bottom-panels"><section class="history-panel"><div class="section-head"><h3>◈ CRÓNICA DE LA NOCHE</h3><span>REGISTRO DE SUCESOS</span></div><div id="history" class="history" aria-live="polite"></div></section><section class="mission-panel"><div class="section-head"><h3>✥ TU MISIÓN</h3><span>OBJETIVOS</span></div><p id="missionText"></p><div id="objectives" class="objectives"></div><div class="utility-actions"><button type="button" id="saveBtn">▣ Guardar</button><button type="button" id="loadBtn">↺ Cargar</button><button type="button" id="newBtn">✦ Reiniciar</button></div></section></div>
+  </section>
+  <aside class="side-column" aria-label="Panel del superviviente">
+    <section class="sheet" aria-label="Estado"><div class="section-head"><h3>SUPERVIVIENTE <span class="red-mark">// 01</span></h3><span>REGISTRO VITAL</span></div>
+      <div class="portrait-row"><div class="portrait" id="characterPortrait" aria-hidden="true"><svg viewBox="0 0 90 100"><defs><linearGradient id="face" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#d0b69a"/><stop offset="1" stop-color="#66584e"/></linearGradient></defs><path d="M7 100 13 76 29 65 62 65 79 78 87 100" fill="#343d3c" stroke="#a39b84"/><path d="M29 64 42 81 59 65 55 55 35 54" fill="#8a665d"/><ellipse cx="45" cy="39" rx="24" ry="29" fill="url(#face)"/><path d="M20 34 20 16 35 6 61 12 70 25 65 37 59 21 45 23 24 21" fill="#292c2a"/><path d="m29 39 12 1m10 0 12-2" stroke="#272524" stroke-width="3"/><path d="M37 56 Q45 61 54 55" stroke="#4c3433" stroke-width="2" fill="none"/><path d="M34 67 45 79 57 68" stroke="#c9b4a0" stroke-width="2" fill="none"/></svg></div><div><div class="character-name" id="characterName">ALEX MORROW</div><p id="characterRole">El último que sigue respirando</p><span class="character-class" id="characterTag">EXPLORADOR · SUPERVIVIENTE</span></div></div>
+      <div class="meter-group"><div class="meter-header"><span>♥ VIDA</span><strong id="hpText">12 / 12</strong></div><div class="meter-track"><div id="hpBar" class="meter-bar hp"></div></div></div>
+      <div class="meter-group"><div class="meter-header"><span>◉ CORDURA</span><strong id="sanityText">09 / 10</strong></div><div class="meter-track"><div id="sanityBar" class="meter-bar sanity"></div></div></div>
+      <div class="meter-group danger-meter"><div class="meter-header"><span>✥ OSCURIDAD</span><strong id="doomText">00 / 26</strong></div><div class="meter-track"><div id="doomBar" class="meter-bar doom"></div></div></div>
+      <div class="score-strip"><span>✧ PUNTUACIÓN DE PARTIDA</span><strong id="scoreValue">0</strong></div><div class="ap-strip"><span>PUNTOS DE ACCIÓN</span><div id="actionPoints" class="ap-pips" aria-label="Puntos de acción restantes"></div><strong id="apText">3 / 3</strong></div>
+    </section>
+    <section class="sheet command-panel" aria-label="Acciones"><div class="section-head"><h3>ACCIONES <span class="red-mark">// 02</span></h3><span>ELIGE TU DESTINO</span></div><p id="actionHint" class="action-hint">Pulsa una habitación contigua para moverte (1 PA).</p>
+      <div class="action-grid"><button type="button" id="axeBtn" class="act weapon" data-action="axe"><span class="act-icon">⚒</span><span><b>HACHA</b><small>Dado 4+ · 1 daño</small></span></button><button type="button" id="shotBtn" class="act weapon" data-action="shotgun"><span class="act-icon">⌁</span><span><b>ESCOPETA</b><small>Dado 3+ · 2 daño</small></span></button>
+      <button type="button" id="searchBtn" class="act"><span class="act-icon">⌕</span><span><b>BUSCAR</b><small>Registrar esta sala</small></span></button><button type="button" id="restBtn" class="act"><span class="act-icon">◌</span><span><b>DESCANSAR</b><small>+1 cordura</small></span></button><button type="button" id="investigateBtn" class="act ritual"><span class="act-icon">◇</span><span><b>INVESTIGAR</b><small>Objetivo de misión</small></span></button><button type="button" id="abilityBtn" class="act feature"><span class="act-icon">✧</span><span><b id="abilityName">RECONOCER</b><small id="abilityHelp">Habilidad del superviviente</small></span></button><button type="button" id="sealBtn" class="act ritual"><span class="act-icon">✥</span><span><b>SELLAR</b><small>Cerrar grieta</small></span></button><button type="button" id="escapeBtn" class="act ritual"><span class="act-icon">⇥</span><span><b>ESCAPAR</b><small>Volver a la entrada</small></span></button></div>
+      <button id="endBtn" type="button" class="end-turn"><span>FINALIZAR TURNO</span><span class="end-arrow">➜</span></button>
+      <div id="dieDisplay" class="die-display hidden" aria-live="polite"><div class="die-face" id="dieFace">⚅</div><div id="dieCaption">Lanzamiento</div></div>
+    </section>
+    <section class="sheet inventory-sheet"><div class="section-head"><h3>INVENTARIO <span class="red-mark">// 03</span></h3><span>OBJETOS</span></div><div class="inventory-grid"><button type="button" id="medkitBtn" class="item"><span class="item-image med">✚</span><b>BOTIQUÍN</b><small id="medkitCount">× 1</small><em>+4 vida</em></button><button type="button" id="wardBtn" class="item"><span class="item-image ward">✧</span><b>TALISMÁN</b><small id="wardCount">× 1</small><em>+2 cordura</em></button><button type="button" id="flareBtn" class="item"><span class="item-image flare">✺</span><b>BENGALA</b><small id="flareCount">× 1</small><em>Luz y aturdimiento</em></button><button type="button" id="barricadeBtn" class="item"><span class="item-image barricade">▤</span><b>BARRICADA</b><small>CH. <span id="scrapCount">0</span></small><em>Protege la sala</em></button><div class="item static"><span class="item-image ammo">╫</span><b>CARTUCHOS</b><small id="ammoCount">× 5</small><em>Para disparar</em></div></div></section>
+    <section class="sheet card-section"><div class="section-head"><h3>MAZO DEL MAL <span class="red-mark">// 04</span></h3><span id="deckCount">18 CARTAS</span></div><div class="card-display"><div class="deck-back" aria-label="Mazo de acontecimientos"><div class="deck-ring">✥<small>404</small></div><span>NO HAY SALIDA</span></div><div class="event-card" id="eventCard" aria-live="polite"><div class="card-label">ÚLTIMO ACONTECIMIENTO</div><div id="eventArt" class="card-art" aria-hidden="true"></div><h4 id="eventTitle">La casa espera</h4><p id="eventDescription">Cada fin de turno revela una carta. Nunca sabes qué escucha al otro lado.</p><div class="card-footer"><span>DEAD CABIN 404</span><span id="eventCode">I · 00</span></div></div></div></section>
+  </aside>
+</main>
+<footer class="site-footer"><span>DEAD CABIN 404 <i>✥</i> UNA NOCHE NO ES SUFICIENTE</span><span>V1.0 · ARTE VECTORIAL ORIGINAL · JUEGO LOCAL · SIN SEGUIMIENTO</span></footer>
+<div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+<div id="modal" class="modal-backdrop hidden" role="presentation"><section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><button id="modalClose" class="modal-close" type="button" aria-label="Cerrar diálogo">×</button><div class="modal-kicker" id="modalKicker">ARCHIVO 404</div><h2 id="modalTitle">Reglamento</h2><div id="modalContent" class="modal-content"></div><div id="modalActions" class="modal-actions"></div></section></div>
+<script>if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) { window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js").catch(() => {})); }</script>
+</body>
+</html>
