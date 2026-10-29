@@ -19,10 +19,10 @@ const ENEMY_TYPES={
  possessed:{label:'Poseído',symbol:'☠',hp:2,steps:1,damage:1,hit:4,description:'Avanza una sala y causa 1 herida.'},
  stalker:{label:'Acechador',symbol:'✣',hp:2,steps:2,damage:1,hit:4,description:'Puede avanzar dos salas por turno.'},
  brute:{label:'Abominación',symbol:'♱',hp:4,steps:1,damage:2,hit:4,description:'Resiste cuatro heridas y golpea con fuerza.'},
- boss:{label:'El Guardián',symbol:'◆',hp:8,steps:1,damage:2,hit:3,description:'Jefe de ocho vidas; con cuatro o menos entra en frenesí.'},
+ boss:{label:'El Guardián',symbol:'◆',hp:8,steps:1,damage:2,hit:3,description:'Jefe de ocho vidas; frenesí bajo cuatro de vida y golpe ritual cada tercera noche.'},
  wraith:{label:'Espectro',symbol:'◈',hp:3,steps:1,damage:0,hit:4,mind:2,description:'Atraviesa cualquier pared y roba cordura.'},
  leech:{label:'Parásito',symbol:'✺',hp:1,steps:1,damage:1,hit:5,doom:2,description:'Parásito: ataque débil, pero acelera la oscuridad.'},
- heart:{label:'Corazón de la casa',symbol:'♥',hp:9,steps:1,damage:1,hit:4,mind:1,description:'Jefe final de 9 vidas; hiere cuerpo y mente.'}
+ heart:{label:'Corazón de la casa',symbol:'♥',hp:9,steps:1,damage:1,hit:4,mind:1,description:'Jefe de 9 vidas; golpe ritual cada tercera noche, anuncia su ataque.'}
 };
 const CARDS=[
  {id:'steps',name:'Pasos sobre el techo',flavor:'Algo arrastra muebles donde no existe un piso superior.',type:'spawn',value:1,art:'claw'},
@@ -114,7 +114,7 @@ function createGame(chapter=1,seed,options={}){
   mode,difficulty,survivor,turn:1,ap:3,pos:ENTRANCE,hp:hero.hp,sanity:hero.sanity,ammo:hero.ammo,medkits:hero.medkits,wards:hero.wards,flares:hero.flares,scrap:0,doom:0,seals:0,totalSeals:0,
   sealSpots:[],sealed:[],revealed:[ENTRANCE],searched:[],enemies:[],nextId:1,deck:[],discard:[],lastEvent:null,lastRoll:null,lastAction:'',log:[],cursed:[],barricades:[],
   bossSummoned:false,bossKilled:false,ended:false,won:false,progressGranted:false,scenarioNote:'',abilityTurn:0,score:0,kills:0,killedStalkers:0,
-  objectiveSpots:[],objectiveDone:[],objectiveCount:0,encounterSpots:[],encounterSeen:[],encounterChoices:[],pendingChoice:null,storyBeats:[],blessings:[],turnsSurvived:0};
+  objectiveSpots:[],objectiveDone:[],objectiveCount:0,encounterSpots:[],encounterSeen:[],encounterChoices:[],pendingChoice:null,storyBeats:[],blessings:[],turnsSurvived:0,guard:0};
  const pool=Array.from({length:25},(_,i)=>i).filter(i=>i!==ENTRANCE&&dist(i,ENTRANCE)>=3);
  s.sealSpots=mode==='endless'?shuffle(s,pool).slice(0,4):shuffle(s,pool).slice(0,spec.seals);
  const other=shuffle(s,pool.filter(i=>!s.sealSpots.includes(i)));
@@ -194,6 +194,8 @@ function ability(s){if(!canUse(s)||s.abilityTurn===s.turn)return false;const id=
  if(id==='medic'){s.hp=Math.min(MAX_HP,s.hp+2);addLog(s,'Primeros auxilios: +2 salud.','loot')}
  if(id==='occultist'){s.sanity=Math.min(MAX_SANITY,s.sanity+1);s.doom=Math.max(0,s.doom-1);addLog(s,'Exorcismo: +1 cordura, −1 oscuridad.','loot')}
  s.lastAction=SURVIVORS[id].ability;return true}
+function guard(s){if(!canUse(s)||s.guard===1)return false;
+ spend(s);s.guard=1;addLog(s,'DEFENSA: te preparas para el siguiente ataque. Evitas 1 herida y 1 pérdida de cordura durante esta fase del mal.','combat');s.lastAction='Defensa preparada';return true}
 function rest(s){if(!canUse(s)||s.sanity===MAX_SANITY)return false;spend(s);
  if(currentChapter(s).pressure==='silence'&&s.mode!=='endless'&&roll(s)<=3){s.doom++;addLog(s,'El silencio te responde. Descanso fallido y +1 oscuridad.','danger')}
  else{s.sanity=Math.min(MAX_SANITY,s.sanity+1);addLog(s,'Respiras despacio: +1 cordura.','loot')}
@@ -234,7 +236,11 @@ function enemyPhase(s){for(const e of s.enemies){if(s.ended)break;if(e.stunnedUn
  if(e.blocked){e.blocked=false;continue}
  if(e.pos===s.pos){const r=roll(s),hit=r>=Math.max(2,stats.hit+DIFFICULTIES[s.difficulty].hitShift);
   addLog(s,`${stats.label} ataca: dado ${r}${hit?' · impacto':' · falló'}.`,hit?'danger':'combat');
-  if(hit){if(stats.damage)damage(s,stats.damage,stats.label);if(stats.mind)hurtMind(s,stats.mind,stats.label);if(stats.doom)s.doom+=stats.doom}check(s)}}}
+  if(hit){const ritual=(e.type==='boss'||e.type==='heart')&&s.turn%3===0;
+  let harm=stats.damage+(ritual?1:0),mind=stats.mind||0;
+  if(ritual)addLog(s,`${stats.label} descarga un golpe ritual intensificado.`, 'danger');
+  if(s.guard===1){harm=Math.max(0,harm-1);mind=Math.max(0,mind-1);s.guard=0;addLog(s,'DEFENSA: bloqueas parte del impacto.', 'combat')}
+  if(harm)damage(s,harm,stats.label);if(mind)hurtMind(s,mind,stats.label);if(stats.doom)s.doom+=stats.doom}check(s)}}}
 function endTurn(s){if(s.ended||s.pendingChoice)return false;
  s.doom+=s.difficulty==='nightmare'?2:s.difficulty==='story'&&s.turn%2===0?0:1;
  addLog(s,'La casa respira. La oscuridad avanza.','phase');applyCard(s);
@@ -249,12 +255,12 @@ function endTurn(s){if(s.ended||s.pendingChoice)return false;
  if(p==='final'&&s.turn%3===0){s.doom++;addLog(s,'El corazón late. +1 oscuridad.','danger')}
  }else if(s.turn%5===0){spawn(s,s.turn>=16?'brute':'leech');s.doom=Math.max(0,s.doom-2)}
  check(s);if(!s.ended)enemyPhase(s);
- if(!s.ended){s.turn++;s.turnsSurvived++;s.ap=3;s.lastAction='Fase del mal completada';s.score+=10;addLog(s,`Comienza el turno ${s.turn}.`,'phase')}return true}
+ if(!s.ended){s.guard=0;s.turn++;s.turnsSurvived++;s.ap=3;s.lastAction='Fase del mal completada';s.score+=10;addLog(s,`Comienza el turno ${s.turn}.`,'phase')}return true}
 function dispatch(s,action){if(!s||s.ended||!action||typeof action.type!=='string')return false;
  if(s.pendingChoice&&action.type!=='CHOOSE')return false;
  switch(action.type){case 'MOVE':return move(s,action.to);case 'SEARCH':return search(s);case 'INVESTIGATE':return objectiveAction(s);
  case 'ATTACK':return attack(s,action.id,action.weapon);case 'HEAL':return heal(s);case 'WARD':return ward(s);case 'FLARE':return flare(s);
- case 'BARRICADE':return barricade(s);case 'ABILITY':return ability(s);case 'REST':return rest(s);case 'SEAL':return seal(s);
+ case 'GUARD':return guard(s);case 'BARRICADE':return barricade(s);case 'ABILITY':return ability(s);case 'REST':return rest(s);case 'SEAL':return seal(s);
  case 'ESCAPE':return escape(s);case 'END_TURN':return endTurn(s);case 'CHOOSE':return choose(s,action.option);default:return false}}
 function validate(s){if(!s||s.version!==VERSION||!Number.isInteger(s.chapter)||s.chapter<1||s.chapter>8||!Number.isInteger(s.pos)||s.pos<0||s.pos>=25||!Number.isInteger(s.rng)||!Number.isInteger(s.turn)||s.turn<1||!Number.isInteger(s.ap)||s.ap<0||s.ap>3||!SURVIVORS[s.survivor]||!DIFFICULTIES[s.difficulty]||!['campaign','endless'].includes(s.mode))return false;
  for(const k of ['hp','sanity','ammo','medkits','wards','flares','scrap','doom','seals','totalSeals','nextId','score','kills','killedStalkers','objectiveCount','abilityTurn'])if(!Number.isInteger(s[k])||s[k]<0||s[k]>10000000)return false;
@@ -262,6 +268,7 @@ function validate(s){if(!s||s.version!==VERSION||!Number.isInteger(s.chapter)||s
  if(s.mode==='campaign'&&s.sealSpots.length!==currentChapter(s).seals||s.sealed.length!==s.seals||s.seals>s.sealSpots.length||!s.revealed.includes(s.pos))return false;
  if(!Array.isArray(s.enemies)||s.enemies.length>10||s.enemies.some(e=>!ENEMY_TYPES[e.type]||!Number.isInteger(e.pos)||e.pos<0||e.pos>=25||!s.revealed.includes(e.pos)||!Number.isInteger(e.hp)))return false;
  if(!Array.isArray(s.deck)||!Array.isArray(s.discard)||s.deck.some(id=>!CARDS.some(c=>c.id===id))||s.discard.some(id=>!CARDS.some(c=>c.id===id))||!Array.isArray(s.log)||!Array.isArray(s.encounterChoices)||!Array.isArray(s.encounterPool)||!Array.isArray(s.storyBeats))return false;
+ if(s.guard!==undefined&&s.guard!==0&&s.guard!==1)return false;
  if(s.pendingChoice!==null&&!ALL_ENCOUNTERS.some(x=>x.id===s.pendingChoice))return false;
  return true}
 function upgradeV3(old){if(!old||old.version!==3)return null;const s=createGame(old.chapter,old.rng,{survivor:'scout',difficulty:'normal'});
@@ -283,4 +290,3 @@ function migrateLegacy(g){if(!g||g.version!==1||!Number.isInteger(g.pos)||g.pos<
 function achievementsFor(s){const found=[];if(s.won&&s.mode==='campaign')found.push('first');if(s.won&&s.chapter===4)found.push('mid');if(s.won&&s.chapter===8)found.push('end');if(s.won&&s.difficulty==='nightmare')found.push('hard');if(s.mode==='endless'&&s.turn>=15)found.push('long');if(s.won&&s.hp>=8)found.push('clean');if(s.encounterChoices.length>=4)found.push('stories');return found}
 return {VERSION,CHAPTERS,STORY_BEATS,ALL_ENCOUNTERS,ROOM_NAMES,ROOM_TYPES,ENEMY_TYPES,CARDS,SURVIVORS,DIFFICULTIES,ENCOUNTERS,ACHIEVEMENTS,SIDE_OBJECTIVES,ENTRANCE,MAX_HP,MAX_SANITY,SIZE,neighbors,dist,createGame,dispatch,validate,upgradeV3,migrateLegacy,currentChapter,currentObjective,doomLimit,objectivesComplete,hasShot,achievementsFor};
 });
-

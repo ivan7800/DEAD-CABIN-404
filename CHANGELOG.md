@@ -1,12 +1,24 @@
+## 2.0.0-candidate — Primera edición táctica
+- Acción DEFENDER, 1 PA, guardia no acumulable.
+- Golpe ritual del Guardián y el Corazón cada tercer turno con aviso de peligro.
+- Tutorial guiado y partida de entrenamiento.
+- Mejoras de contraste, UI y entrada por teclado.
+- Compatibilidad de guardados v4 y caché PWA versionada.
+- 42 tests Node y smoke Chromium escritorio/móvil emulado.
+- Pendiente: prueba humana y validación de equilibrio, Safari físico y gráficos de nueva generación.
+
 # Registro de versiones
 
-## 1.8.0 — Expedientes cinematográficos (29/10/2026)
-- Ocho láminas de capítulo SVG originales y galería ilustrada.
-- Feedback visual de combate, rituales y daño, con botón ON/OFF y preferencia de movimiento reducido.
-- Corrección de softlock de jefes en capítulos 4 y 8 al completarse el cupo de enemigos.
-- Lanzadores Windows y Linux con servidor Python 3 en loopback.
-- Caché PWA v1-8-0, compilación autónoma y 38 tests Node.
-- Formato de guardados v4 sin cambios; pendientes Safari real y estudio de equilibrio con jugadores.
+## 1.8.0 — Expedientes ilustrados y calidad de vida (29-10-2026)
+- Ocho láminas de capítulo SVG originales, con escenas distintas de tormenta, sótano, cabaña, ritual y corazón cósmico.
+- Galería ilustrada en el selector de ocho capítulos, introducciones y pantalla de resultado.
+- Efectos visuales de combate, fallos, rituales y peligro no bloqueantes, con interruptor ON/OFF persistente y respeto a movimiento reducido.
+- Corrección de bloqueo crítico: el Guardián y el Corazón pueden entrar aunque haya diez enemigos, sustituyendo a un enemigo menor.
+- Lanzadores Windows `.bat` y Linux `.sh`, con servidor Python 3 local sin exposición a la red ni dependencia del puerto 8000.
+- PWA actualizada a caché `v1-8-0`; HTML autónomo regenerado y tests de recursos.
+- QA: 38 tests Node, Chromium escritorio + móvil 390/320, prueba de servidor HTTP real y apertura del HTML autocontenido mediante inyección local.
+- El motor sigue en formato de guardados v4 para compatibilidad con partidas existentes.
+- Limitaciones: arte escalable SVG, no fotografía/3D, y pendientes pruebas humanas completas e iOS físico.
 
 ## 1.0.0 — Edición definitiva
 
