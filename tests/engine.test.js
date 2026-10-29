@@ -46,10 +46,10 @@ test('matar acechadores completa la misión de capítulo 3',()=>{const s=mk(3,77
  for(let z=0;z<9&&!killed;z++){E.dispatch(s,{type:'ATTACK',id:i+1,weapon:'shotgun'});killed=!s.enemies.length;s.ap=3}
  assert.ok(killed)}assert.equal(s.objectiveCount,3);assert.equal(E.objectivesComplete(s),false)});
 test('capítulo 4 requiere sellar, derrotar jefe y retornar',()=>{const s=mk(4);s.sealed=s.sealSpots.slice(0,2);s.seals=2;s.pos=s.sealSpots[2];s.revealed=[22,s.pos,12];s.ap=3;s.encounterSpots=[];
- assert.equal(E.dispatch(s,{type:'SEAL'}),true);assert.ok(s.enemies.some(x=>x.type==='boss'));s.pos=22;assert.equal(E.dispatch(s,{type:'ESCAPE'}),false);s.bossKilled=true;s.objectiveCount=1;s.enemies=[];assert.equal(E.dispatch(s,{type:'ESCAPE'}),true);assert.equal(s.won,true)});
+ assert.equal(E.dispatch(s,{type:'SEAL'}),true);assert.ok(s.enemies.some(x=>x.type==='boss'));s.pos=22;assert.equal(E.dispatch(s,{type:'ESCAPE'}),false);s.bossKilled=true;s.objectiveCount=1;s.enemies=[];assert.equal(E.dispatch(s,{type:'ESCAPE'}),true);assert.equal(s.pendingChoice,'finale-4');assert.equal(E.dispatch(s,{type:'CHOOSE',option:0}),true);assert.equal(E.dispatch(s,{type:'ESCAPE'}),true);assert.equal(s.won,true)});
 test('capítulo 8 invoca un Corazón de 9 puntos',()=>{const s=mk(8);s.sealed=s.sealSpots.slice(0,3);s.seals=3;s.pos=s.sealSpots[3];s.revealed=[22,s.pos,12];s.encounterSpots=[];
  assert.equal(E.dispatch(s,{type:'SEAL'}),true);assert.ok(s.enemies.some(x=>x.type==='heart'&&x.hp===9))});
-test('victoria exige tanto misión secundaria como grietas',()=>{const s=mk();s.sealed=s.sealSpots.slice();s.seals=3;assert.equal(E.dispatch(s,{type:'ESCAPE'}),false);s.objectiveCount=1;assert.equal(E.dispatch(s,{type:'ESCAPE'}),true);assert.equal(s.won,true)});
+test('victoria exige tanto misión secundaria como grietas',()=>{const s=mk();s.sealed=s.sealSpots.slice();s.seals=3;assert.equal(E.dispatch(s,{type:'ESCAPE'}),false);s.objectiveCount=1;assert.equal(E.dispatch(s,{type:'ESCAPE'}),true);assert.equal(s.pendingChoice,'finale-1');assert.equal(E.dispatch(s,{type:'CHOOSE',option:0}),true);assert.equal(E.dispatch(s,{type:'ESCAPE'}),true);assert.equal(s.won,true)});
 test('derrota por oscuridad, salud o cordura y estados terminales',()=>{for(const resource of ['hp','sanity','doom']){
  const s=mk();if(resource==='doom')s.doom=E.doomLimit(s)-1;else s[resource]=0;
  E.dispatch(s,{type:'END_TURN'});assert.equal(s.ended,true);assert.equal(s.won,false);assert.equal(E.dispatch(s,{type:'MOVE',to:17}),false)}});
@@ -79,7 +79,7 @@ test('simulación adversarial: 100 partidas con acciones aleatorias nunca rompe 
   const idx=(seed*11+step*19)%actions.length;E.dispatch(s,actions[idx]);assert.ok(E.validate(s),`seed ${seed} step ${step}`)}
  }});
 test('16 escenas exclusivas de capítulo y 8 encuentros genéricos',()=>{
- assert.equal(E.ALL_ENCOUNTERS.length,24);
+ assert.equal(E.ALL_ENCOUNTERS.length,32);
  for(let c=1;c<=8;c++)assert.equal(E.STORY_BEATS[c].length,2);
  const s=mk(2,2026);s.encounterSpots=[];s.pos=s.sealSpots[0];s.revealed.push(s.pos);
  assert.equal(E.dispatch(s,{type:'SEAL'}),true);assert.equal(s.pendingChoice,'c2-0');
@@ -116,6 +116,7 @@ test('las ocho misiones admiten victoria cuando están completos sus requisitos'
   const s=mk(chapter,10000+chapter);s.sealed=s.sealSpots.slice();s.seals=s.sealed.length;s.totalSeals=s.seals;
   s.objectiveCount=E.SIDE_OBJECTIVES[chapter].target;s.bossKilled=true;s.pos=22;s.pendingChoice=null;
   assert.equal(E.objectivesComplete(s),true);assert.equal(E.dispatch(s,{type:'ESCAPE'}),true);
+  assert.equal(s.pendingChoice,'finale-'+chapter);assert.equal(E.dispatch(s,{type:'CHOOSE',option:0}),true);assert.equal(E.dispatch(s,{type:'ESCAPE'}),true);
   assert.equal(s.won,true);assert.equal(E.validate(s),true);
  }
 });

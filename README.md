@@ -1,3 +1,13 @@
+# DEAD CABIN 404 — Campaña narrativa v2.6
+
+**Versión 2.6.0.** Ocho desenlaces jugables (dos alternativas cada uno), ecos tácticos de decisión y pequeñas recompensas narrativas heredables al capítulo siguiente. Para cerrar un capítulo: cumple objetivos, vuelve a la Entrada, selecciona ESCAPAR, resuelve el clímax y vuelve a ESCAPAR. Los guardados v4 siguen siendo compatibles.
+
+## Calidad y límites
+
+Se verificaron 76 pruebas Node sobre el paquete local antes de la publicación; las pruebas de CI verifican el código integrado. Quedan pendientes partidas humanas completas, dispositivos físicos y equilibrado final de Pesadilla.
+
+---
+
 # DEAD CABIN 404 — Premium Táctica 2.3
 
 **Juego de mesa táctico de terror para un jugador, original y totalmente local.** Ocho capítulos, tres supervivientes, tres dificultades, 25 salas, 24 cartas de acontecimiento, 7 variantes de enemigo, modo infinito, encuentros narrativos y progreso guardado.

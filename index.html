@@ -5,35 +5,37 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#100f12">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
-  <link rel="apple-touch-icon" href="assets/icon-180.png">
+<link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/icon-180.png">
   <meta name="description" content="DEAD CABIN 404: juego de mesa de terror táctico para una persona. Explora, sobrevive y sella las grietas de la cabaña.">
-  <title>DEAD CABIN 404 | Edición Premium Táctica 2.2</title>
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/premium.css">
-  <link rel="stylesheet" href="css/cinematic.css">
-  <link rel="stylesheet" href="css/illustration.css">
-  <link rel="stylesheet" href="css/edition18.css">
-  <link rel="stylesheet" href="css/edition20.css">
-  <link rel="stylesheet" href="css/edition21.css">
-  <link rel="stylesheet" href="css/edition22.css">
+  <title>DEAD CABIN 404 | Edición narrativa 2.6</title>
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/premium.css">
+<link rel="stylesheet" href="css/cinematic.css">
+<link rel="stylesheet" href="css/illustration.css">
+<link rel="stylesheet" href="css/edition18.css">
+<link rel="stylesheet" href="css/edition20.css">
+<link rel="stylesheet" href="css/edition21.css">
+<link rel="stylesheet" href="css/edition22.css">
 <link rel="stylesheet" href="css/edition23.css">
-  <script src="js/engine.js" defer></script>
-  <script src="js/art.js" defer></script>
-  <script src="js/premium-art.js" defer></script>
-  <script src="js/chapter-art.js" defer></script>
-  <script src="js/audio.js" defer></script>
-  <script src="js/feedback.js" defer></script>
-  <script src="js/card-ui.js" defer></script>
-  <script src="js/app.js" defer></script>
-  <script src="js/cinematic.js" defer></script>
+<link rel="stylesheet" href="css/edition24.css">
+<link rel="stylesheet" href="css/edition25.css">
+<script src="js/engine.js" defer></script>
+<script src="js/art.js" defer></script>
+<script src="js/premium-art.js" defer></script>
+<script src="js/chapter-art.js" defer></script>
+<script src="js/audio.js" defer></script>
+<script src="js/feedback.js" defer></script>
+<script src="js/card-ui.js" defer></script>
+<script src="js/app.js" defer></script>
+<script src="js/cinematic.js" defer></script>
 </head>
 <body>
 <div class="noise" aria-hidden="true"></div>
 <header class="site-header">
   <div class="header-art" aria-hidden="true"><div class="moon"></div><div class="horizon"></div><div class="cabin-roof"></div><div class="cabin-body"></div><div class="cabin-window"></div></div>
   <div class="header-inner">
-    <div class="brand"><span class="brand-emblem" aria-hidden="true">✥</span><div><span class="overline">AN OCCULT TABLETOP NIGHTMARE · 1984</span><h1>DEAD <span>CABIN</span> 404</h1><p>LA NOCHE DEL UMBRAL <span class="header-divider">◆</span> EDICIÓN PREMIUM TÁCTICA 2.3</p></div></div>
+    <div class="brand"><span class="brand-emblem" aria-hidden="true">✥</span><div><span class="overline">AN OCCULT TABLETOP NIGHTMARE · 1984</span><h1>DEAD <span>CABIN</span> 404</h1><p>LA NOCHE DEL UMBRAL <span class="header-divider">◆</span> EDICIÓN PREMIUM TÁCTICA 2.4</p></div></div>
     <nav class="header-tools" aria-label="Menú principal">
       <div class="header-group primary-nav" role="group" aria-label="Modos de juego">
         <button id="campaignBtn" class="tool-btn accent" type="button">◈ <span>CAMPAÑA</span></button>
@@ -54,6 +56,7 @@
 <main class="game-layout">
   <section class="board-column" aria-label="Zona de juego">
     <div class="chapter-bar"><div><div class="eyebrow"><span class="red-dot"></span> EXPEDIENTE <span id="chapterNumber">01 / 08</span></div><h2 id="chapterTitle">El libro que respira</h2><p id="chapterSubtitle">La llegada</p></div><div class="night-clock"><span>LA NOCHE AVANZA</span><strong id="turnDisplay">TURNO 01</strong></div></div>
+    <section class="chapter-forecast" id="chapterForecast" aria-live="polite" aria-atomic="true"><div class="chapter-forecast-mark" aria-hidden="true">◈</div><div><strong id="forecastLabel">EL LIBRO ESCUCHA</strong><p id="forecastText">La casa espera tu siguiente acción.</p></div></section>
     <div class="board-frame"><div class="board-topline"><span>PLANO DE LA CABAÑA</span><span class="serial">D-C/404 — SECTOR 05 × 05</span></div>
       <div class="board-border"><div class="board-mat"><div id="board" class="board" role="group" aria-label="Tablero interactivo: cinco columnas y cinco filas"></div></div></div>
       <div class="board-bottomline"><span>✥ <b>NO ABRAS EL LIBRO</b> ✥</span><span>✥ LAS PAREDES RECUERDAN ✥</span></div>
@@ -120,10 +123,11 @@
   <button type="button" id="mobileGuardBtn" aria-label="Defender">⛨ <span>DEFENDER</span></button>
   <button type="button" id="mobileTurnBtn" class="primary" aria-label="Finalizar turno">➜ <span>TURNO</span></button>
 </div>
-<footer class="site-footer"><span>DEAD CABIN 404 <i>✥</i> UNA NOCHE NO ES SUFICIENTE</span><span>V2.3 · EQUILIBRIO · ACCESIBILIDAD · GUARDADOS SEGUROS</span></footer>
+<footer class="site-footer"><span>DEAD CABIN 404 <i>✥</i> UNA NOCHE NO ES SUFICIENTE</span><span>V2.4 · OCHO EXPEDIENTES · TENSIÓN · DECISIONES</span></footer>
 <div id="fxStage" aria-hidden="true"></div>
 <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
 <div id="modal" class="modal-backdrop hidden" role="presentation"><section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><button id="modalClose" class="modal-close" type="button" aria-label="Cerrar diálogo">×</button><div class="modal-kicker" id="modalKicker">ARCHIVO 404</div><h2 id="modalTitle">Reglamento</h2><div id="modalContent" class="modal-content"></div><div id="modalActions" class="modal-actions"></div></section></div>
+
 <script>if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) { window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js").catch(() => {})); }</script>
 </body>
 </html>

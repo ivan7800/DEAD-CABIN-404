@@ -1,3 +1,10 @@
+## 2.6.0 — Desenlaces propios y continuidad de campaña (29-10-2026)
+- Ocho desenlaces interactivos y dos decisiones finales por expediente.
+- Siete tipos de legado pueden mejorar el siguiente capítulo; no se aplican dos veces.
+- Ecos de decisiones previas y guía táctica de cada capítulo conservados desde v2.4-v2.5.
+- Guardados v4 compatibles; versión de PWA y HTML independiente actualizados.
+- 76 pruebas Node aprobadas localmente en la candidata; pendientes pruebas humanas de campaña completa.
+
 ## 2.3.0 — Seguridad de partidas, controles móviles y balance (29-10-2026)
 - Validación profunda de estados v4: registros de sucesos, enemigos, eventos, dados y límites de recursos.
 - Restauración transaccional: primero se valida y renderiza provisionalmente, después se persiste; errores no sustituyen la partida sana.

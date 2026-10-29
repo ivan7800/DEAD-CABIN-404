@@ -17,4 +17,3 @@ function play(type,before,after){if(!after)return;
 }
 root.DeadCabinFeedback={sync,toggle,play,enabled};
 })(globalThis);
-

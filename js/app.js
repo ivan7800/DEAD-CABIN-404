@@ -198,9 +198,10 @@ function renderObjectives(){const c=E.currentChapter(game),o=E.currentObjective(
  $('objectives').innerHTML=objectives.map(x=>`<div class="objective${x.done?' done':''}"><span class="objective-check">${x.done?'✓':'·'}</span><span>${escapeHtml(x.text)}</span></div>`).join('')}
 
 function renderHistory(){$('history').innerHTML=game.log.slice(0,14).map(e=>`<div class="entry ${escapeHtml(e.kind||'narration')}"><time>TURNO ${format(e.turn)}</time><p>${escapeHtml(e.text)}</p></div>`).join('')}
-function render(){if(!E.validate(game)){showToast('Error: estado de partida inválido.');return}renderBoard();renderRoomScene();renderVitals();renderActions();renderDie();renderCard();renderObjectives();renderHistory()}
+function renderForecast(){const f=E.chapterForecast(game);if(game.mode==='campaign'&&E.objectivesComplete(game)&&game.pos===E.ENTRANCE&&!game.storyBeats.includes('finale')){f.label='EL UMBRAL ESPERA';f.message='Todos los objetivos están completos. ESCAPAR abrirá el desenlace exclusivo de este capítulo.';f.danger=false;}$('forecastLabel').textContent=f.label;$('forecastText').textContent=f.message+(game.blessings||[]).map(id=>Object.values(E.CHAPTER_ECHOES).find(e=>e.id===id)).filter(Boolean).map(e=>` · ECO ACTIVO: ${e.name}`).join('');$('chapterForecast').classList.toggle('urgent',f.danger)}
+function render(){if(!E.validate(game)){showToast('Error: estado de partida inválido.');return}renderBoard();renderRoomScene();renderVitals();renderActions();renderDie();renderCard();renderObjectives();renderHistory();renderForecast()}
 function maybeEncounter(){if(!game.pendingChoice||game.ended)return;const scene=E.ALL_ENCOUNTERS.find(x=>x.id===game.pendingChoice);if(!scene)return;
- showModal({kicker:'ENCUENTRO · DECISIÓN IRREVERSIBLE',title:scene.name,lock:true,content:`<p class="modal-callout">${escapeHtml(scene.text)}</p><p>Tu elección modificará los recursos o los peligros de esta partida.</p>`,
+ showModal({kicker:'ENCUENTRO · DECISIÓN IRREVERSIBLE',title:scene.name,lock:true,content:`<p class="modal-callout">${escapeHtml(scene.text)}</p><p>Tu elección modificará los recursos o los peligros de esta partida.</p>${scene.id===`c${game.chapter}-0`&&E.CHAPTER_ECHOES[game.chapter]?`<p class="echo-preview"><strong>CONSECUENCIA ESPECIAL:</strong> La primera elección activa «${escapeHtml(E.CHAPTER_ECHOES[game.chapter].name)}». ${escapeHtml(E.CHAPTER_ECHOES[game.chapter].effect)}</p>`:''}`,
  actions:scene.options.map((x,i)=>({label:x.label+' · '+x.description,primary:i===0,run:()=>act({type:'CHOOSE',option:i})}))})}
 function afterAction(type,before){persist();render();F.play(type,before,game);const result=game.lastRoll;
  switch(type){case 'ATTACK':S.effect(result&&result.hit?'hit':'roll');break;case 'MOVE':S.effect(game.revealed.length>before.revealed?'explore':'move');break;
@@ -218,7 +219,7 @@ function showEnding(){const win=game.won,c=E.currentChapter(game),isEndless=game
  <p>Turnos: <b>${game.turn}</b> · Grietas: <b>${game.totalSeals}</b> · Enemigos derrotados: <b>${game.kills}</b> · Decisiones: <b>${game.encounterChoices.length}</b></p>
  <p class="final-score">PUNTUACIÓN FINAL: <b>${game.score.toLocaleString('es-ES')}</b></p>
  ${win&&!isEndless&&game.chapter<8?'<p>Se ha desbloqueado el siguiente capítulo.</p>':''}${win&&!isEndless&&game.chapter===8?'<p>Has completado los ocho expedientes. El archivo sigue abierto para nuevas dificultades y personajes.</p>':''}`;
- let actions=[];if(win&&!isEndless&&game.chapter<8)actions.push({label:'SIGUIENTE CAPÍTULO',primary:true,run:()=>startNew(game.chapter+1,{survivor:game.survivor,difficulty:game.difficulty,mode:'campaign'})});
+ let actions=[];if(win&&!isEndless&&game.chapter<8)actions.push({label:'SIGUIENTE CAPÍTULO',primary:true,run:()=>startNew(game.chapter+1,{survivor:game.survivor,difficulty:game.difficulty,mode:'campaign',legacy:game.legacy})});
  actions.push({label:'REINTENTAR',run:()=>startNew(game.chapter,{survivor:game.survivor,difficulty:game.difficulty,mode:game.mode})});actions.push({label:'ARCHIVO DE LOGROS',run:showRecords});actions.push({label:'CAMPAÑA',run:showCampaign});
  showModal({kicker:win?'HAS ESCAPADO · POR AHORA':'EL FINAL DE TU HISTORIA',title:win?'Sobreviviste a la noche':'La casa ha ganado',content,actions})}
 
