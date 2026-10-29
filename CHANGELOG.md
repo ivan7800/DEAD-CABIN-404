@@ -26,3 +26,13 @@
 ## 0.1 — Primera versión jugable
 
 - Exploración, turnos, grietas, enemigos básicos, oscuridad, salud, cordura y guardado.
+
+## 1.7.0 — La cabaña cobra vida (29-10-2026)
+- 25 salas con envejecimiento original y detalles propios, sin nuevas dependencias.
+- 8 miniaturas vectoriales 2.5D (superviviente y 7 tipos de enemigo) sustituyen fichas tipográficas.
+- Vista de sala ampliada, con criatura local y avisos de amenaza.
+- Banda sonora procedural: viento, graves, crujidos, impactos, efectos espectrales y tensión dinámica. Sonido desactivado por defecto.
+- Compatibilidad con configuración de movimiento reducido, táctil y guardados existentes.
+- PWA versionada (v1-7-0) y generador HTML sin instalación actualizado.
+- QA: 28 pruebas de motor + smoke real Chromium escritorio y móvil 390/320 (auditoría no exhaustiva).
+- El arte es SVG con volumen aparente; **no** es 3D ni fotorrealismo prerenderizado.
