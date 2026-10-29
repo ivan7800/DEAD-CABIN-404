@@ -17,6 +17,7 @@
   <link rel="stylesheet" href="css/edition20.css">
   <link rel="stylesheet" href="css/edition21.css">
   <link rel="stylesheet" href="css/edition22.css">
+<link rel="stylesheet" href="css/edition23.css">
   <script src="js/engine.js" defer></script>
   <script src="js/art.js" defer></script>
   <script src="js/premium-art.js" defer></script>
@@ -32,7 +33,7 @@
 <header class="site-header">
   <div class="header-art" aria-hidden="true"><div class="moon"></div><div class="horizon"></div><div class="cabin-roof"></div><div class="cabin-body"></div><div class="cabin-window"></div></div>
   <div class="header-inner">
-    <div class="brand"><span class="brand-emblem" aria-hidden="true">✥</span><div><span class="overline">AN OCCULT TABLETOP NIGHTMARE · 1984</span><h1>DEAD <span>CABIN</span> 404</h1><p>LA NOCHE DEL UMBRAL <span class="header-divider">◆</span> EDICIÓN PREMIUM TÁCTICA 2.2</p></div></div>
+    <div class="brand"><span class="brand-emblem" aria-hidden="true">✥</span><div><span class="overline">AN OCCULT TABLETOP NIGHTMARE · 1984</span><h1>DEAD <span>CABIN</span> 404</h1><p>LA NOCHE DEL UMBRAL <span class="header-divider">◆</span> EDICIÓN PREMIUM TÁCTICA 2.3</p></div></div>
     <nav class="header-tools" aria-label="Menú principal">
       <div class="header-group primary-nav" role="group" aria-label="Modos de juego">
         <button id="campaignBtn" class="tool-btn accent" type="button">◈ <span>CAMPAÑA</span></button>
@@ -57,6 +58,14 @@
       <div class="board-border"><div class="board-mat"><div id="board" class="board" role="group" aria-label="Tablero interactivo: cinco columnas y cinco filas"></div></div></div>
       <div class="board-bottomline"><span>✥ <b>NO ABRAS EL LIBRO</b> ✥</span><span>✥ LAS PAREDES RECUERDAN ✥</span></div>
     </div>
+    <section class="mobile-tactical" id="mobileTactical" aria-label="Acciones de la sala y estado vital">
+      <div class="mobile-tactical-head"><strong id="mobileVitals">♥ 12/12 · ◉ 9/10 · ✥ 0/26 · PA 3/3</strong><span id="mobileContext" role="status">EXPLORA UNA SALA VECINA</span></div>
+      <div class="mobile-tactical-actions">
+        <button type="button" id="mobileSealBtn">✥ SELLAR</button><button type="button" id="mobileInvestigateBtn">◇ INVESTIGAR</button><button type="button" id="mobileEscapeBtn">⇥ ESCAPAR</button>
+        <button type="button" id="mobileHealBtn">✚ CURAR</button><button type="button" id="mobileWardBtn">✧ TALISMÁN</button><button type="button" id="mobileAbilityBtn">✦ HABILIDAD</button>
+        <button type="button" id="mobileFlareBtn">✺ BENGALA</button><button type="button" id="mobileMoreBtn">⋯ VER TODAS</button>
+      </div>
+    </section>
     <div class="board-key"><span><i class="key-dot player"></i> Superviviente</span><span><i class="key-dot foe"></i> Enemigos</span><span><i class="key-dot rift"></i> Grietas</span><span><i class="key-dot reachable"></i> Casilla accesible</span><span><i class="key-dot cursed"></i> Habitación maldita</span><span><i class="key-dot clue"></i> Pista de misión</span></div>
     <section class="cinematic-room" aria-label="Vista ilustrada de la sala actual"><div class="cinematic-room-visual" id="roomSceneArt" aria-hidden="true"></div><div class="cinematic-room-caption"><small>EXPLORACIÓN · VISTA DE SALA</small><h3 id="roomSceneName">ENTRADA</h3><p id="roomSceneDetails">Las paredes conservan marcas que no recuerdas haber visto.</p><div class="cinematic-room-tag" id="roomSceneTag">01 / 25</div></div></section>
     <div id="roomInfo" class="room-strip" aria-live="polite">Selecciona una habitación vecina para explorarla.</div>
@@ -74,7 +83,7 @@
         <p id="bossDetail"></p>
       </div><div class="score-strip"><span>✧ PUNTUACIÓN DE PARTIDA</span><strong id="scoreValue">0</strong></div><div class="ap-strip"><span>PUNTOS DE ACCIÓN</span><div id="actionPoints" class="ap-pips" aria-label="Puntos de acción restantes"></div><strong id="apText">3 / 3</strong></div>
     </section>
-    <section class="sheet command-panel" aria-label="Acciones"><div class="section-head"><h3>ACCIONES <span class="red-mark">// 02</span></h3><span>ELIGE TU DESTINO</span></div><p id="actionHint" class="action-hint">Pulsa una habitación contigua para moverte (1 PA).</p>
+    <section class="sheet command-panel" id="actionPanel" aria-label="Acciones"><div class="section-head"><h3>ACCIONES <span class="red-mark">// 02</span></h3><span>ELIGE TU DESTINO</span></div><p id="actionHint" class="action-hint">Pulsa una habitación contigua para moverte (1 PA).</p>
       <div class="action-grid">
         <div class="action-group action-group-combat" role="group" aria-label="Acciones de combate"><div class="action-group-title"><span>01 · COMBATE</span><small>ENFRENTA LA AMENAZA</small></div><div class="action-pair">
           <button type="button" id="axeBtn" class="act weapon" data-action="axe"><span class="act-icon">⚒</span><span><b>HACHA</b><small>Dado 4+ · 1 daño</small></span></button><button type="button" id="shotBtn" class="act weapon" data-action="shotgun"><span class="act-icon">⌁</span><span><b>ESCOPETA</b><small>Dado 3+ · 2 daño</small></span></button>
@@ -111,7 +120,7 @@
   <button type="button" id="mobileGuardBtn" aria-label="Defender">⛨ <span>DEFENDER</span></button>
   <button type="button" id="mobileTurnBtn" class="primary" aria-label="Finalizar turno">➜ <span>TURNO</span></button>
 </div>
-<footer class="site-footer"><span>DEAD CABIN 404 <i>✥</i> UNA NOCHE NO ES SUFICIENTE</span><span>V2.2 · JEFES CON FASES · QA AMPLIADA · SIN SEGUIMIENTO</span></footer>
+<footer class="site-footer"><span>DEAD CABIN 404 <i>✥</i> UNA NOCHE NO ES SUFICIENTE</span><span>V2.3 · EQUILIBRIO · ACCESIBILIDAD · GUARDADOS SEGUROS</span></footer>
 <div id="fxStage" aria-hidden="true"></div>
 <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
 <div id="modal" class="modal-backdrop hidden" role="presentation"><section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><button id="modalClose" class="modal-close" type="button" aria-label="Cerrar diálogo">×</button><div class="modal-kicker" id="modalKicker">ARCHIVO 404</div><h2 id="modalTitle">Reglamento</h2><div id="modalContent" class="modal-content"></div><div id="modalActions" class="modal-actions"></div></section></div>

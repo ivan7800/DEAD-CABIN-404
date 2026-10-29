@@ -112,7 +112,7 @@ function bossThreat(s){
  const detail=e.type==='heart'?`Onda a ${range} ${range===1?'sala':'salas'}: pierde ${frenzy?2:1} de cordura y +1 oscuridad. Defender reduce la pérdida mental.`:'Impacta en salas contiguas. El Guardián puede moverse '+(frenzy?'2':'1')+' salas. Defender reduce el daño.';
  return {id:e.id,type:e.type,name:stats.label,hp:e.hp,maxHp:stats.hp,phase:frenzy?2:1,phaseLabel:frenzy?'FASE II · FRENESÍ':'FASE I · ACECHO',ritual,turnsUntil:(3-s.turn%3)%3,range,label,detail,exposed:e.exposedUntil===s.turn};
 }
-function doomLimit(s){return s.mode==='endless'?30:Math.max(12,currentChapter(s).limit+DIFFICULTIES[s.difficulty].doomBonus)}
+function doomLimit(s){const finale=s.mode==='campaign'&&s.chapter===8?(s.difficulty==='nightmare'?6:3):0;return s.mode==='endless'?30:Math.max(12,currentChapter(s).limit+DIFFICULTIES[s.difficulty].doomBonus+finale)}
 function createGame(chapter=1,seed,options={}){
  if(!Number.isInteger(chapter)||chapter<1||chapter>8)chapter=1;
  const survivor=SURVIVORS[options.survivor]?options.survivor:'scout';
@@ -233,12 +233,22 @@ function choose(s,option){if(s.ended||!s.pendingChoice||!Number.isInteger(option
  case 'cleanse':s.doom=Math.max(0,s.doom-2);hurtMind(s,1,'Cenizas rituales');break;
  case 'barricade':if(!s.barricades.includes(s.pos))s.barricades.push(s.pos);break}
  addLog(s,`DECISIÓN · ${scene.name}: ${choice.label}. ${choice.description}`,'story');s.lastAction=`Decisión: ${choice.label}`;check(s);return true}
-function applyCard(s){if(!s.deck.length)refillDeck(s);const id=s.deck.pop(),c=CARDS.find(x=>x.id===id);s.discard.push(id);s.lastEvent={id:c.id,name:c.name,flavor:c.flavor,type:c.type,art:c.art};addLog(s,`CARTA · ${c.name}. ${c.flavor}`,'card');
+function applyCard(s){
+ if(!s.deck.length)refillDeck(s);
+ const id=s.deck.pop(),c=CARDS.find(x=>x.id===id);s.discard.push(id);
+ const before={hp:s.hp,sanity:s.sanity,doom:s.doom,ammo:s.ammo,medkits:s.medkits,wards:s.wards,flares:s.flares,scrap:s.scrap,enemies:s.enemies.length};
+ addLog(s,`CARTA · ${c.name}. ${c.flavor}`,'card');
  switch(c.type){case 'sanity':s.sanity=Math.min(MAX_SANITY,Math.max(0,s.sanity+c.value));break;
  case 'damage':damage(s,c.value,'Evento');break;case 'hope':s.sanity=Math.min(MAX_SANITY,s.sanity+c.value);break;
  case 'ammo':s.ammo+=c.value;break;case 'medkit':s.medkits+=c.value;break;case 'ward':s.wards+=c.value;break;case 'flare':s.flares+=c.value;break;case 'scrap':s.scrap+=c.value;break;
  case 'doom':s.doom=Math.max(0,s.doom+c.value);break;
- case 'spawn':for(let i=0;i<c.value;i++)spawn(s,s.chapter>=6&&rand(s)<.15?'wraith':s.chapter>=4&&rand(s)<.16?'brute':s.chapter>=3&&rand(s)<.4?'stalker':'possessed');break}}
+ case 'spawn':for(let i=0;i<c.value;i++)spawn(s,s.chapter>=6&&rand(s)<.15?'wraith':s.chapter>=4&&rand(s)<.16?'brute':s.chapter>=3&&rand(s)<.4?'stalker':'possessed');break}
+ const key={sanity:'sanity',hope:'sanity',damage:'hp',doom:'doom',ammo:'ammo',medkit:'medkits',ward:'wards',flare:'flares',scrap:'scrap',spawn:'enemies'}[c.type];
+ const delta=(c.type==='spawn'?s.enemies.length:s[key])-before[key],name={sanity:'cordura',hope:'cordura',damage:'salud',doom:'oscuridad',ammo:'cartuchos',medkit:'botiquines',ward:'talismanes',flare:'bengalas',scrap:'chatarra',spawn:'criaturas'}[c.type];
+ const applied=delta===0?(c.type==='spawn'?'Sin aparición: el tablero está lleno.':'Sin efecto: el recurso ya está en su límite.'):c.type==='spawn'?`${delta} ${delta===1?'criatura aparece':'criaturas aparecen'} en la cabaña.`:`${delta>0?'+':''}${delta} ${name} aplicado${Math.abs(delta)===1?'':'s'}.`;
+ s.lastEvent={id:c.id,name:c.name,flavor:c.flavor,type:c.type,art:c.art,turn:s.turn,applied};
+ addLog(s,`EFECTO REAL · ${applied}`,'card');
+}
 function nextMove(s,e){const opts=neighbors(e.pos).filter(i=>s.revealed.includes(i));if(!opts.length)return;
  opts.sort((a,b)=>dist(a,s.pos)-dist(b,s.pos)||a-b);if(dist(opts[0],s.pos)<dist(e.pos,s.pos))e.pos=opts[0]}
 function enemyPhase(s){for(const e of s.enemies){if(s.ended)break;if(e.stunnedUntil===s.turn)continue;
@@ -274,17 +284,17 @@ function enemyPhase(s){for(const e of s.enemies){if(s.ended)break;if(e.stunnedUn
   if(s.guard===1){harm=Math.max(0,harm-1);mind=Math.max(0,mind-1);s.guard=0;addLog(s,'DEFENSA: bloqueas parte del impacto.', 'combat')}
   if(harm)damage(s,harm,stats.label);if(mind)hurtMind(s,mind,stats.label);if(stats.doom)s.doom+=stats.doom}check(s)}}}
 function endTurn(s){if(s.ended||s.pendingChoice)return false;
- s.doom+=s.difficulty==='nightmare'?2:s.difficulty==='story'&&s.turn%2===0?0:1;
+ s.doom+=s.difficulty==='nightmare'?(s.mode==='campaign'&&s.chapter===8&&s.turn%3===0?1:2):s.difficulty==='story'&&s.turn%2===0?0:1;
  addLog(s,'La casa respira. La oscuridad avanza.','phase');applyCard(s);
  if(s.turn%3===0&&!s.enemies.some(e=>e.type==='boss'||e.type==='heart'))spawn(s,s.mode==='endless'&&s.turn>=12?'wraith':s.chapter>=3?'stalker':'possessed');
  if(s.mode==='campaign'){
  const p=currentChapter(s).pressure;
  if(p==='storm'&&s.turn%3===0){s.doom+=s.objectiveCount>=2?0:2;addLog(s,'El temporal desata su furia. Repara los pararrayos para protegerte.','danger')}
- if(p==='hunters'&&s.turn%4===0)spawn(s,'stalker');
+ if(p==='hunters'&&s.turn%5===0)spawn(s,'stalker');
  if(p==='shifting'&&s.turn%3===0){const options=s.revealed.filter(x=>x!==ENTRANCE);if(options.length){const i=pick(s,options);if(!s.cursed.includes(i))s.cursed.push(i);addLog(s,`La habitación ${ROOM_NAMES[i]} se retuerce y queda maldita.`,'danger');if(s.pos===i)hurtMind(s,1,'Habitación maldita')}}
  if(p==='silence'&&s.turn%4===0)hurtMind(s,1,'El eco del silencio');
  if(p==='ritual'&&s.turn%4===0)hurtMind(s,1,'El cuarto nombre');
- if(p==='final'&&s.turn%3===0){s.doom++;addLog(s,'El corazón late. +1 oscuridad.','danger')}
+ if(p==='final'&&s.turn%4===0){s.doom++;addLog(s,'El corazón late. +1 oscuridad.','danger')}
  }else if(s.turn%5===0){spawn(s,s.turn>=16?'brute':'leech');s.doom=Math.max(0,s.doom-2)}
  check(s);if(!s.ended)enemyPhase(s);
  if(!s.ended){s.guard=0;s.turn++;s.turnsSurvived++;s.ap=3;s.lastAction='Fase del mal completada';s.score+=10;addLog(s,`Comienza el turno ${s.turn}.`,'phase')}return true}
@@ -294,15 +304,35 @@ function dispatch(s,action){if(!s||s.ended||!action||typeof action.type!=='strin
  case 'ATTACK':return attack(s,action.id,action.weapon);case 'HEAL':return heal(s);case 'WARD':return ward(s);case 'FLARE':return flare(s);
  case 'GUARD':return guard(s);case 'BARRICADE':return barricade(s);case 'ABILITY':return ability(s);case 'REST':return rest(s);case 'SEAL':return seal(s);
  case 'ESCAPE':return escape(s);case 'END_TURN':return endTurn(s);case 'CHOOSE':return choose(s,action.option);default:return false}}
-function validate(s){if(!s||s.version!==VERSION||!Number.isInteger(s.chapter)||s.chapter<1||s.chapter>8||!Number.isInteger(s.pos)||s.pos<0||s.pos>=25||!Number.isInteger(s.rng)||!Number.isInteger(s.turn)||s.turn<1||!Number.isInteger(s.ap)||s.ap<0||s.ap>3||!SURVIVORS[s.survivor]||!DIFFICULTIES[s.difficulty]||!['campaign','endless'].includes(s.mode))return false;
- for(const k of ['hp','sanity','ammo','medkits','wards','flares','scrap','doom','seals','totalSeals','nextId','score','kills','killedStalkers','objectiveCount','abilityTurn'])if(!Number.isInteger(s[k])||s[k]<0||s[k]>10000000)return false;
- for(const key of ['sealSpots','sealed','revealed','searched','cursed','barricades','objectiveSpots','objectiveDone','encounterSpots','encounterSeen'])if(!Array.isArray(s[key])||s[key].some(i=>!Number.isInteger(i)||i<0||i>=25))return false;
+// Schema defensivo para guardados v4. La validación debe ser total antes de renderizar/importar.
+function validate(s){
+ const plain=x=>x!==null&&typeof x==='object'&&!Array.isArray(x);
+ const num=(x,min=0,max=10000000)=>Number.isSafeInteger(x)&&x>=min&&x<=max;
+ const txt=(x,max=1000)=>typeof x==='string'&&x.length<=max;
+ const bool=x=>typeof x==='boolean';
+ const spots=['sealSpots','sealed','revealed','searched','cursed','barricades','objectiveSpots','objectiveDone','encounterSpots','encounterSeen'];
+ const loc=a=>Array.isArray(a)&&a.length<=25&&a.every(v=>num(v,0,24))&&new Set(a).size===a.length;
+ if(!plain(s)||s.version!==VERSION||!num(s.chapter,1,8)||!num(s.pos,0,24)||!num(s.rng,-2147483648,4294967295)||!num(s.turn,1,10000000)||!num(s.ap,0,3)||!Object.hasOwn(SURVIVORS,s.survivor)||!Object.hasOwn(DIFFICULTIES,s.difficulty)||!['campaign','endless'].includes(s.mode))return false;
+ for(const k of ['hp','sanity','ammo','medkits','wards','flares','scrap','doom','seals','totalSeals','nextId','score','kills','killedStalkers','objectiveCount','abilityTurn'])if(!num(s[k]))return false;
+ if(s.hp>MAX_HP||s.sanity>MAX_SANITY||s.nextId<1||s.abilityTurn>s.turn||!num(s.turnsSurvived)||!(s.guard===undefined||num(s.guard,0,1)))return false;
+ for(const k of ['bossSummoned','bossKilled','ended','won'])if(!bool(s[k]))return false;
+ if(s.recorded!==undefined&&!bool(s.recorded))return false;
+ if(!txt(s.lastAction,2000)||!txt(s.scenarioNote,2000))return false;
+ if(spots.some(k=>!loc(s[k])))return false;
  if(s.mode==='campaign'&&s.sealSpots.length!==currentChapter(s).seals||s.sealed.length!==s.seals||s.seals>s.sealSpots.length||!s.revealed.includes(s.pos))return false;
- if(!Array.isArray(s.enemies)||s.enemies.length>10||s.enemies.some(e=>!ENEMY_TYPES[e.type]||!Number.isInteger(e.pos)||e.pos<0||e.pos>=25||!s.revealed.includes(e.pos)||!Number.isInteger(e.hp)))return false;
- if(!Array.isArray(s.deck)||!Array.isArray(s.discard)||s.deck.some(id=>!CARDS.some(c=>c.id===id))||s.discard.some(id=>!CARDS.some(c=>c.id===id))||!Array.isArray(s.log)||!Array.isArray(s.encounterChoices)||!Array.isArray(s.encounterPool)||!Array.isArray(s.storyBeats))return false;
- if(s.guard!==undefined&&s.guard!==0&&s.guard!==1)return false;
+ if(s.sealed.some(i=>!s.sealSpots.includes(i))||s.searched.some(i=>!s.revealed.includes(i))||s.objectiveDone.some(i=>!s.objectiveSpots.includes(i)))return false;
+ if(!Array.isArray(s.enemies)||s.enemies.length>10||s.enemies.some(e=>!plain(e)||!num(e.id,1)||!Object.hasOwn(ENEMY_TYPES,e.type)||!num(e.pos,0,24)||!s.revealed.includes(e.pos)||!num(e.hp,1,ENEMY_TYPES[e.type]?.hp)||e.stunnedUntil!==undefined&&!num(e.stunnedUntil,0)||e.exposedUntil!==undefined&&!num(e.exposedUntil,0)||e.blocked!==undefined&&!bool(e.blocked)))return false;
+ if(new Set(s.enemies.map(e=>e.id)).size!==s.enemies.length)return false;
+ const cardIds=new Set(CARDS.map(c=>c.id));
+ if(!Array.isArray(s.deck)||!Array.isArray(s.discard)||s.deck.length>24||s.discard.length>24||s.deck.some(id=>!cardIds.has(id))||s.discard.some(id=>!cardIds.has(id)))return false;
+ if(!Array.isArray(s.log)||s.log.length>90||s.log.some(e=>!plain(e)||!num(e.turn,1,10000000)||!txt(e.text,2000)||!txt(e.kind,30)))return false;
+ if(!Array.isArray(s.encounterChoices)||s.encounterChoices.length>300||s.encounterChoices.some(x=>!txt(x,100))||!Array.isArray(s.encounterPool)||s.encounterPool.length>30||s.encounterPool.some(x=>!txt(x,100))||!Array.isArray(s.storyBeats)||s.storyBeats.length>20||s.storyBeats.some(x=>!txt(x,100))||!Array.isArray(s.blessings)||s.blessings.length>30||s.blessings.some(x=>!txt(x,100)))return false;
+ if(s.lastEvent!==null&&(!plain(s.lastEvent)||!cardIds.has(s.lastEvent.id)||!txt(s.lastEvent.name,200)||!txt(s.lastEvent.flavor,1000)||!txt(s.lastEvent.type,50)||!txt(s.lastEvent.art,50)||s.lastEvent.applied!==undefined&&!txt(s.lastEvent.applied,300)||s.lastEvent.turn!==undefined&&!num(s.lastEvent.turn,1,10000000)))return false;
+ if(s.lastRoll!==null&&(!plain(s.lastRoll)||!num(s.lastRoll.value,1,6)||!bool(s.lastRoll.hit)||!bool(s.lastRoll.crit)||!['axe','shotgun'].includes(s.lastRoll.weapon)||!num(s.lastRoll.damage,0,100)))return false;
  if(s.pendingChoice!==null&&!ALL_ENCOUNTERS.some(x=>x.id===s.pendingChoice))return false;
- return true}
+ if(s.objectiveCount>currentObjective(s).target||s.killedStalkers>s.kills)return false;
+ return true;
+}
 function upgradeV3(old){if(!old||old.version!==3)return null;const s=createGame(old.chapter,old.rng,{survivor:'scout',difficulty:'normal'});
  // Mantener recursos, progreso y tablero, añadir objetivos v1.0 repartidos en salas nuevas.
  for(const key of ['turn','ap','pos','hp','sanity','ammo','medkits','wards','doom','seals','totalSeals','nextId','bossSummoned','bossKilled','ended','won','lastEvent','lastRoll','lastAction'])if(old[key]!==undefined)s[key]=old[key];

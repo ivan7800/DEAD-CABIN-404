@@ -2,6 +2,12 @@
 
 **Título:** La noche del umbral · **Género:** juego de mesa de terror táctico en solitario · **Jugadores:** uno · **Idioma:** español · **Duración orientativa por expediente:** 25–60 minutos, según velocidad, decisiones y dificultad. Esta duración es una estimación de diseño, no un tiempo cronometrado con jugadores.
 
+## Acciones de proximidad en móvil (v2.3)
+
+Bajo el tablero encontrarás indicadores de salud, cordura, oscuridad y puntos de acción, junto a **Sellar**, **Investigar**, **Escapar**, **Curar**, **Talismán**, **Habilidad** y **Bengala**. Las acciones imposibles aparecen desactivadas; las pertinentes a la habitación resaltan automáticamente. **Ver todas** lleva al panel completo con combate, descanso e inventario. La barra fija inferior permite atacar, buscar, defender y finalizar turno.
+
+La última carta muestra el **efecto realmente aplicado**: algunos recursos tienen límites y algunas invocaciones no pueden aparecer si la casa está llena. Las copias JSON pasan por validación profunda antes de cambiar la partida activa.
+
 ## 1. Ambientación
 
 Año 1984. La cabaña de Umbral Norte pertenece a un lugar que el bosque mantiene oculto. Las habitaciones no siempre se corresponden con el exterior. Un libro extraño ha desgarrado el límite entre memoria, muerte y materia. Eres un superviviente y debes cerrar las grietas que permiten que la casa te devore.

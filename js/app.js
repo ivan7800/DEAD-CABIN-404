@@ -29,13 +29,18 @@ async function importGame(file){
  if(!backup||backup.format!=='dead-cabin-404-backup-v1'||!E.validate(backup.game)){
   showToast('La copia no pertenece a DEAD CABIN 404 o está dañada.');return;
  }
- const imported=backup.game,progress=Number.isInteger(backup.unlocked)?Math.max(1,Math.min(8,backup.unlocked)):1;
+ const imported=JSON.parse(JSON.stringify(backup.game)),progress=Number.isInteger(backup.unlocked)?Math.max(1,Math.min(8,backup.unlocked)):1;
  showModal({kicker:'RESTAURAR PARTIDA',title:'¿Importar esta partida?',content:`<p class="modal-callout">Capítulo ${imported.chapter}, turno ${imported.turn}. Se reemplazará la partida local actual.</p><p>La copia se ha verificado y es compatible con los guardados de la versión 4.</p>`,actions:[
   {label:'RESTAURAR COPIA',primary:true,run:()=>{
-   game=imported;unlocked=Math.max(unlocked,progress,game.chapter);setStorage(PROGRESS,String(unlocked));
+   // Restauración transaccional: probar primero el render en memoria; nunca persistir un estado que falla.
+   const prior=game,priorUnlock=unlocked,priorRecords=JSON.parse(JSON.stringify(records));
+   game=imported;attackMode=null;previousRevealed=[];previousCard='';
+   try{if(!E.validate(game))throw new Error('Estado inválido');render()}
+   catch(err){game=prior;unlocked=priorUnlock;records=priorRecords;render();showToast('Copia rechazada: no se puede presentar con seguridad.');return}
+   unlocked=Math.max(unlocked,progress,game.chapter);setStorage(PROGRESS,String(unlocked));
    const r=backup.records;if(r&&Number.isInteger(r.games)&&r.games>=0&&Number.isInteger(r.wins)&&r.wins>=0){
     records={games:Math.max(records.games,r.games),wins:Math.max(records.wins,r.wins),bestScore:Math.max(records.bestScore,Number(r.bestScore)||0),bestTurn:Math.max(records.bestTurn,Number(r.bestTurn)||0),achievements:[...new Set([...records.achievements,...(Array.isArray(r.achievements)?r.achievements:[]).filter(x=>E.ACHIEVEMENTS.some(a=>a.id===x))])]};saveRecords()}
-   attackMode=null;previousRevealed=[];previousCard='';persist();render();
+   persist();
    if(game.pendingChoice)maybeEncounter();else if(game.ended)showEnding();else showToast('Partida importada y restaurada.');
   }},{label:'CANCELAR'}]});
 }
@@ -147,7 +152,7 @@ function renderActions(){const can=game.ap>0&&!game.ended&&!game.pendingChoice,f
  const ritualWarning=!game.ended&&Boolean(E.bossThreat(game)?.ritual);
  $('guardBtn').classList.toggle('tactical-alert',ritualWarning&&!game.guard);
  $('guardStatus').textContent=game.guard?'ACTIVA':ritualWarning?'¡RITUAL!':'';
- syncQuickButtons();$('actionHint').textContent=statusMessage();$('roomInfo').textContent=`${E.ROOM_NAMES[game.pos]} · ${statusMessage()}`;document.body.classList.toggle('mode-attack',!!attackMode)}
+ syncQuickButtons();renderTacticalStrip();$('actionHint').textContent=statusMessage();$('roomInfo').textContent=`${E.ROOM_NAMES[game.pos]} · ${statusMessage()}`;document.body.classList.toggle('mode-attack',!!attackMode)}
 
 function renderDie(){let r=game.lastRoll;if(!r){$('dieDisplay').classList.add('hidden');return}$('dieDisplay').classList.remove('hidden');$('dieFace').textContent=['','⚀','⚁','⚂','⚃','⚄','⚅'][r.value]||r.value;$('dieCaption').textContent=`${r.weapon==='axe'?'Hacha':'Escopeta'} · dado ${r.value} · ${r.hit?`${r.damage} daño${r.crit?' ¡CRÍTICO!':''}`:'FALLO'}`}
 function renderCard(){
@@ -160,10 +165,22 @@ function renderCard(){
  $('eventArt').innerHTML=C.illustration(last?last.id:'silence',meta.family);
  $('eventTitle').textContent=last?meta.name:'La casa espera';
  $('eventDescription').textContent=last?meta.flavor:'Cada turno revela una nueva carta. Algo escucha al otro lado.';
- $('eventEffect').textContent=meta.effect;
- $('eventCode').textContent=last?`${format(game.discard.length)} · TURNO ${format(game.turn)}`:'SIN REVELAR';
+ $('eventEffect').textContent=last?.applied||meta.effect;
+ $('eventCode').textContent=last?`${format(game.discard.length)} · TURNO ${format(last.turn||game.turn)}`:'SIN REVELAR';
  if(last&&previousCard!==last.id){card.classList.remove('just-drawn');void card.offsetWidth;card.classList.add('just-drawn');previousCard=last.id}
 }
+function renderTacticalStrip(){
+ const strip=$('mobileTactical');if(!strip)return;
+ $('mobileVitals').textContent=`♥ ${game.hp}/${E.MAX_HP} · ◉ ${game.sanity}/${E.MAX_SANITY} · ✥ ${game.doom}/${E.doomLimit(game)} · PA ${game.ap}/3`;
+ const here=game.enemies.some(e=>e.pos===game.pos),rift=game.sealSpots.includes(game.pos)&&!game.sealed.includes(game.pos),clue=game.objectiveSpots.includes(game.pos)&&!game.objectiveDone.includes(game.pos);
+ const status=game.ended?'PARTIDA TERMINADA':game.pendingChoice?'RESUELVE EL ENCUENTRO':here?'ENEMIGO EN LA HABITACIÓN':rift?'GRIETA ACTIVA: PUEDES SELLAR':clue?'PISTA DISPONIBLE: INVESTIGA':game.ap===0?'SIN PUNTOS DE ACCIÓN':'EXPLORA UNA SALA VECINA';
+ $('mobileContext').textContent=status;
+ for(const [quick,original] of [['mobileSealBtn','sealBtn'],['mobileInvestigateBtn','investigateBtn'],['mobileEscapeBtn','escapeBtn'],['mobileHealBtn','medkitBtn'],['mobileWardBtn','wardBtn'],['mobileAbilityBtn','abilityBtn'],['mobileFlareBtn','flareBtn']]){
+  const target=$(quick),source=$(original);if(!target||!source)continue;
+  target.disabled=source.disabled;target.classList.toggle('recommended',!source.disabled&&((quick==='mobileSealBtn'&&rift)||(quick==='mobileInvestigateBtn'&&clue)||(quick==='mobileEscapeBtn'&&game.pos===E.ENTRANCE)));
+ }
+}
+
 function syncQuickButtons(){
  for(const [quick,full] of [['mobileAttackBtn','axeBtn'],['mobileSearchBtn','searchBtn'],['mobileGuardBtn','guardBtn'],['mobileTurnBtn','endBtn']]){
   const mobile=$(quick),original=$(full);if(!mobile||!original)continue;
@@ -216,6 +233,8 @@ function init(){let storedProgress=parseInt(getStorage(PROGRESS)||'1',10);unlock
  $('mobileSearchBtn').onclick=()=>act({type:'SEARCH'});
  $('mobileGuardBtn').onclick=()=>act({type:'GUARD'});
  $('mobileTurnBtn').onclick=()=>act({type:'END_TURN'});
+ for(const [quick,type] of [['mobileSealBtn','SEAL'],['mobileInvestigateBtn','INVESTIGATE'],['mobileEscapeBtn','ESCAPE'],['mobileHealBtn','HEAL'],['mobileWardBtn','WARD'],['mobileAbilityBtn','ABILITY'],['mobileFlareBtn','FLARE']])$(quick).onclick=()=>act({type});
+ $('mobileMoreBtn').onclick=()=>{$('actionPanel').scrollIntoView({behavior:'smooth',block:'start'})};
  [['guardBtn','GUARD'],['searchBtn','SEARCH'],['restBtn','REST'],['sealBtn','SEAL'],['escapeBtn','ESCAPE'],['medkitBtn','HEAL'],['wardBtn','WARD'],['flareBtn','FLARE'],['barricadeBtn','BARRICADE'],['investigateBtn','INVESTIGATE'],['abilityBtn','ABILITY'],['endBtn','END_TURN']].forEach(([id,type])=>$(id).addEventListener('click',()=>act({type})));
  F.sync();$('fxBtn').onclick=()=>{F.toggle();showToast('Efectos visuales '+(F.enabled()?'activados.':'desactivados.'))};$('guideBtn').onclick=showRules;$('tutorialBtn').onclick=showTutorial;$('campaignBtn').onclick=showCampaign;$('endlessBtn').onclick=()=>showSetup(1,'endless');$('recordsBtn').onclick=showRecords;
  $('saveBtn').onclick=()=>showToast(persist()?'Partida guardada.':'No se ha podido guardar en este navegador.');

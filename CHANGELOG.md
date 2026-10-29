@@ -1,3 +1,13 @@
+## 2.3.0 — Seguridad de partidas, controles móviles y balance (29-10-2026)
+- Validación profunda de estados v4: registros de sucesos, enemigos, eventos, dados y límites de recursos.
+- Restauración transaccional: primero se valida y renderiza provisionalmente, después se persiste; errores no sustituyen la partida sana.
+- Carta de evento: indicador de efecto realmente aplicado y turno en que se reveló, con compatibilidad para cartas guardadas anteriores.
+- Panel táctico bajo el tablero (móvil/tableta): vida, cordura, oscuridad, PA, estado contextual, Sellar, Investigar, Escapar, Curar, Talismán, Habilidad, Bengala y Todas.
+- Ajuste del capítulo 3 (aparición periódica adicional cada 5 turnos) y del capítulo 8 (margen de oscuridad y menor presión ambiental) sin tocar otros capítulos.
+- Tests: 60 Node, 100 estados manipulados rechazados, Chromium 320/390px, importación real corrupta/válida, 1.152 simulaciones (761 victorias frente a 735 en v2.2).
+- Conserva partidas antiguas, logros, los ocho capítulos y lanzadores. Sin nuevos mecanismos de monetización, red o cuentas.
+- PWA cache v2-3-0. **Pendiente:** partidas humanas de principio a fin y pruebas en iPhone físico, Windows y Linux físicos.
+
 ## 2.2.0 — Consolidación táctica y QA ampliado (29-10-2026)
 - Guardián: barrido adyacente con tirada cada tercer turno; segunda fase más móvil y peligrosa.
 - Corazón: pulso radial cada tercer turno; radio 1 en fase I, radio 2 en fase II; defendiéndose se mitiga el daño mental.

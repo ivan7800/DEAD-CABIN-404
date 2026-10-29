@@ -3,7 +3,7 @@
 const fs=require('node:fs');const path=require('node:path');
 const root=path.resolve(__dirname,'..');
 let source=fs.readFileSync(path.join(root,'index.html'),'utf8');
-const style=['style.css','premium.css','cinematic.css','illustration.css','edition18.css','edition20.css','edition21.css','edition22.css'].map(n=>fs.existsSync(path.join(root,'css',n))?fs.readFileSync(path.join(root,'css',n),'utf8'):'').join('\n');
+const style=['style.css','premium.css','cinematic.css','illustration.css','edition18.css','edition20.css','edition21.css','edition22.css','edition23.css'].map(n=>fs.existsSync(path.join(root,'css',n))?fs.readFileSync(path.join(root,'css',n),'utf8'):'').join('\n');
 const js=['engine.js','art.js','premium-art.js','chapter-art.js','audio.js','feedback.js','card-ui.js','app.js','cinematic.js'].filter(name=>fs.existsSync(path.join(root,'js',name))).map(name=>fs.readFileSync(path.join(root,'js',name),'utf8'));
 source=source.replace(/\s*<link rel="stylesheet" href="css\/[^"]+">/g,'');source=source.replace('</head>',`<style>\n${style}\n</style>\n</head>`);
 source=source.replace(/\s*<script src="js\/[^"]+" defer><\/script>/g,'');
@@ -15,6 +15,6 @@ source=source.replace(/<script>if \("serviceWorker" in navigator.*?<\/script>/s,
 const all=js.map(x=>`<script>\n${x.replace(/<\/script/gi,'<\\/script')}\n</script>`).join('\n');
 source=source.replace('</body>',all+'\n</body>');
 const output=path.resolve(root,'JUGAR-SIN-INSTALAR.html');fs.writeFileSync(output,source);
-const release=path.resolve(root,'..','DEAD-CABIN-404-v2.2-JUGAR.html');fs.writeFileSync(release,source);
+const release=path.resolve(root,'..','DEAD-CABIN-404-v2.3-JUGAR.html');fs.writeFileSync(release,source);
 console.log('Creado:',output,'('+Buffer.byteLength(source)+' bytes)');
 console.log('Creado:',release);
