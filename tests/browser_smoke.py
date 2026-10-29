@@ -6,8 +6,8 @@ p=Path(__file__).resolve().parents[1]
 source=(p/'index.html').read_text()
 source=re.sub(r'<link rel="stylesheet" href="css/[^"]+">','',source)
 source=re.sub(r'<script src="js/[^"]+" defer></script>','',source)
-source=source.replace('</head>','<style>'+ ''.join((p/'css'/name).read_text() for name in ['style.css','premium.css','cinematic.css','illustration.css','edition18.css','edition20.css']) +'</style></head>')
-scripts=[(p/'js'/name).read_text() for name in ['engine.js','art.js','premium-art.js','chapter-art.js','audio.js','feedback.js','app.js','cinematic.js']]
+source=source.replace('</head>','<style>'+ ''.join((p/'css'/name).read_text() for name in ['style.css','premium.css','cinematic.css','illustration.css','edition18.css','edition20.css','edition21.css']) +'</style></head>')
+scripts=[(p/'js'/name).read_text() for name in ['engine.js','art.js','premium-art.js','chapter-art.js','audio.js','feedback.js','card-ui.js','app.js','cinematic.js']]
 def boot(page,storage=None):
     page.set_content(source,wait_until='load')
     page.evaluate("""(data) => {window.__storage={...data};Object.defineProperty(window,'localStorage',{configurable:true,value:{getItem:k=>window.__storage[k]??null,setItem:(k,v)=>{window.__storage[k]=String(v)},removeItem:k=>{delete window.__storage[k]}}})}""",storage or {})
@@ -63,6 +63,11 @@ with sync_playwright() as playwright:
     page.locator('#endBtn').click()
     assert page.locator('#turnDisplay').inner_text()=='TURNO 02'
     assert page.locator('#eventTitle').inner_text()!='La casa espera'
+    assert page.locator('#eventEffect').inner_text().strip()!=''
+    assert page.locator('#eventType').inner_text().strip()!=''
+    assert page.locator('.event-card .card-art svg.event-illustration').count()==1
+    assert page.locator('#eventCard').get_attribute('data-family') in ('threat','occult','hope','supply')
+    assert page.locator('.action-group').count()==3
     page.locator('#saveBtn').click()
     assert 'guardada' in page.locator('#toast').inner_text()
     page.locator('#recordsBtn').click()
@@ -146,6 +151,26 @@ with sync_playwright() as playwright:
         assert overflow<=1,f'Overflow at {width}: {overflow}px'
         assert mobile.locator('.tile').count()==25
         assert mobile.locator('#abilityBtn').is_visible()
+        assert mobile.locator('#mobileDock').is_visible()
+        assert mobile.locator('#mobileSearchBtn').is_enabled()
+        mobile.locator('#mobileSearchBtn').click()
+        assert mobile.evaluate('window.__deadCabin.state.searched.includes(22)')
+        assert mobile.locator('#mobileGuardBtn').is_enabled()
+        mobile.locator('#mobileGuardBtn').click()
+        assert mobile.evaluate('window.__deadCabin.state.guard')==1
+        mobile.locator('#mobileTurnBtn').click()
+        assert mobile.evaluate('window.__deadCabin.state.turn')==2
+        assert mobile.locator('#mobileGuardBtn').get_attribute('aria-pressed')=='false'
+        # Attack quick action: synthetic adjacent enemy, then a real tap on its tile.
+        mobile.evaluate('''() => {const s=window.__deadCabin.state;s.enemies=[{id:92,type:'possessed',pos:17,hp:2}];s.nextId=93;s.revealed=[22,17];s.sanity=8;s.ap=3}''')
+        mobile.evaluate('window.__deadCabin.act({type:"REST"})')
+        assert mobile.locator('#mobileAttackBtn').is_enabled()
+        mobile.locator('#mobileAttackBtn').click()
+        assert mobile.locator('#mobileAttackBtn').get_attribute('aria-pressed')=='true'
+        assert mobile.locator('[data-pos="17"]').get_attribute('class').find('attackable')>=0
+        mobile.locator('[data-pos="17"]').click()
+        assert mobile.locator('#dieDisplay').is_visible()
+        assert mobile.locator('#mobileAttackBtn').get_attribute('aria-pressed')=='false'
         mobile.close()
     assert not errors,errors
     print('PASS: Chromium desktop — movement, combat d6, 24-card deck, config, campaign, encounter, ending, achievements, saves and endless')
