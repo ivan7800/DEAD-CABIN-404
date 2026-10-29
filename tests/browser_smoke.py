@@ -6,8 +6,8 @@ p=Path(__file__).resolve().parents[1]
 source=(p/'index.html').read_text()
 source=re.sub(r'<link rel="stylesheet" href="css/[^"]+">','',source)
 source=re.sub(r'<script src="js/[^"]+" defer></script>','',source)
-source=source.replace('</head>','<style>'+ (p/'css/style.css').read_text() + (p/'css/illustration.css').read_text() +'</style></head>')
-scripts=[(p/'js'/name).read_text() for name in ['engine.js','art.js','premium-art.js','audio.js','app.js']]
+source=source.replace('</head>','<style>'+ ''.join((p/'css'/name).read_text() for name in ['style.css','premium.css','cinematic.css','illustration.css','edition18.css']) +'</style></head>')
+scripts=[(p/'js'/name).read_text() for name in ['engine.js','art.js','premium-art.js','chapter-art.js','audio.js','feedback.js','app.js','cinematic.js']]
 def boot(page,storage=None):
     page.set_content(source,wait_until='load')
     page.evaluate("""(data) => {window.__storage={...data};Object.defineProperty(window,'localStorage',{configurable:true,value:{getItem:k=>window.__storage[k]??null,setItem:(k,v)=>{window.__storage[k]=String(v)},removeItem:k=>{delete window.__storage[k]}}})}""",storage or {})
@@ -19,6 +19,8 @@ with sync_playwright() as playwright:
     page.on('pageerror',lambda e:errors.append(str(e)))
     boot(page)
     assert page.locator('#modalTitle').inner_text()=='El libro que respira'
+    assert page.locator('.chapter-illustration svg.chapter-art').count()==1
+    assert page.locator('#fxBtn').get_attribute('aria-pressed')=='true'
     page.get_by_role('button',name='ENTRAR EN LA CABAÑA').click()
     assert page.locator('.tile').count()==25
     assert page.locator('.miniature-art').count()==1
@@ -43,6 +45,7 @@ with sync_playwright() as playwright:
     page.locator('#modalClose').click()
     page.locator('#campaignBtn').click()
     assert page.locator('.chapter-card').count()==8
+    assert page.locator('.chapter-card .chapter-thumb svg.chapter-art').count()==8
     assert page.locator('.chapter-card[disabled]').count()==7
     page.locator('.chapter-card[data-chapter="1"]').click()
     assert page.locator('#survivorSelect').is_visible()
@@ -62,6 +65,7 @@ with sync_playwright() as playwright:
     assert 'attackable' in page.locator('[data-pos="17"]').get_attribute('class')
     page.locator('[data-pos="17"]').click()
     assert page.locator('#dieDisplay').is_visible()
+    assert page.locator('#fxStage .fx-banner').count()==1
     # Encounter mandatory and resolved via UI
     page.evaluate('''() => {const s=window.__deadCabin.state;s.encounterSpots=[17];s.encounterPool=['telephone'];s.encounterSeen=[];s.enemies=[];s.ap=3;s.revealed=[22];s.sanity=8;}''')
     page.evaluate('window.__deadCabin.act({type:"REST"})')

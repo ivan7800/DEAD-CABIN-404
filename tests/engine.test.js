@@ -100,3 +100,22 @@ test('un encuentro revelado por explorador se activa al pisarlo después',()=>{
  assert.equal(E.dispatch(s,{type:'ABILITY'}),true);assert.ok(s.revealed.includes(17));assert.equal(s.pendingChoice,null);
  assert.equal(E.dispatch(s,{type:'MOVE',to:17}),true);assert.equal(s.pendingChoice,'telephone');assert.equal(E.dispatch(s,{type:'CHOOSE',option:1}),true)
 });
+
+test('jefes invocados con tablero lleno no bloquean el objetivo',()=>{
+ for(const [chapter,kind] of [[4,'boss'],[8,'heart']]){
+  const s=mk(chapter,50404);s.sealed=s.sealSpots.slice(0,-1);s.seals=s.sealed.length;s.totalSeals=s.seals;
+  s.pos=s.sealSpots.at(-1);s.revealed=Array.from({length:25},(_,i)=>i);s.encounterSpots=[];s.sanity=10;s.doom=0;
+  s.enemies=Array.from({length:10},(_,i)=>({id:i+1,type:'possessed',hp:2,pos:i===s.pos?24:i}));
+  if(s.enemies.some(e=>e.pos===s.pos))s.enemies[9].pos=23;s.nextId=11;
+  assert.equal(E.validate(s),true);assert.equal(E.dispatch(s,{type:'SEAL'}),true);
+  assert.equal(s.bossSummoned,true);assert.ok(s.enemies.some(e=>e.type===kind));assert.equal(s.enemies.length,10);assert.equal(E.validate(s),true);
+ }
+});
+test('las ocho misiones admiten victoria cuando están completos sus requisitos',()=>{
+ for(let chapter=1;chapter<=8;chapter++){
+  const s=mk(chapter,10000+chapter);s.sealed=s.sealSpots.slice();s.seals=s.sealed.length;s.totalSeals=s.seals;
+  s.objectiveCount=E.SIDE_OBJECTIVES[chapter].target;s.bossKilled=true;s.pos=22;s.pendingChoice=null;
+  assert.equal(E.objectivesComplete(s),true);assert.equal(E.dispatch(s,{type:'ESCAPE'}),true);
+  assert.equal(s.won,true);assert.equal(E.validate(s),true);
+ }
+});
