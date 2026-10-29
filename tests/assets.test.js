@@ -10,7 +10,7 @@ test('all CSS and JS referenced in index exist and are local',()=>{
 });
 test('PWA precaches all runtime scripts and styles',()=>{
  const html=read('index.html'),sw=read('sw.js');for(const [,url] of html.matchAll(/(?:src|href)="((?:js|css)\/[a-z-]+\.(?:js|css))"/g))assert.ok(sw.includes(`'./${url}'`),`Uncached ${url}`);
- assert.match(sw,/dead-cabin-404-v1-7-0/);
+ assert.match(sw,/dead-cabin-404-v1-8-0/);
 });
 test('source contains no external font, tracking, or audio dependency',()=>{
  const html=read('index.html'),audio=read('js/audio.js');assert.doesNotMatch(html,/https?:\/\//);assert.doesNotMatch(audio,/fetch\(|\.mp3|\.ogg|\.wav/);

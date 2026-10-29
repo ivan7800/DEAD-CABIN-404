@@ -1,5 +1,13 @@
 # Registro de versiones
 
+## 1.8.0 — Expedientes cinematográficos (29/10/2026)
+- Ocho láminas de capítulo SVG originales y galería ilustrada.
+- Feedback visual de combate, rituales y daño, con botón ON/OFF y preferencia de movimiento reducido.
+- Corrección de softlock de jefes en capítulos 4 y 8 al completarse el cupo de enemigos.
+- Lanzadores Windows y Linux con servidor Python 3 en loopback.
+- Caché PWA v1-8-0, compilación autónoma y 38 tests Node.
+- Formato de guardados v4 sin cambios; pendientes Safari real y estudio de equilibrio con jugadores.
+
 ## 1.0.0 — Edición definitiva
 
 - Motor actualizado a estado versionado 4 con migración de partidas 0.3 y 0.1–0.2.
