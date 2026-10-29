@@ -1,0 +1,9 @@
+/* 2.0 tactical UI: improve contrast, focus and spatial readability. */
+#guardBtn.selected{background:linear-gradient(135deg,#344c3e,#21382c);border-color:#b8dea3;box-shadow:inset 0 0 20px #b8dea333,0 0 10px #b8dea326}
+#guardBtn:disabled{opacity:.5}
+.tile.revealed .room-label{background:#09100ee8;color:#fff1d5;letter-spacing:.02em;text-shadow:0 1px 3px #000}
+.tile.here{box-shadow:inset 0 0 17px #e3bc6644,0 0 0 2px #ffc57c}
+.tile:focus-visible{outline:3px solid #f9dda4;outline-offset:-4px;z-index:4}
+#tutorialBtn{border-color:#af9264}
+@media(max-width:650px){#tutorialBtn{padding:9px 10px}.tile .room-label{font-size:clamp(7px,1.7vw,9px)}}
+@media(prefers-reduced-motion:reduce){#guardBtn,.tile{transition:none!important}}

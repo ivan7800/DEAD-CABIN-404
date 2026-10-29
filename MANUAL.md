@@ -1,4 +1,4 @@
-# DEAD CABIN 404 — Reglamento oficial — edición 1.8
+# DEAD CABIN 404 — Reglamento oficial · edición 1.8 (reglas de campaña 1.0)
 
 **Título:** La noche del umbral · **Género:** juego de mesa de terror táctico en solitario · **Jugadores:** uno · **Idioma:** español · **Duración orientativa por expediente:** 25–60 minutos, según velocidad, decisiones y dificultad. Esta duración es una estimación de diseño, no un tiempo cronometrado con jugadores.
 
@@ -10,7 +10,7 @@ El juego es original; no usa personajes, diálogos, ilustraciones ni nombres pro
 
 ## 2. Preparación
 
-1. Abre `index.html` (carpeta completa) o `JUGAR-SIN-INSTALAR.html` (archivo único).
+1. Abre `JUGAR-SIN-INSTALAR.html` (archivo único) o utiliza `INICIAR-WINDOWS.bat` / `INICIAR-LINUX.sh` (requieren Python 3) para jugar al proyecto modular en un servidor local.
 2. En **Campaña**, elige un expediente desbloqueado; o en **Infinito**, inicia una partida independiente.
 3. Elige personaje y dificultad. Los ocho expedientes se desbloquean en orden; el modo infinito siempre está disponible.
 4. Comienzas en la casilla **23, Entrada**, con **3 puntos de acción** y las otras 24 estancias cubiertas.
@@ -137,7 +137,10 @@ Existe un importador de partidas v0.3 y v0.1–0.2 en el mismo origen, con conve
 
 **Nota de equilibrio:** las reglas están cubiertas por pruebas técnicas y simulaciones automáticas, pero no hay evidencia de una campaña completa probada manualmente por jugadores humanos, ni verificación física en Safari iOS. El modo Pesadilla y los capítulos finales están diseñados para ser difíciles. Antes de una publicación comercial debería hacerse una ronda de pruebas externas de balance y accesibilidad.
 
+## 1.8 · Ilustraciones, efectos y accesibilidad
 
-## Edición cinematográfica 1.8
+Cada expediente dispone de una ilustración cinematográfica propia que aparece en la introducción y el selector de capítulos. Los impactos, los fallos y los sellos producen avisos visuales breves **sin retrasar ni interceptar los controles**. El nuevo botón **EFECTOS ON/OFF** de la cabecera desactiva animaciones y guarda la preferencia localmente. Si tu dispositivo solicita movimiento reducido, las animaciones se desactivan automáticamente. El botón **SONIDO ON/OFF** es independiente y el sonido continúa desactivado al comenzar. La actualización no cambia los guardados v4 ni las condiciones de victoria.
 
-Ocho ilustraciones SVG originales aparecen al comenzar cada capítulo y en la galería. Los impactos, fallos y sellos muestran breves avisos que no bloquean controles. El botón **EFECTOS ON/OFF** desactiva animaciones y guarda la preferencia localmente. Para el proyecto modular, usa **INICIAR-WINDOWS.bat** o **INICIAR-LINUX.sh** (requieren Python 3) y el juego abrirá en un servidor privado `127.0.0.1`. El sonido sigue siendo opcional. No cambian reglas, victorias ni guardados.
+## Edición táctica 2.0 — Defender y golpes rituales
+
+**Defender** cuesta 1 punto de acción y activa una protección de un solo impacto: reduce una herida y una pérdida de cordura del primer golpe acertado de los enemigos en la fase nocturna. No puedes repetirla mientras siga activa y desaparece al comienzo del turno siguiente. El Guardián y el Corazón de la cabaña ejecutan golpes rituales reforzados cada tercera noche; consulta el aviso sobre las acciones cuando uno de estos jefes esté en el tablero. **Tutorial** abre una explicación en cuatro pasos y ofrece comenzar un entrenamiento que inicia una nueva partida en dificultad Historia. Guarda la partida actual antes de aceptarlo.

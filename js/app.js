@@ -3,7 +3,7 @@
 const E=globalThis.DeadCabinEngine,A=globalThis.DeadCabinArt,S=globalThis.DeadCabinAudio,CA=globalThis.DeadCabinChapterArt,F=globalThis.DeadCabinFeedback;
 if(!E||!A||!S||!CA||!F){document.body.textContent='Error: faltan módulos del juego. Comprueba que has extraído el ZIP completo.';return}
 const $=id=>document.getElementById(id), SAVE='dead-cabin-404-v4', OLD_SAVE='dead-cabin-404-v3', PROGRESS='dead-cabin-404-campaign-v3', LEGACY='dead-cabin-404-v1', RECORDS='dead-cabin-404-records-v4';
-let game,attackMode=null,unlocked=1,previousRevealed=[],previousCard='',lastModalFocus=null,toastTimer=null, records={games:0,wins:0,bestScore:0,bestTurn:0,achievements:[]};
+let training=false,trainingStage=0;let game,attackMode=null,unlocked=1,previousRevealed=[],previousCard='',lastModalFocus=null,toastTimer=null, records={games:0,wins:0,bestScore:0,bestTurn:0,achievements:[]};
 function escapeHtml(str){return String(str).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function format(n){return String(n).padStart(2,'0')}
 function getStorage(key){try{return localStorage.getItem(key)}catch{return null}}
@@ -36,16 +36,27 @@ function chapterIntro(){const c=E.currentChapter(game),isEndless=game.mode==='en
  <p>Tienes 3 PA por turno. En algunas habitaciones encontrarás encuentros que obligan a elegir una de dos consecuencias.</p>`,
  actions:[{label:'ENTRAR EN LA CABAÑA',primary:true,run:()=>showToast('La casa ya sabe que estás aquí.')},{label:'Ver reglamento',run:showRules}]})}
 
-function showRules(){showModal({kicker:'MANUAL COMPLETO · EDICIÓN 1.8',title:'Reglamento de la noche',content:`
+function showRules(){showModal({kicker:'MANUAL COMPLETO · EDICIÓN 2.0',title:'Reglamento de la noche',content:`
  <p>Juego de mesa táctico original para una persona, sin servidor. El motor usa un dado d6 reproducible y baraja de 24 cartas sin reposición hasta agotar el mazo.</p>
  <h3>1 · Misiones</h3><p>Revela el tablero de 5×5 entrando en losetas vecinas. Debes cerrar todas las grietas y resolver la <b>misión exclusiva</b> del capítulo (encontrar reliquias, reparar pararrayos, matar acechadores, purificar salas, recuperar señales de radio o vencer al jefe). Después regresa a la casilla 23 y pulsa Escapar. Cada capítulo tiene su propio límite de oscuridad.</p>
  <h3>2 · Tres puntos de acción</h3><ul><li><b>Mover:</b> pulsa habitación ortogonal adyacente, 1 PA; revela la sala.</li><li><b>Buscar:</b> 1 PA; una vez por habitación y sin enemigos dentro. Da cartuchos, botiquín, talismán, bengala, chatarra o cordura.</li><li><b>Investigar:</b> 1 PA en una sala con símbolo ◇, sin enemigos; completa objetivos especiales.</li><li><b>Hacha:</b> 1 PA; alcance 0–1, impacta con 4+ en un d6, hace 1 daño (+1 con 6).</li><li><b>Escopeta:</b> 1 PA +1 cartucho; alcance 0–2 en línea despejada y explorada, impacta con 3+, hace 2 daño (+1 con 6).</li><li><b>Sellar:</b> 1 PA sobre grieta ✥ sin enemigos; −1 cordura, −3 oscuridad.</li><li><b>Descansar:</b> 1 PA, +1 cordura. En capítulo 6 puede fallar.</li><li><b>Habilidad:</b> 1 PA, una vez por turno: explorar desde lejos, primeros auxilios o exorcismo.</li><li><b>Botiquín:</b> 1 PA, consume 1, +4 salud; <b>Talismán:</b> 1 PA, consume 1, +2 cordura y −2 oscuridad.</li><li><b>Bengala:</b> 1 PA, revela las cuatro salas contiguas, aturde enemigos cercanos y −1 oscuridad.</li><li><b>Barricada:</b> 1 PA +1 chatarra, frena al primer enemigo que entra en la sala.</li></ul>
- <h3>3 · Combate y monstruos</h3><p>Hay poseídos, acechadores (2 movimientos), abominaciones (2 de daño), espectros (atraviesan espacios revelados y atacan cordura), parásitos (aumentan oscuridad) y dos jefes. Un arma reforzada gasta automáticamente 3 chatarras al golpear para causar +1 daño. Todos los ataques con dado están anotados en la crónica.</p>
+ <p><b>Defender:</b> gasta 1 PA. Reduce en 1 el daño de vida y cordura del primer impacto de la fase del mal. Los jefes ejecutan golpes rituales de mayor daño cada tercera noche: anticipa el turno indicado por la crónica.</p><h3>3 · Combate y monstruos</h3><p>Hay poseídos, acechadores (2 movimientos), abominaciones (2 de daño), espectros (atraviesan espacios revelados y atacan cordura), parásitos (aumentan oscuridad) y dos jefes. Un arma reforzada gasta automáticamente 3 chatarras al golpear para causar +1 daño. Todos los ataques con dado están anotados en la crónica.</p>
  <h3>4 · Fase del mal</h3><p>Pulsa Fin de turno, aunque te queden PA. La oscuridad aumenta según la dificultad, se roba una carta, avanzan los efectos especiales, aparecen monstruos y cada enemigo actúa. Entonces recuperas 3 PA. En «Historia» la oscuridad sube más despacio; «Pesadilla» añade presión y precisión enemiga.</p>
  <h3>5 · Encuentros y campaña</h3><p>Cuatro habitaciones esconden decisiones narrativas con efectos reales. Hay ocho capítulos con misiones diferentes, tres supervivientes y tres dificultades. Cada victoria de campaña desbloquea el siguiente capítulo, con logros persistentes.</p>
  <h3>6 · Supervivencia infinita</h3><p>Las grietas reaparecen cuando sellas las cuatro iniciales; la dificultad crece. A partir del turno 12 puedes escapar por la Entrada y registrar tu puntuación, o seguir jugando hasta caer. La puntuación depende de exploración, objetivos, enemigos y supervivencia.</p>
  <h3>7 · Derrota, controles y guardado</h3><p>Pierdes al llegar a 0 salud, 0 cordura o al límite de oscuridad. WASD/flechas mueven; E finaliza; 1 busca; 2 descansa; 3 sella; 4 usa botiquín; Esc cancela selección. Los controles táctiles también funcionan. El guardado es local, automático tras cada acción; solo hay una partida activa por navegador y origen.</p>`,actions:[{label:'VOLVER AL JUEGO',primary:true}]})}
 
+function showTutorial(){
+ const steps=[
+  ['ANTES DE ENTRAR','Tienes 3 puntos de acción (PA) por turno. Cada movimiento ortogonal gasta 1 PA. Una habitación revelada puede contener recursos, grietas, enemigos o una decisión.'],
+  ['BUSCAR Y PREPARARSE','En una sala segura, pulsa BUSCAR para encontrar suministros. Si esperas un ataque, pulsa DEFENDER: gasta 1 PA y reduce el primer impacto de la fase nocturna.'],
+  ['COMBATIR','Selecciona HACHA o ESCOPETA y después pulsa una sala marcada en rojo. Cada golpe tira un dado d6; la escopeta requiere cartuchos. Los jefes cargan un ataque especial cada tercera noche.'],
+  ['GANAR Y SOBREVIVIR','Cumple el objetivo especial del capítulo, sella todas sus grietas y vuelve a la Entrada para ESCAPAR. La oscuridad crece cuando terminas tu turno.']
+ ];
+ function step(i){const [title,desc]=steps[i];showModal({kicker:`TUTORIAL INTERACTIVO · ${i+1}/${steps.length}`,title,content:`<p class="modal-callout">${desc}</p><p>Aprenderás los controles con una partida de entrenamiento en dificultad Historia. No se altera tu partida hasta que pulses <b>INICIAR ENTRENAMIENTO</b>.</p>`,actions:[...(i>0?[{label:'ANTERIOR',run:()=>step(i-1)}]:[]),...(i<steps.length-1?[{label:'SIGUIENTE',primary:true,run:()=>step(i+1)}]:[{label:'INICIAR ENTRENAMIENTO',primary:true,run:()=>{training=true;trainingStage=0;startNew(1,{survivor:'scout',difficulty:'story',mode:'campaign'});showToast('Entrenamiento: pulsa una casilla vecina para moverte.')} }]),{label:'CERRAR'}]})}
+ step(0)
+}
+function trainingHint(action){if(!training)return;const type=action.type;const stages=['MOVE','SEARCH','GUARD','END_TURN'];if(type===stages[trainingStage]){trainingStage++;const hints=['Ahora pulsa BUSCAR en una sala segura.','Prueba DEFENDER: consume 1 PA y amortigua el siguiente ataque.','Finaliza el turno para observar la fase del mal.','¡Entrenamiento completado! Sigue la misión o abre el reglamento.'];showToast(hints[Math.min(trainingStage-1,3)]);if(trainingStage>=4)training=false}}
 function showSetup(n=1,mode='campaign'){
  const isEndless=mode==='endless',prev=game||E.createGame(1),chapter=E.CHAPTERS[n-1];
  const survivorChoices=Object.entries(E.SURVIVORS).map(([id,x])=>`<option value="${id}" ${prev.survivor===id?'selected':''}>${escapeHtml(x.name)} — ${escapeHtml(x.role)}</option>`).join('');
@@ -66,6 +77,7 @@ function statusMessage(){if(game.ended)return game.won?'Sobreviviste a la noche.
  if(game.pendingChoice)return 'Un encuentro exige una decisión. Elige una de las dos opciones para continuar.';
  if(attackMode)return`Modo ${attackMode==='axe'?'hacha':'escopeta'}: selecciona una loseta roja con enemigo o pulsa el mismo botón para cancelar.`;
  if(game.ap===0)return'Sin puntos de acción. Termina tu turno.';
+ if(game.enemies.some(e=>(e.type==='boss'||e.type==='heart'))&&game.turn%3===0)return '¡ALERTA! El jefe prepara un golpe ritual. Usa DEFENDER antes de finalizar el turno.';
  const foes=game.enemies.filter(e=>e.pos===game.pos);if(foes.length)return`PELIGRO: ${foes.length} enemigo(s) en la misma habitación. No puedes buscar, investigar o sellar.`;
  if(game.objectiveSpots.includes(game.pos)&&!game.objectiveDone.includes(game.pos))return'Hay una pista ◇ en esta sala: pulsa INVESTIGAR.';
  if(game.sealSpots.includes(game.pos)&&!game.sealed.includes(game.pos))return'Una grieta palpita bajo tus pies. Puedes sellarla ahora.';
@@ -93,6 +105,7 @@ function renderVitals(){const c=E.currentChapter(game),limit=E.doomLimit(game),h
 function renderActions(){const can=game.ap>0&&!game.ended&&!game.pendingChoice,foesHere=game.enemies.some(e=>e.pos===game.pos),axeTargets=game.enemies.some(e=>E.dist(game.pos,e.pos)<=1),shotTargets=game.enemies.some(e=>E.hasShot(game,e.pos));
  $('axeBtn').disabled=!can||!axeTargets;$('shotBtn').disabled=!can||game.ammo<1||!shotTargets;
  $('axeBtn').classList.toggle('selected',attackMode==='axe');$('shotBtn').classList.toggle('selected',attackMode==='shotgun');$('axeBtn').setAttribute('aria-pressed',String(attackMode==='axe'));$('shotBtn').setAttribute('aria-pressed',String(attackMode==='shotgun'));
+ $('guardBtn').disabled=!can||game.guard===1; $('guardBtn').classList.toggle('selected',game.guard===1);$('guardBtn').setAttribute('aria-pressed',String(game.guard===1));
  $('searchBtn').disabled=!can||game.searched.includes(game.pos)||foesHere;
  $('restBtn').disabled=!can||game.sanity>=10;$('sealBtn').disabled=!can||!game.sealSpots.includes(game.pos)||game.sealed.includes(game.pos)||foesHere;
  $('investigateBtn').disabled=!can||!game.objectiveSpots.includes(game.pos)||game.objectiveDone.includes(game.pos)||foesHere;
@@ -123,7 +136,7 @@ function afterAction(type,before){persist();render();F.play(type,before,game);co
  else S.effect('defeat');registerEnd();showEnding()}
  else if(game.pendingChoice)maybeEncounter()}
 function act(action){const before={revealed:game.revealed.length,ended:game.ended,hp:game.hp,sanity:game.sanity},done=E.dispatch(game,action);
- if(!done){showToast('Acción no disponible en este momento.');return false}attackMode=null;afterAction(action.type,before);return true}
+ if(!done){showToast('Acción no disponible en este momento.');return false}trainingHint(action);attackMode=null;afterAction(action.type,before);return true}
 
 function boardClick(e){const tile=e.target.closest('[data-pos]');if(!tile)return;const i=Number(tile.dataset.pos);if(attackMode){const target=game.enemies.find(x=>x.pos===i);if(target){act({type:'ATTACK',id:target.id,weapon:attackMode})}return}act({type:'MOVE',to:i})}
 function setMode(mode){if(game.ended||game.pendingChoice||game.ap===0)return;attackMode=attackMode===mode?null:mode;renderBoard();renderActions();if(attackMode)showToast('Selecciona la loseta roja del enemigo para atacar.')}
@@ -143,8 +156,8 @@ function init(){let storedProgress=parseInt(getStorage(PROGRESS)||'1',10);unlock
  if(game.ended&&game.won)unlocked=Math.max(unlocked,Math.min(8,game.chapter+1));else unlocked=Math.max(unlocked,game.chapter)}
  setStorage(PROGRESS,String(unlocked));render();$('board').addEventListener('click',boardClick);
  $('axeBtn').onclick=()=>setMode('axe');$('shotBtn').onclick=()=>setMode('shotgun');
- [['searchBtn','SEARCH'],['restBtn','REST'],['sealBtn','SEAL'],['escapeBtn','ESCAPE'],['medkitBtn','HEAL'],['wardBtn','WARD'],['flareBtn','FLARE'],['barricadeBtn','BARRICADE'],['investigateBtn','INVESTIGATE'],['abilityBtn','ABILITY'],['endBtn','END_TURN']].forEach(([id,type])=>$(id).addEventListener('click',()=>act({type})));
- F.sync();$('fxBtn').onclick=()=>{F.toggle();showToast('Efectos visuales '+(F.enabled()?'activados.':'desactivados.'))};$('guideBtn').onclick=showRules;$('campaignBtn').onclick=showCampaign;$('endlessBtn').onclick=()=>showSetup(1,'endless');$('recordsBtn').onclick=showRecords;
+ [['guardBtn','GUARD'],['searchBtn','SEARCH'],['restBtn','REST'],['sealBtn','SEAL'],['escapeBtn','ESCAPE'],['medkitBtn','HEAL'],['wardBtn','WARD'],['flareBtn','FLARE'],['barricadeBtn','BARRICADE'],['investigateBtn','INVESTIGATE'],['abilityBtn','ABILITY'],['endBtn','END_TURN']].forEach(([id,type])=>$(id).addEventListener('click',()=>act({type})));
+ F.sync();$('fxBtn').onclick=()=>{F.toggle();showToast('Efectos visuales '+(F.enabled()?'activados.':'desactivados.'))};$('guideBtn').onclick=showRules;$('tutorialBtn').onclick=showTutorial;$('campaignBtn').onclick=showCampaign;$('endlessBtn').onclick=()=>showSetup(1,'endless');$('recordsBtn').onclick=showRecords;
  $('saveBtn').onclick=()=>showToast(persist()?'Partida guardada.':'No se ha podido guardar en este navegador.');
  $('loadBtn').onclick=()=>{let loaded=loadSaved();if(loaded){attackMode=null;previousRevealed=[];previousCard='';render();if(game.pendingChoice)maybeEncounter();else showToast('Partida restaurada.')}else showToast('No hay una partida guardada válida.')};
  $('newBtn').onclick=confirmNew;$('modalClose').onclick=closeModal;$('modal').addEventListener('click',ev=>{if(ev.target===$('modal'))closeModal()});
@@ -156,4 +169,3 @@ function init(){let storedProgress=parseInt(getStorage(PROGRESS)||'1',10);unlock
 function onKeyDown(e){if(e.key==='Tab'&&!$('modal').classList.contains('hidden')){const items=Array.from($('modal').querySelectorAll('button:not(:disabled):not([hidden]),select,textarea,input')).filter(x=>x.getClientRects().length>0);if(items.length){const first=items[0],last=items[items.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}}return}if(e.key==='Escape'){if(!$('modal').classList.contains('hidden'))closeModal();else if(attackMode){attackMode=null;renderBoard();renderActions()}return}if(!$('modal').classList.contains('hidden')||['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName))return;let shifts={ArrowUp:-5,w:-5,W:-5,ArrowDown:5,s:5,S:5,ArrowLeft:-1,a:-1,A:-1,ArrowRight:1,d:1,D:1};if(e.key in shifts){e.preventDefault();const n=game.pos+shifts[e.key];if(E.neighbors(game.pos).includes(n))act({type:'MOVE',to:n});return}let commands={e:'END_TURN',E:'END_TURN','1':'SEARCH','2':'REST','3':'SEAL','4':'HEAL'};if(commands[e.key]){e.preventDefault();act({type:commands[e.key]})}}
 init();
 })();
-

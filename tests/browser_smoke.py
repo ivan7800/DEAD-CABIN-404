@@ -6,7 +6,7 @@ p=Path(__file__).resolve().parents[1]
 source=(p/'index.html').read_text()
 source=re.sub(r'<link rel="stylesheet" href="css/[^"]+">','',source)
 source=re.sub(r'<script src="js/[^"]+" defer></script>','',source)
-source=source.replace('</head>','<style>'+ ''.join((p/'css'/name).read_text() for name in ['style.css','premium.css','cinematic.css','illustration.css','edition18.css']) +'</style></head>')
+source=source.replace('</head>','<style>'+ ''.join((p/'css'/name).read_text() for name in ['style.css','premium.css','cinematic.css','illustration.css','edition18.css','edition20.css']) +'</style></head>')
 scripts=[(p/'js'/name).read_text() for name in ['engine.js','art.js','premium-art.js','chapter-art.js','audio.js','feedback.js','app.js','cinematic.js']]
 def boot(page,storage=None):
     page.set_content(source,wait_until='load')
@@ -21,6 +21,7 @@ with sync_playwright() as playwright:
     assert page.locator('#modalTitle').inner_text()=='El libro que respira'
     assert page.locator('.chapter-illustration svg.chapter-art').count()==1
     assert page.locator('#fxBtn').get_attribute('aria-pressed')=='true'
+    page.screenshot(path=str(p/'tests'/'chapter-intro.png'),full_page=True)
     page.get_by_role('button',name='ENTRAR EN LA CABAÑA').click()
     assert page.locator('.tile').count()==25
     assert page.locator('.miniature-art').count()==1
@@ -28,7 +29,31 @@ with sync_playwright() as playwright:
     assert page.locator('.tile.revealed').count()==1
     assert page.locator('#apText').inner_text()=='3 / 3'
     page.locator('#toast').wait_for(state='hidden',timeout=6000)
+    page.locator('#fxBtn').click()
+    assert page.locator('#fxBtn').get_attribute('aria-pressed')=='false'
+    assert page.evaluate('document.documentElement.dataset.effects')=='off'
+    page.locator('#fxBtn').click()
+    assert page.locator('#fxBtn').get_attribute('aria-pressed')=='true'
+    # Guided tutorial: every step and new game can be reached using real buttons.
+    page.locator('#tutorialBtn').click()
+    for i in range(3):
+        assert f'{i+1}/4' in page.locator('#modalKicker').inner_text()
+        page.get_by_role('button',name='SIGUIENTE').click()
+    page.get_by_role('button',name='INICIAR ENTRENAMIENTO').click()
+    assert page.evaluate('window.__deadCabin.state.difficulty')=='story'
+    page.get_by_role('button',name='ENTRAR EN LA CABAÑA').click()
+    assert page.locator('#guardBtn').is_enabled()
+    page.locator('#guardBtn').click()
+    assert page.evaluate('window.__deadCabin.state.guard')==1
+    assert page.locator('#guardBtn').is_disabled()
+    page.locator('#endBtn').click()
+    assert page.evaluate('window.__deadCabin.state.guard')==0
     page.screenshot(path=str(p/'tests'/'desktop.png'),full_page=True)
+    # New game allows the rest of the existing regression route.
+    page.locator('#campaignBtn').click()
+    page.locator('.chapter-card[data-chapter="1"]').click()
+    page.get_by_role('button',name='COMENZAR PARTIDA').click()
+    page.get_by_role('button',name='ENTRAR EN LA CABAÑA').click()
     # Uso de interfaz y movimiento
     page.locator('[data-pos="17"]').click()
     assert page.locator('#apText').inner_text()=='2 / 3'
@@ -107,6 +132,8 @@ with sync_playwright() as playwright:
     assert page.locator('#soundBtn').get_attribute('aria-pressed')=='true'
     page.locator('#soundBtn').click()
     assert page.locator('#soundBtn').get_attribute('aria-pressed')=='false'
+    # Chapter 8 key art must render its own illustration
+    assert 'capítulo 8' in page.evaluate("window.DeadCabinChapterArt.render(8)")
     # Responsive y experiencia táctil
     for width in [390,320]:
         mobile=browser.new_page(viewport={'width':width,'height':844},device_scale_factor=1,is_mobile=True,has_touch=True)
