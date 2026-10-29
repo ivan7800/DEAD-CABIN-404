@@ -8,15 +8,18 @@
   <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="assets/icon-180.png">
   <meta name="description" content="DEAD CABIN 404: juego de mesa de terror táctico para una persona. Explora, sobrevive y sella las grietas de la cabaña.">
-  <title>DEAD CABIN 404 | Edición Premium 1.7</title>
+  <title>DEAD CABIN 404 | Edición Cinematográfica 1.8</title>
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/premium.css">
   <link rel="stylesheet" href="css/cinematic.css">
   <link rel="stylesheet" href="css/illustration.css">
+  <link rel="stylesheet" href="css/edition18.css">
   <script src="js/engine.js" defer></script>
   <script src="js/art.js" defer></script>
   <script src="js/premium-art.js" defer></script>
+  <script src="js/chapter-art.js" defer></script>
   <script src="js/audio.js" defer></script>
+  <script src="js/feedback.js" defer></script>
   <script src="js/app.js" defer></script>
   <script src="js/cinematic.js" defer></script>
 </head>
@@ -25,8 +28,8 @@
 <header class="site-header">
   <div class="header-art" aria-hidden="true"><div class="moon"></div><div class="horizon"></div><div class="cabin-roof"></div><div class="cabin-body"></div><div class="cabin-window"></div></div>
   <div class="header-inner">
-    <div class="brand"><span class="brand-emblem" aria-hidden="true">✥</span><div><span class="overline">AN OCCULT TABLETOP NIGHTMARE · 1984</span><h1>DEAD <span>CABIN</span> 404</h1><p>LA NOCHE DEL UMBRAL <span class="header-divider">◆</span> EDICIÓN PREMIUM 1.7</p></div></div>
-    <div class="header-tools"><button id="soundBtn" class="tool-btn" type="button" aria-pressed="false" title="Activar o desactivar audio">♫ <span>SONIDO OFF</span></button><button id="guideBtn" class="tool-btn" type="button">ⓘ <span>REGLAMENTO</span></button><button id="campaignBtn" class="tool-btn accent" type="button">◈ <span>CAMPAÑA</span></button><button id="endlessBtn" class="tool-btn" type="button">∞ <span>INFINITO</span></button><button id="recordsBtn" class="tool-btn" type="button">✧ <span>LOGROS</span></button></div>
+    <div class="brand"><span class="brand-emblem" aria-hidden="true">✥</span><div><span class="overline">AN OCCULT TABLETOP NIGHTMARE · 1984</span><h1>DEAD <span>CABIN</span> 404</h1><p>LA NOCHE DEL UMBRAL <span class="header-divider">◆</span> EDICIÓN CINEMATOGRÁFICA 1.8</p></div></div>
+    <div class="header-tools"><button id="fxBtn" class="tool-btn" type="button" aria-pressed="true" title="Activar o desactivar animaciones y efectos">✦ <span>EFECTOS ON</span></button><button id="soundBtn" class="tool-btn" type="button" aria-pressed="false" title="Activar o desactivar audio">♫ <span>SONIDO OFF</span></button><button id="guideBtn" class="tool-btn" type="button">ⓘ <span>REGLAMENTO</span></button><button id="campaignBtn" class="tool-btn accent" type="button">◈ <span>CAMPAÑA</span></button><button id="endlessBtn" class="tool-btn" type="button">∞ <span>INFINITO</span></button><button id="recordsBtn" class="tool-btn" type="button">✧ <span>LOGROS</span></button></div>
   </div>
 </header>
 <main class="game-layout">
@@ -59,7 +62,8 @@
     <section class="sheet card-section"><div class="section-head"><h3>MAZO DEL MAL <span class="red-mark">// 04</span></h3><span id="deckCount">18 CARTAS</span></div><div class="card-display"><div class="deck-back" aria-label="Mazo de acontecimientos"><div class="deck-ring">✥<small>404</small></div><span>NO HAY SALIDA</span></div><div class="event-card" id="eventCard" aria-live="polite"><div class="card-label">ÚLTIMO ACONTECIMIENTO</div><div id="eventArt" class="card-art" aria-hidden="true"></div><h4 id="eventTitle">La casa espera</h4><p id="eventDescription">Cada fin de turno revela una carta. Nunca sabes qué escucha al otro lado.</p><div class="card-footer"><span>DEAD CABIN 404</span><span id="eventCode">I · 00</span></div></div></div></section>
   </aside>
 </main>
-<footer class="site-footer"><span>DEAD CABIN 404 <i>✥</i> UNA NOCHE NO ES SUFICIENTE</span><span>V1.7 · MINIATURAS 2.5D Y ARTE ORIGINAL · JUEGO LOCAL · SIN SEGUIMIENTO</span></footer>
+<footer class="site-footer"><span>DEAD CABIN 404 <i>✥</i> UNA NOCHE NO ES SUFICIENTE</span><span>V1.8 · MINIATURAS 2.5D Y ARTE ORIGINAL · JUEGO LOCAL · SIN SEGUIMIENTO</span></footer>
+<div id="fxStage" aria-hidden="true"></div>
 <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
 <div id="modal" class="modal-backdrop hidden" role="presentation"><section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><button id="modalClose" class="modal-close" type="button" aria-label="Cerrar diálogo">×</button><div class="modal-kicker" id="modalKicker">ARCHIVO 404</div><h2 id="modalTitle">Reglamento</h2><div id="modalContent" class="modal-content"></div><div id="modalActions" class="modal-actions"></div></section></div>
 <script>if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) { window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js").catch(() => {})); }</script>

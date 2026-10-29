@@ -1,0 +1,41 @@
+/* DEAD CABIN 404 · Edición cinematográfica 1.8 */
+:root{--gold:#e8c68b;--red:#d86658}
+.chapter-illustration{height:clamp(160px,24vw,260px);border:1px solid #856a4c;background:#0a1010;overflow:hidden;box-shadow:inset 0 0 40px #000,0 10px 25px #0008;margin:3px 0 18px}
+.chapter-illustration .chapter-art{display:block;width:100%;height:100%;filter:contrast(1.13) saturate(.92)}
+.chapter-list .chapter-card{position:relative;isolation:isolate;transition:transform .15s,border-color .15s,background .15s}
+.chapter-list .chapter-card:not(:disabled):hover{transform:translateY(-2px);box-shadow:0 7px 18px #0009;border-color:#d6b784}
+.chapter-list .chapter-card:not(:disabled):focus-visible{outline:3px solid #f1d89d;outline-offset:3px}
+.chapter-bar{position:relative}
+.chapter-bar:before{content:"";position:absolute;inset:-15px -8px -5px;pointer-events:none;background:radial-gradient(circle at 12% 10%,#95634317,transparent 55%)}
+.chapter-bar h2{filter:drop-shadow(0 3px 4px #000)}
+.cinematic-room{border-color:#ae855c;box-shadow:0 16px 35px #0009,inset 0 0 0 3px #171714}
+.cinematic-room-visual{background:radial-gradient(circle,#6f5740,#171e1b 70%)}
+.cinematic-room-visual .room-art{filter:brightness(1.2) contrast(1.17) saturate(1.1)}
+.cinematic-room-caption{background:linear-gradient(115deg,#27241db8,#101716 88%)}
+.tile.revealed{transform:translateZ(0)}
+.tile.revealed .room-weathering{filter:drop-shadow(0 1px 1px #0a0908)}
+.tile.revealed.here .miniature-art{filter:drop-shadow(0 0 4px #f7ce89)}
+.token.boss .miniature-art{filter:drop-shadow(0 0 8px #da544a)}
+#fxStage{position:fixed;inset:0;z-index:100;pointer-events:none;display:grid;place-items:center;overflow:hidden}
+.fx-banner{padding:22px 34px;max-width:min(90vw,650px);text-align:center;border:2px solid #d4af7c;border-radius:4px;background:linear-gradient(150deg,#302422ee,#0c1414f5);color:#f5dcc0;box-shadow:0 0 90px #060909e8,0 0 28px #bb825c66;letter-spacing:.14em;font:900 clamp(20px,3vw,36px)/1.2 Georgia,serif;text-shadow:0 2px 8px #000;animation:fxArrival .75s ease-out both}
+.fx-banner.impact{border-color:#db5d57;color:#ffd4c9;box-shadow:0 0 90px #b82f2a48,0 0 35px #000}
+.fx-banner.miss{border-color:#7a8b80;color:#b6c4b9}
+.fx-banner.ritual{border-color:#d6b876;color:#f5ddb3}
+.fx-banner.danger{border-color:#a7454d;color:#f4afb7}
+@keyframes fxArrival{0%{opacity:0;transform:scale(1.17) translateY(9px);filter:blur(8px)}20%{opacity:1;filter:blur(0)}75%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(.98) translateY(-7px)}}
+#fxBtn{border-color:#887356}
+#fxBtn[aria-pressed="false"]{color:#a6a39b}
+html[data-effects="off"] .cinematic-particle,html[data-effects="off"] .cinematic-impact{display:none}
+html[data-effects="off"] .tile .miniature-art,html[data-effects="off"] .event-card:after{animation:none!important}
+html[data-effects="off"] *{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}
+@media(max-width:800px){.chapter-illustration{height:180px}.fx-banner{padding:16px 22px}}
+@media(max-width:390px){.header-tools{gap:5px}.tool-btn{padding:8px}.chapter-illustration{height:140px}}
+@media(prefers-reduced-motion:reduce){#fxStage{display:none!important}.chapter-list .chapter-card{transition:none}}
+
+
+/* Chapter selection gallery — bespoke miniature key art for all eight scenarios. */
+.chapter-list .chapter-card{min-height:112px;overflow:hidden;padding-left:142px;position:relative}
+.chapter-card .chapter-thumb{position:absolute;inset:8px auto 8px 8px;width:121px;overflow:hidden;border:1px solid #806247;background:#0b0e0e;box-shadow:inset 0 0 15px #000}
+.chapter-thumb .chapter-art{display:block;width:100%;height:100%;object-fit:cover;filter:saturate(.85) contrast(1.12)}
+.chapter-card:disabled .chapter-thumb{filter:grayscale(.85);opacity:.58}
+@media(max-width:480px){.chapter-list .chapter-card{padding-left:106px;min-height:95px}.chapter-card .chapter-thumb{width:88px}}

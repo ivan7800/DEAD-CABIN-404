@@ -1,7 +1,7 @@
 /* DEAD CABIN 404 · Controlador de interfaz: motor → DOM (sin dependencias). */
 (function(){'use strict';
-const E=globalThis.DeadCabinEngine,A=globalThis.DeadCabinArt,S=globalThis.DeadCabinAudio;
-if(!E||!A||!S){document.body.textContent='Error: faltan módulos del juego. Comprueba que has extraído el ZIP completo.';return}
+const E=globalThis.DeadCabinEngine,A=globalThis.DeadCabinArt,S=globalThis.DeadCabinAudio,CA=globalThis.DeadCabinChapterArt,F=globalThis.DeadCabinFeedback;
+if(!E||!A||!S||!CA||!F){document.body.textContent='Error: faltan módulos del juego. Comprueba que has extraído el ZIP completo.';return}
 const $=id=>document.getElementById(id), SAVE='dead-cabin-404-v4', OLD_SAVE='dead-cabin-404-v3', PROGRESS='dead-cabin-404-campaign-v3', LEGACY='dead-cabin-404-v1', RECORDS='dead-cabin-404-records-v4';
 let game,attackMode=null,unlocked=1,previousRevealed=[],previousCard='',lastModalFocus=null,toastTimer=null, records={games:0,wins:0,bestScore:0,bestTurn:0,achievements:[]};
 function escapeHtml(str){return String(str).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
@@ -30,13 +30,13 @@ function closeModal(force=false){if($('modal').dataset.locked==='true'&&!force)r
 
 function chapterIntro(){const c=E.currentChapter(game),isEndless=game.mode==='endless',o=E.currentObjective(game);
  showModal({kicker:isEndless?'SUPERVIVENCIA INFINITA':`EXPEDIENTE ${format(game.chapter)} / 08`,title:isEndless?'Noche sin amanecer':c.name,
- content:`<p class="modal-callout">${escapeHtml(isEndless?'La cabaña no termina. Resiste tantas noches como puedas; a partir del turno 12 podrás regresar a la Entrada y evacuar con tu puntuación.':c.description)}</p>
+ content:`<div class="chapter-illustration">${CA.render(isEndless?8:game.chapter)}</div><p class="modal-callout">${escapeHtml(isEndless?'La cabaña no termina. Resiste tantas noches como puedas; a partir del turno 12 podrás regresar a la Entrada y evacuar con tu puntuación.':c.description)}</p>
  <p><b>${escapeHtml(E.SURVIVORS[game.survivor].name)}</b> · ${escapeHtml(E.SURVIVORS[game.survivor].role)} · Dificultad ${escapeHtml(E.DIFFICULTIES[game.difficulty].name)}.</p>
  ${isEndless?'<p>Cierra grietas para frenar la oscuridad. No hay un turno final obligatorio.</p>':`<p><b>Objetivo de misión:</b> ${c.seals} grietas y <b>${escapeHtml(o.description)}</b>. Después, regresa a la Entrada.</p>`}
  <p>Tienes 3 PA por turno. En algunas habitaciones encontrarás encuentros que obligan a elegir una de dos consecuencias.</p>`,
  actions:[{label:'ENTRAR EN LA CABAÑA',primary:true,run:()=>showToast('La casa ya sabe que estás aquí.')},{label:'Ver reglamento',run:showRules}]})}
 
-function showRules(){showModal({kicker:'MANUAL COMPLETO · EDICIÓN 1.0',title:'Reglamento de la noche',content:`
+function showRules(){showModal({kicker:'MANUAL COMPLETO · EDICIÓN 1.8',title:'Reglamento de la noche',content:`
  <p>Juego de mesa táctico original para una persona, sin servidor. El motor usa un dado d6 reproducible y baraja de 24 cartas sin reposición hasta agotar el mazo.</p>
  <h3>1 · Misiones</h3><p>Revela el tablero de 5×5 entrando en losetas vecinas. Debes cerrar todas las grietas y resolver la <b>misión exclusiva</b> del capítulo (encontrar reliquias, reparar pararrayos, matar acechadores, purificar salas, recuperar señales de radio o vencer al jefe). Después regresa a la casilla 23 y pulsa Escapar. Cada capítulo tiene su propio límite de oscuridad.</p>
  <h3>2 · Tres puntos de acción</h3><ul><li><b>Mover:</b> pulsa habitación ortogonal adyacente, 1 PA; revela la sala.</li><li><b>Buscar:</b> 1 PA; una vez por habitación y sin enemigos dentro. Da cartuchos, botiquín, talismán, bengala, chatarra o cordura.</li><li><b>Investigar:</b> 1 PA en una sala con símbolo ◇, sin enemigos; completa objetivos especiales.</li><li><b>Hacha:</b> 1 PA; alcance 0–1, impacta con 4+ en un d6, hace 1 daño (+1 con 6).</li><li><b>Escopeta:</b> 1 PA +1 cartucho; alcance 0–2 en línea despejada y explorada, impacta con 3+, hace 2 daño (+1 con 6).</li><li><b>Sellar:</b> 1 PA sobre grieta ✥ sin enemigos; −1 cordura, −3 oscuridad.</li><li><b>Descansar:</b> 1 PA, +1 cordura. En capítulo 6 puede fallar.</li><li><b>Habilidad:</b> 1 PA, una vez por turno: explorar desde lejos, primeros auxilios o exorcismo.</li><li><b>Botiquín:</b> 1 PA, consume 1, +4 salud; <b>Talismán:</b> 1 PA, consume 1, +2 cordura y −2 oscuridad.</li><li><b>Bengala:</b> 1 PA, revela las cuatro salas contiguas, aturde enemigos cercanos y −1 oscuridad.</li><li><b>Barricada:</b> 1 PA +1 chatarra, frena al primer enemigo que entra en la sala.</li></ul>
@@ -54,7 +54,7 @@ function showSetup(n=1,mode='campaign'){
  content:`<p>Selecciona superviviente y dificultad. <b>Se sustituirá la partida activa</b>, pero conservarás capítulos, récords y logros.</p><div class="setup-field"><label for="survivorSelect">SUPERVIVIENTE</label><select id="survivorSelect">${survivorChoices}</select></div><div class="setup-field"><label for="difficultySelect">DIFICULTAD</label><select id="difficultySelect">${difficultyChoices}</select></div><p class="modal-callout">${escapeHtml(isEndless?'Sin final forzoso: puedes escapar desde el turno 12.':chapter.description)}</p>`,
  actions:[{label:'COMENZAR PARTIDA',primary:true,run:()=>{let survivor=$('survivorSelect').value,difficulty=$('difficultySelect').value;startNew(n,{survivor,difficulty,mode})}},{label:'CANCELAR'}]})}
 function showCampaign(){let html='<p>Ocho expedientes conectados, cada uno con objetivo secundario propio. Las victorias desbloquean nuevos capítulos.</p><div class="chapter-list">';
- for(const c of E.CHAPTERS){const locked=c.id>unlocked;html+=`<button type="button" class="chapter-card${c.id===game.chapter&&game.mode==='campaign'?' current':''}" data-chapter="${c.id}" ${locked?'disabled':''}><small>CAPÍTULO ${format(c.id)} ${locked?'· BLOQUEADO':c.id===game.chapter&&game.mode==='campaign'?'· ACTUAL':'· DISPONIBLE'}</small><strong>${escapeHtml(c.name)}</strong><small>${escapeHtml(E.SIDE_OBJECTIVES[c.id].name)}</small></button>`}
+ for(const c of E.CHAPTERS){const locked=c.id>unlocked;html+=`<button type="button" class="chapter-card${c.id===game.chapter&&game.mode==='campaign'?' current':''}" data-chapter="${c.id}" ${locked?'disabled':''}><span class="chapter-thumb" aria-hidden="true">${CA.render(c.id)}</span><small>CAPÍTULO ${format(c.id)} ${locked?'· BLOQUEADO':c.id===game.chapter&&game.mode==='campaign'?'· ACTUAL':'· DISPONIBLE'}</small><strong>${escapeHtml(c.name)}</strong><small>${escapeHtml(E.SIDE_OBJECTIVES[c.id].name)}</small></button>`}
  html+='</div><p class="modal-callout">Elige un capítulo para configurar una nueva partida. Los capítulos y los logros permanecen guardados localmente.</p>';
  showModal({kicker:'EL LIBRO DE LOS OCHO UMBRALES',title:'Seleccionar capítulo',content:html,actions:[{label:'VOLVER AL JUEGO',primary:true}]});
  $('modalContent').querySelectorAll('[data-chapter]').forEach(b=>b.addEventListener('click',()=>{const n=Number(b.dataset.chapter);if(n<=unlocked)showSetup(n)}))}
@@ -116,19 +116,19 @@ function render(){if(!E.validate(game)){showToast('Error: estado de partida inv�
 function maybeEncounter(){if(!game.pendingChoice||game.ended)return;const scene=E.ALL_ENCOUNTERS.find(x=>x.id===game.pendingChoice);if(!scene)return;
  showModal({kicker:'ENCUENTRO · DECISIÓN IRREVERSIBLE',title:scene.name,lock:true,content:`<p class="modal-callout">${escapeHtml(scene.text)}</p><p>Tu elección modificará los recursos o los peligros de esta partida.</p>`,
  actions:scene.options.map((x,i)=>({label:x.label+' · '+x.description,primary:i===0,run:()=>act({type:'CHOOSE',option:i})}))})}
-function afterAction(type,before){persist();render();const result=game.lastRoll;
+function afterAction(type,before){persist();render();F.play(type,before,game);const result=game.lastRoll;
  switch(type){case 'ATTACK':S.effect(result&&result.hit?'hit':'roll');break;case 'MOVE':S.effect(game.revealed.length>before.revealed?'explore':'move');break;
  case 'END_TURN':S.effect('event');break;case 'SEAL':S.effect('seal');break;case 'SEARCH':case 'INVESTIGATE':case 'ABILITY':case 'HEAL':case 'WARD':case 'FLARE':S.effect('loot');break;}
  if(game.ended&&!before.ended){if(game.won&&game.mode==='campaign'){unlocked=Math.max(unlocked,Math.min(8,game.chapter+1));setStorage(PROGRESS,String(unlocked));S.effect('victory')}
  else S.effect('defeat');registerEnd();showEnding()}
  else if(game.pendingChoice)maybeEncounter()}
-function act(action){const before={revealed:game.revealed.length,ended:game.ended},done=E.dispatch(game,action);
+function act(action){const before={revealed:game.revealed.length,ended:game.ended,hp:game.hp,sanity:game.sanity},done=E.dispatch(game,action);
  if(!done){showToast('Acción no disponible en este momento.');return false}attackMode=null;afterAction(action.type,before);return true}
 
 function boardClick(e){const tile=e.target.closest('[data-pos]');if(!tile)return;const i=Number(tile.dataset.pos);if(attackMode){const target=game.enemies.find(x=>x.pos===i);if(target){act({type:'ATTACK',id:target.id,weapon:attackMode})}return}act({type:'MOVE',to:i})}
 function setMode(mode){if(game.ended||game.pendingChoice||game.ap===0)return;attackMode=attackMode===mode?null:mode;renderBoard();renderActions();if(attackMode)showToast('Selecciona la loseta roja del enemigo para atacar.')}
 function showEnding(){const win=game.won,c=E.currentChapter(game),isEndless=game.mode==='endless';
- let content=`<div class="game-over-mark ${win?'win':''}">${win?'✧':'✥'}</div><p class="modal-callout">${escapeHtml(game.lastAction)}</p>
+ let content=`<div class="chapter-illustration">${CA.render(game.chapter)}</div><div class="game-over-mark ${win?'win':''}">${win?'✧':'✥'}</div><p class="modal-callout">${escapeHtml(game.lastAction)}</p>
  <p>Turnos: <b>${game.turn}</b> · Grietas: <b>${game.totalSeals}</b> · Enemigos derrotados: <b>${game.kills}</b> · Decisiones: <b>${game.encounterChoices.length}</b></p>
  <p class="final-score">PUNTUACIÓN FINAL: <b>${game.score.toLocaleString('es-ES')}</b></p>
  ${win&&!isEndless&&game.chapter<8?'<p>Se ha desbloqueado el siguiente capítulo.</p>':''}${win&&!isEndless&&game.chapter===8?'<p>Has completado los ocho expedientes. El archivo sigue abierto para nuevas dificultades y personajes.</p>':''}`;
@@ -144,7 +144,7 @@ function init(){let storedProgress=parseInt(getStorage(PROGRESS)||'1',10);unlock
  setStorage(PROGRESS,String(unlocked));render();$('board').addEventListener('click',boardClick);
  $('axeBtn').onclick=()=>setMode('axe');$('shotBtn').onclick=()=>setMode('shotgun');
  [['searchBtn','SEARCH'],['restBtn','REST'],['sealBtn','SEAL'],['escapeBtn','ESCAPE'],['medkitBtn','HEAL'],['wardBtn','WARD'],['flareBtn','FLARE'],['barricadeBtn','BARRICADE'],['investigateBtn','INVESTIGATE'],['abilityBtn','ABILITY'],['endBtn','END_TURN']].forEach(([id,type])=>$(id).addEventListener('click',()=>act({type})));
- $('guideBtn').onclick=showRules;$('campaignBtn').onclick=showCampaign;$('endlessBtn').onclick=()=>showSetup(1,'endless');$('recordsBtn').onclick=showRecords;
+ F.sync();$('fxBtn').onclick=()=>{F.toggle();showToast('Efectos visuales '+(F.enabled()?'activados.':'desactivados.'))};$('guideBtn').onclick=showRules;$('campaignBtn').onclick=showCampaign;$('endlessBtn').onclick=()=>showSetup(1,'endless');$('recordsBtn').onclick=showRecords;
  $('saveBtn').onclick=()=>showToast(persist()?'Partida guardada.':'No se ha podido guardar en este navegador.');
  $('loadBtn').onclick=()=>{let loaded=loadSaved();if(loaded){attackMode=null;previousRevealed=[];previousCard='';render();if(game.pendingChoice)maybeEncounter();else showToast('Partida restaurada.')}else showToast('No hay una partida guardada válida.')};
  $('newBtn').onclick=confirmNew;$('modalClose').onclick=closeModal;$('modal').addEventListener('click',ev=>{if(ev.target===$('modal'))closeModal()});
@@ -156,3 +156,4 @@ function init(){let storedProgress=parseInt(getStorage(PROGRESS)||'1',10);unlock
 function onKeyDown(e){if(e.key==='Tab'&&!$('modal').classList.contains('hidden')){const items=Array.from($('modal').querySelectorAll('button:not(:disabled):not([hidden]),select,textarea,input')).filter(x=>x.getClientRects().length>0);if(items.length){const first=items[0],last=items[items.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}}return}if(e.key==='Escape'){if(!$('modal').classList.contains('hidden'))closeModal();else if(attackMode){attackMode=null;renderBoard();renderActions()}return}if(!$('modal').classList.contains('hidden')||['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName))return;let shifts={ArrowUp:-5,w:-5,W:-5,ArrowDown:5,s:5,S:5,ArrowLeft:-1,a:-1,A:-1,ArrowRight:1,d:1,D:1};if(e.key in shifts){e.preventDefault();const n=game.pos+shifts[e.key];if(E.neighbors(game.pos).includes(n))act({type:'MOVE',to:n});return}let commands={e:'END_TURN',E:'END_TURN','1':'SEARCH','2':'REST','3':'SEAL','4':'HEAL'};if(commands[e.key]){e.preventDefault();act({type:commands[e.key]})}}
 init();
 })();
+

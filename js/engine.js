@@ -22,7 +22,7 @@ const ENEMY_TYPES={
  boss:{label:'El Guardián',symbol:'◆',hp:8,steps:1,damage:2,hit:3,description:'Jefe de ocho vidas; con cuatro o menos entra en frenesí.'},
  wraith:{label:'Espectro',symbol:'◈',hp:3,steps:1,damage:0,hit:4,mind:2,description:'Atraviesa cualquier pared y roba cordura.'},
  leech:{label:'Parásito',symbol:'✺',hp:1,steps:1,damage:1,hit:5,doom:2,description:'Parásito: ataque débil, pero acelera la oscuridad.'},
- heart:{label:'Corazón de la casa',symbol:'♥',hp:9,steps:1,damage:1,hit:4,mind:1,description:'Jefe final de 12 vidas; hiere cuerpo y mente.'}
+ heart:{label:'Corazón de la casa',symbol:'♥',hp:9,steps:1,damage:1,hit:4,mind:1,description:'Jefe final de 9 vidas; hiere cuerpo y mente.'}
 };
 const CARDS=[
  {id:'steps',name:'Pasos sobre el techo',flavor:'Algo arrastra muebles donde no existe un piso superior.',type:'spawn',value:1,art:'claw'},
@@ -136,7 +136,12 @@ function damage(s,n,source){s.hp=Math.max(0,s.hp-n);addLog(s,`${source}: −${n}
 function hurtMind(s,n,source){s.sanity=Math.max(0,s.sanity-n);addLog(s,`${source}: −${n} cordura.`,'danger')}
 function finish(s,won,msg){if(s.ended)return;s.ended=true;s.won=won;s.ap=0;s.pendingChoice=null;addLog(s,msg,won?'victory':'danger');s.lastAction=msg;s.score+=Math.max(0,Math.floor((s.hp+s.sanity)*4+(s.mode==='endless'?s.turn*6:150-s.doom*2)))}
 function check(s){if(s.ended)return;if(s.hp<=0)finish(s,false,'DERROTA · Tus heridas te vencen.');else if(s.sanity<=0)finish(s,false,'DERROTA · El bosque se instala en tu mente.');else if(s.doom>=doomLimit(s))finish(s,false,'DERROTA · La oscuridad devora el último refugio.')}
-function spawn(s,type,preferred){if(s.enemies.length>=10)return false;const valid=s.revealed.filter(i=>i!==s.pos&&dist(i,s.pos)>=2),less=s.revealed.filter(i=>i!==s.pos);
+function spawn(s,type,preferred){if(s.enemies.length>=10){
+  if(type!=='boss'&&type!=='heart')return false;
+  const victim=s.enemies.findIndex(e=>e.type!=='boss'&&e.type!=='heart');
+  if(victim<0)return false;
+  s.enemies.splice(victim,1);addLog(s,'La presencia del jefe consume a una criatura menor.','danger');
+ }const valid=s.revealed.filter(i=>i!==s.pos&&dist(i,s.pos)>=2),less=s.revealed.filter(i=>i!==s.pos);
  const spot=(Number.isInteger(preferred)&&s.revealed.includes(preferred)&&preferred!==s.pos)?preferred:(valid.length?pick(s,valid):less.length?pick(s,less):s.pos);
  const e={id:s.nextId++,type,pos:spot,hp:ENEMY_TYPES[type].hp};s.enemies.push(e);addLog(s,`${ENEMY_TYPES[type].label} aparece en ${ROOM_NAMES[spot]}.`,'danger');return true}
 function triggerEncounter(s,i){if(!s.encounterSpots.includes(i)||s.encounterSeen.includes(i)||s.ended)return;
@@ -196,8 +201,8 @@ function rest(s){if(!canUse(s)||s.sanity===MAX_SANITY)return false;spend(s);
 function seal(s){if(!canUse(s)||!s.sealSpots.includes(s.pos)||s.sealed.includes(s.pos)||s.enemies.some(e=>e.pos===s.pos))return false;
  spend(s);s.sealed.push(s.pos);s.seals++;s.totalSeals++;s.sanity=Math.max(0,s.sanity-1);s.doom=Math.max(0,s.doom-3);s.score+=55;addLog(s,`Sello cerrado (${s.seals}/${s.sealSpots.length}). −1 cordura, −3 oscuridad.`,'story');s.lastAction='Ritual de cierre';
  if(s.mode==='endless'&&s.seals===s.sealSpots.length){const places=shuffle(s,Array.from({length:25},(_,i)=>i).filter(i=>i!==ENTRANCE)).slice(0,4);s.sealSpots=places;s.sealed=[];s.seals=0;addLog(s,'Has cerrado un círculo de cuatro grietas. Nacen cuatro grietas nuevas.','danger')}
- if(s.mode==='campaign'&&s.seals===currentChapter(s).seals&&['boss','final'].includes(currentChapter(s).pressure)&&!s.bossSummoned){s.bossSummoned=true;
-  const spots=s.revealed.filter(i=>i!==s.pos&&dist(i,s.pos)>=2);spawn(s,s.chapter===8?'heart':'boss',spots.length?pick(s,spots):undefined);addLog(s,'Un cuerpo inmenso emerge de las vigas. Destrúyelo antes de escapar.','danger')}
+ if(s.mode==='campaign'&&s.seals===currentChapter(s).seals&&['boss','final'].includes(currentChapter(s).pressure)&&!s.bossSummoned){const spots=s.revealed.filter(i=>i!==s.pos&&dist(i,s.pos)>=2);
+  if(spawn(s,s.chapter===8?'heart':'boss',spots.length?pick(s,spots):undefined)){s.bossSummoned=true;addLog(s,'Un cuerpo inmenso emerge de las vigas. Destrúyelo antes de escapar.','danger')}}
  check(s);if(!s.ended&&s.seals===1)storyBeat(s,'seal');return true}
 function objectivesComplete(s){return s.mode==='endless'?s.turn>=12:s.seals===currentChapter(s).seals&&s.objectiveCount>=currentObjective(s).target&&(currentObjective(s).type!=='boss'||s.bossKilled)}
 function escape(s){if(s.ended||s.pendingChoice||s.pos!==ENTRANCE||!objectivesComplete(s))return false;
@@ -278,3 +283,4 @@ function migrateLegacy(g){if(!g||g.version!==1||!Number.isInteger(g.pos)||g.pos<
 function achievementsFor(s){const found=[];if(s.won&&s.mode==='campaign')found.push('first');if(s.won&&s.chapter===4)found.push('mid');if(s.won&&s.chapter===8)found.push('end');if(s.won&&s.difficulty==='nightmare')found.push('hard');if(s.mode==='endless'&&s.turn>=15)found.push('long');if(s.won&&s.hp>=8)found.push('clean');if(s.encounterChoices.length>=4)found.push('stories');return found}
 return {VERSION,CHAPTERS,STORY_BEATS,ALL_ENCOUNTERS,ROOM_NAMES,ROOM_TYPES,ENEMY_TYPES,CARDS,SURVIVORS,DIFFICULTIES,ENCOUNTERS,ACHIEVEMENTS,SIDE_OBJECTIVES,ENTRANCE,MAX_HP,MAX_SANITY,SIZE,neighbors,dist,createGame,dispatch,validate,upgradeV3,migrateLegacy,currentChapter,currentObjective,doomLimit,objectivesComplete,hasShot,achievementsFor};
 });
+
