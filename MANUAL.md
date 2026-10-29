@@ -1,4 +1,4 @@
-# DEAD CABIN 404 — Reglamento oficial · edición 1.8 (reglas de campaña 1.0)
+# DEAD CABIN 404 — Reglamento oficial · edición 2.1 (reglas de campaña 1.0)
 
 **Título:** La noche del umbral · **Género:** juego de mesa de terror táctico en solitario · **Jugadores:** uno · **Idioma:** español · **Duración orientativa por expediente:** 25–60 minutos, según velocidad, decisiones y dificultad. Esta duración es una estimación de diseño, no un tiempo cronometrado con jugadores.
 
@@ -144,3 +144,12 @@ Cada expediente dispone de una ilustración cinematográfica propia que aparece 
 ## Edición táctica 2.0 — Defender y golpes rituales
 
 **Defender** cuesta 1 punto de acción y activa una protección de un solo impacto: reduce una herida y una pérdida de cordura del primer golpe acertado de los enemigos en la fase nocturna. No puedes repetirla mientras siga activa y desaparece al comienzo del turno siguiente. El Guardián y el Corazón de la cabaña ejecutan golpes rituales reforzados cada tercera noche; consulta el aviso sobre las acciones cuando uno de estos jefes esté en el tablero. **Tutorial** abre una explicación en cuatro pasos y ofrece comenzar un entrenamiento que inicia una nueva partida en dificultad Historia. Guarda la partida actual antes de aceptarlo.
+
+
+## 2.1 — Interpretación de las cartas e interfaz renovada
+
+Cada acontecimiento revela **una ilustración única**, un **tipo** y una **consecuencia mecánica**. La frase de ambientación es narrativa: el efecto real se lee en el recuadro **CONSECUENCIA**. Ejemplos: "Frío imposible" resta 1 de cordura; "Maletín olvidado" añade un botiquín; "Raíces en las paredes" aumenta la oscuridad en 2; "La última vela" reduce la oscuridad en 1. Las invocaciones no pueden superar el límite de criaturas simultáneas del motor.
+
+El panel de acciones está organizado por **Combate**, **Exploración** y **Rituales** sin alterar los costes. Cuando un jefe amenaza con un golpe ritual, la acción **Defender** muestra una alerta. En móviles, una barra fija proporciona accesos rápidos a **Hacha, Buscar, Defender y Finalizar turno**; utiliza las mismas reglas que sus botones completos. La misión se muestra antes que el registro histórico en pantallas pequeñas.
+
+El juego sigue guardando con el mismo formato v4. Los estilos visuales y el nuevo módulo de cartas no modifican estadísticas, cartas, recompensas ni enemigos.

@@ -1,0 +1,106 @@
+/* DEAD CABIN 404 — Premium UX 2.1
+   Presentation-only layer; gameplay actions and game state stay in the existing modules.
+   Visual hierarchy: board > decisions > objectives > chronicle. */
+:root{--ux-paper:#f0dfb9;--ux-gold:#dfbb80;--ux-muted:#b7a994;--ux-edge:#806f57;--ux-surface:#151a1a;--ux-focus:#f5d49a}
+body{background:radial-gradient(ellipse 75% 45% at 40% 0%,#37413a44,transparent 76%),linear-gradient(#0a1011,#141617 58%,#0a0c0d)}
+.sheet,.history-panel,.mission-panel{border-color:#76644e;background:linear-gradient(145deg,#242925,#171b1a 70%);box-shadow:0 14px 35px #0008,inset 0 1px #dfba7b16}
+.section-head{margin-bottom:14px}.section-head h3{font-size:12px;letter-spacing:.1em}.section-head>span{color:#c1af95;font-size:10px}
+/* Header: meaningful grouped navigation rather than seven undifferentiated controls. */
+.site-header{height:auto;min-height:158px}
+.header-inner{display:grid;grid-template-columns:minmax(310px,1fr) auto;align-items:center;min-height:158px;padding:20px 26px;gap:24px}
+.header-tools{display:flex;align-items:center;gap:12px;justify-content:flex-end;flex-wrap:wrap;max-width:910px;margin:0}
+.header-group{display:flex;gap:5px;align-items:stretch;padding:5px;border:1px solid #6c614b6d;background:#101716dd;border-radius:7px;box-shadow:inset 0 1px #bd9f7220}
+.header-group .tool-btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;min-height:44px;padding:8px 11px;border-radius:4px;border:1px solid transparent;background:transparent;letter-spacing:.035em;color:#dfd2ba;white-space:nowrap;font-size:11px}
+.header-group .tool-btn:hover:not(:disabled),.header-group .tool-btn:focus-visible{background:#36382e;border-color:#8e7857}
+.primary-nav{border-color:#ac7b55}.primary-nav .tool-btn.accent{background:linear-gradient(145deg,#9e4d40,#62332e);border-color:#cc8064;color:#fff0d4;box-shadow:0 2px 13px #a7463433}
+.support-nav .tool-btn{color:#e0cfb0}.settings-nav .tool-btn{font-size:10px;color:#b9b6ac}
+/* Command hierarchy and contextual warning. */
+.command-panel{border-color:#a18964}.command-panel .action-hint{font-size:12px;line-height:1.5;min-height:44px;border-left:3px solid #e0ac6b;padding:11px 12px;background:#1a211f;color:#f3ddbb}
+.action-grid{display:flex;flex-direction:column;gap:13px}
+.action-group{padding:11px;background:#131817aa;border:1px solid #524c3f;border-radius:7px}
+.action-group-combat{border-color:#764e44;background:linear-gradient(145deg,#291f1c,#161b19)}
+.action-group-ritual{border-color:#665d53}
+.action-group-title{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:9px;padding-bottom:8px;border-bottom:1px solid #75624755;color:#e3c08d;font-size:10px;font-weight:900;letter-spacing:.11em}
+.action-group-title small{font-size:9px;letter-spacing:.03em;color:#b6a58f}
+.action-pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.action-pair .act{width:100%;min-width:0;min-height:58px;padding:9px;gap:8px;background:linear-gradient(120deg,#313731,#202522);border:1px solid #736750;border-radius:5px;align-items:center;text-align:left}
+.action-pair .act .act-icon{font-size:26px;flex:0 0 29px;color:#e5bf83}
+.action-pair .act>b,.action-pair .act>span:not(.act-icon){min-width:0}
+.action-pair .act b{font-size:11px;letter-spacing:.075em;color:#f0d9ae}
+.action-pair .act small{font-size:10px;line-height:1.38;color:#c7bda9;white-space:normal}
+.action-pair .act.act-wide{grid-column:1/-1;min-height:54px}
+.action-group-combat #guardBtn{position:relative;border-color:#8b9c7b;background:linear-gradient(130deg,#364438,#25312b);padding-right:72px}
+#guardBtn .act-status{position:absolute;right:9px;top:50%;transform:translateY(-50%);font-size:9px;letter-spacing:.05em;color:#e0eabe;border-radius:3px;padding:4px 6px;background:#2b4c38;border:1px solid #88a37e}
+#guardBtn .act-status:empty{display:none}
+#guardBtn.tactical-alert{border-color:#e4a65d;box-shadow:inset 0 0 18px #dc6d2e24,0 0 12px #c6772e30;background:linear-gradient(130deg,#5c3d26,#30312a)}
+#guardBtn.selected .act-status{background:#b5cc90;color:#16231a;border-color:#c6dda2}
+.action-pair .act:disabled{opacity:.46;filter:saturate(.5)}
+.action-pair .act:focus-visible,.mobile-command-dock button:focus-visible{outline:3px solid var(--ux-focus);outline-offset:2px}
+.end-turn{min-height:64px;margin-top:14px;border:2px solid #e5a37f;background:linear-gradient(125deg,#8e392f,#b95e48 52%,#70352e);color:#fff1d8;box-shadow:0 0 0 3px #381b19,0 7px 24px #0008;font-size:13px;letter-spacing:.14em}
+.end-turn:hover:not(:disabled){filter:brightness(1.12)}
+/* The inventory is a collection of usable equipment, not five tiny decorative tiles. */
+.inventory-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.inventory-grid .item{display:grid;grid-template-columns:44px minmax(0,1fr);grid-template-rows:auto auto auto;align-content:center;column-gap:8px;min-height:96px;min-width:0;text-align:left;padding:10px 9px;border-radius:6px;border:1px solid #77664d;background:linear-gradient(145deg,#292c26,#1d2523)}
+.inventory-grid .item .item-image{grid-column:1;grid-row:1/4;align-self:center;display:grid;place-items:center;height:48px;width:44px;font-size:31px;border:1px solid #6f624c77;border-radius:5px;background:#121b1a}
+.inventory-grid .item b{grid-column:2;grid-row:1;color:#f0d3a6;font-size:10px;letter-spacing:.045em}
+.inventory-grid .item small{grid-column:2;grid-row:2;color:#ead19c;font:700 17px var(--font-title)}
+.inventory-grid .item em{grid-column:2;grid-row:3;color:#c2b39b;font-size:10px;line-height:1.35}
+.inventory-grid .item:not(.static):disabled{opacity:.48}
+.inventory-grid .item:not(.static):focus-visible{outline:3px solid var(--ux-focus);outline-offset:2px}
+.inventory-grid .item.static{opacity:.83;border-style:dashed;cursor:default}
+/* Event-card system: consistent proportions, clear category, mechanics and flavor. */
+.card-section{border-color:#94764e}
+.card-display{display:grid;grid-template-columns:minmax(0,1fr);gap:15px;align-items:stretch}
+.deck-back{transform:none;min-height:69px;display:flex;flex-direction:row;justify-content:flex-start;gap:16px;border:1px solid #8f7654;border-radius:6px;padding:9px 14px;background:repeating-linear-gradient(135deg,#171916,#171916 8px,#242821 9px,#242821 10px);box-shadow:inset 0 0 0 3px #111411,0 4px 10px #0005}
+.deck-ring{width:46px;height:46px;flex:none;border-color:#bba276;font-size:24px;box-shadow:inset 0 0 0 3px #29281f}
+.deck-ring small{font-size:8px;margin-top:-3px}
+.deck-back>span{display:none}
+.deck-meta{display:flex;flex-direction:column;align-items:start;justify-content:center;gap:2px}
+.deck-meta strong{color:#e9d5aa;font:800 12px/1.2 var(--font-title);letter-spacing:.08em}
+.deck-meta span{color:#bca88a;font-size:10px;letter-spacing:.075em}
+.event-card{--card-accent:#c1a67a;--card-soft:#fff0ca;--card-ink:#241d1b;display:flex;flex-direction:column;position:relative;min-height:unset;height:auto;padding:13px 14px 11px;overflow:hidden;border:2px solid var(--card-accent);border-radius:7px;color:var(--card-ink);background:linear-gradient(145deg,#ead8b4 2%,#c8b08a 65%,#e0c59c 100%);box-shadow:0 13px 22px #000b,inset 0 0 0 3px #8f775a,inset 0 0 0 5px #efdfbe}
+.event-card::before{z-index:0;background:radial-gradient(ellipse at 14% 5%,#fff5dc55,transparent 43%),repeating-linear-gradient(80deg,transparent 0 6px,#3c282209 6px 7px);opacity:.85}
+.event-card::after{z-index:0}
+.event-card[data-family="threat"]{--card-accent:#983f36;--card-soft:#ffe0c9;--card-ink:#37201a;background:linear-gradient(135deg,#f0dbc1,#c7a38c 75%,#e2b59b)}
+.event-card[data-family="occult"]{--card-accent:#724775;--card-soft:#e8d4ec;--card-ink:#322637;background:linear-gradient(135deg,#e8d9d9,#bcb0c3 75%,#d6bcc8)}
+.event-card[data-family="hope"]{--card-accent:#577c69;--card-soft:#e1f3d7;--card-ink:#234035;background:linear-gradient(135deg,#f4e5c2,#b9c4a5 72%,#d4d5ae)}
+.event-card[data-family="supply"]{--card-accent:#946c3e;--card-soft:#ffebc0;--card-ink:#38291b;background:linear-gradient(135deg,#f0dfbb,#cab083 72%,#e6cc9d)}
+.card-head{z-index:1;display:flex;align-items:flex-start;justify-content:space-between;gap:7px;margin:1px 0 10px}
+.card-label{border-bottom:0;padding:3px 0;color:#6f5848;font-size:9px;line-height:1.2;letter-spacing:.105em;font-weight:900}
+.card-label span{font-size:16px;vertical-align:middle;color:var(--card-accent);padding-left:4px}
+.card-type{display:inline-flex;align-items:center;justify-content:center;background:var(--card-accent);color:#fff6e9;font-size:9px;line-height:1.2;font-weight:900;letter-spacing:.09em;padding:7px 10px;border-radius:4px;box-shadow:0 2px 4px #0002;white-space:nowrap}
+.card-art{z-index:1;flex:none;height:auto;aspect-ratio:320/180;min-height:0;margin:0 0 12px;border:4px solid #554434;border-radius:2px;background:#192524;box-shadow:0 0 0 1px #d5b487,inset 0 0 0 4px #101619;overflow:hidden}
+.card-art .event-illustration{width:100%;height:100%;display:block;filter:saturate(.85) contrast(1.15)}
+.card-copy{z-index:1;min-height:91px;display:flex;flex-direction:column;gap:6px;margin:0 0 11px}
+.card-copy h4{margin:0;color:var(--card-ink);font:700 clamp(18px,2.1vw,23px)/1.14 var(--font-title);letter-spacing:.01em}
+.card-copy p.card-flavor{margin:0;color:#514034;font:italic 13px/1.45 Georgia,serif}
+.card-effect{z-index:1;position:relative;border:1px solid #7b6c56;border-left:5px solid var(--card-accent);background:#fff4d7bf;box-shadow:inset 0 1px #fff9ed;padding:10px 11px;margin:0 0 15px;min-height:73px;display:flex;flex-direction:column;justify-content:center;gap:4px}
+.card-effect-kicker{font:900 9px/1.2 var(--font-body);letter-spacing:.14em;color:#665342}
+.card-effect strong{display:block;font:800 13px/1.35 var(--font-body);color:var(--card-ink);overflow-wrap:break-word}
+.card-footer{z-index:1;position:relative;bottom:auto;left:auto;right:auto;margin-top:auto;padding-top:8px;border-top:1px solid #8e725b;color:#664d3f;font-size:9px;letter-spacing:.035em;gap:8px}
+/* Keep focus on mission and turn, with secondary logs further down. */
+.mission-panel{border-color:#99805a}.mission-panel #objectives{margin-bottom:12px}
+.mission-panel .utility-actions button{min-height:42px;color:#ead7b9;border-color:#9b805e}
+.history-panel{opacity:.96}
+.toast{max-width:min(480px,calc(100vw - 18px));font-size:12px;border-radius:6px}
+.modal{border-radius:7px}.modal-actions button{min-height:44px;border-radius:4px}
+/* The dock gives phone players essential actions without scrolling past the log. */
+.mobile-command-dock{display:none}
+@media(max-width:1200px){.header-inner{display:flex;flex-wrap:wrap;min-height:unset}.header-tools{justify-content:flex-start;max-width:100%}}
+@media(max-width:875px){.bottom-panels .mission-panel{order:-1}.bottom-panels{gap:12px}.header-group .tool-btn{min-height:43px}}
+@media(max-width:650px){
+ .site-header{min-height:0}.header-inner{gap:12px;padding:15px 12px}.header-tools{display:grid;grid-template-columns:1fr;gap:7px;width:100%}.header-group{width:100%;justify-content:stretch;gap:3px;padding:4px}
+ .header-group .tool-btn{min-width:0;flex:1;min-height:42px;padding:8px 4px;font-size:10px}.support-nav .tool-btn{font-size:10px}
+ .board-frame{padding:8px}.game-layout{padding:14px 8px 102px}.board-key{row-gap:8px}.action-group{padding:10px}
+ .card-display{gap:10px}.deck-back{min-height:61px}.event-card{padding:13px}.card-art{margin-bottom:12px}.card-copy h4{font-size:22px}.card-copy p.card-flavor{font-size:13px}
+ .bottom-panels{display:flex;flex-direction:column}.bottom-panels .mission-panel{order:-1}
+ .inventory-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.inventory-grid .item{min-height:94px}
+ .mobile-command-dock{position:fixed;left:0;right:0;bottom:0;z-index:45;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;padding:9px max(8px,env(safe-area-inset-right)) calc(8px + env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left));border-top:2px solid #9e7753;background:#101817f5;box-shadow:0 -8px 28px #000c;backdrop-filter:blur(9px)}
+ .mobile-command-dock button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-width:0;min-height:49px;border-radius:5px;padding:5px 2px;background:#29312c;border:1px solid #8b7c62;color:#f1d7a7;font:800 16px/1.1 Georgia,serif;cursor:pointer}
+ .mobile-command-dock button span{font:800 9px/1.15 var(--font-body);letter-spacing:.03em}
+ .mobile-command-dock button.primary{background:#8d4238;border-color:#e5a177;color:#fff0d6}
+ .mobile-command-dock button:disabled{opacity:.4}.mobile-command-dock button[aria-pressed="true"]{background:#88654b;border-color:#f7d8a2}
+ .site-footer{padding-bottom:calc(95px + env(safe-area-inset-bottom))}
+}
+@media(max-width:360px){.action-group-title small{font-size:8px}.action-pair .act{padding:7px}.action-pair .act small{font-size:9px}.inventory-grid .item{grid-template-columns:36px 1fr;column-gap:5px;padding:8px 6px}.inventory-grid .item .item-image{width:35px}.card-head{gap:5px}.card-label{font-size:8px}.card-type{font-size:8px;padding:6px 8px}}
+@media(prefers-reduced-motion:reduce){.event-card,.card-art .event-illustration,.mobile-command-dock button,.action-pair .act{animation:none!important;transition:none!important}}

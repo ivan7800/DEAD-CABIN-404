@@ -1,7 +1,7 @@
 /* DEAD CABIN 404 · Controlador de interfaz: motor → DOM (sin dependencias). */
 (function(){'use strict';
-const E=globalThis.DeadCabinEngine,A=globalThis.DeadCabinArt,S=globalThis.DeadCabinAudio,CA=globalThis.DeadCabinChapterArt,F=globalThis.DeadCabinFeedback;
-if(!E||!A||!S||!CA||!F){document.body.textContent='Error: faltan módulos del juego. Comprueba que has extraído el ZIP completo.';return}
+const E=globalThis.DeadCabinEngine,A=globalThis.DeadCabinArt,S=globalThis.DeadCabinAudio,CA=globalThis.DeadCabinChapterArt,F=globalThis.DeadCabinFeedback,C=globalThis.DeadCabinCardUI;
+if(!E||!A||!S||!CA||!F||!C){document.body.textContent='Error: faltan módulos del juego. Comprueba que has extraído el ZIP completo.';return}
 const $=id=>document.getElementById(id), SAVE='dead-cabin-404-v4', OLD_SAVE='dead-cabin-404-v3', PROGRESS='dead-cabin-404-campaign-v3', LEGACY='dead-cabin-404-v1', RECORDS='dead-cabin-404-records-v4';
 let training=false,trainingStage=0;let game,attackMode=null,unlocked=1,previousRevealed=[],previousCard='',lastModalFocus=null,toastTimer=null, records={games:0,wins:0,bestScore:0,bestTurn:0,achievements:[]};
 function escapeHtml(str){return String(str).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
@@ -113,10 +113,36 @@ function renderActions(){const can=game.ap>0&&!game.ended&&!game.pendingChoice,f
  $('escapeBtn').disabled=game.ended||!!game.pendingChoice||game.pos!==E.ENTRANCE||!E.objectivesComplete(game);
  $('medkitBtn').disabled=!can||game.medkits===0||game.hp>=12;$('wardBtn').disabled=!can||game.wards===0||(game.sanity===10&&game.doom===0);
  $('flareBtn').disabled=!can||game.flares===0;$('barricadeBtn').disabled=!can||game.scrap===0||game.barricades.includes(game.pos)||foesHere;
- $('endBtn').disabled=game.ended||!!game.pendingChoice;$('actionHint').textContent=statusMessage();$('roomInfo').textContent=`${E.ROOM_NAMES[game.pos]} · ${statusMessage()}`;document.body.classList.toggle('mode-attack',!!attackMode)}
+ $('endBtn').disabled=game.ended||!!game.pendingChoice;
+ const ritualWarning=!game.ended&&game.enemies.some(e=>e.type==='boss'||e.type==='heart')&&game.turn%3===0;
+ $('guardBtn').classList.toggle('tactical-alert',ritualWarning&&!game.guard);
+ $('guardStatus').textContent=game.guard?'ACTIVA':ritualWarning?'¡RITUAL!':'';
+ syncQuickButtons();$('actionHint').textContent=statusMessage();$('roomInfo').textContent=`${E.ROOM_NAMES[game.pos]} · ${statusMessage()}`;document.body.classList.toggle('mode-attack',!!attackMode)}
 
 function renderDie(){let r=game.lastRoll;if(!r){$('dieDisplay').classList.add('hidden');return}$('dieDisplay').classList.remove('hidden');$('dieFace').textContent=['','⚀','⚁','⚂','⚃','⚄','⚅'][r.value]||r.value;$('dieCaption').textContent=`${r.weapon==='axe'?'Hacha':'Escopeta'} · dado ${r.value} · ${r.hit?`${r.damage} daño${r.crit?' ¡CRÍTICO!':''}`:'FALLO'}`}
-function renderCard(){const c=game.lastEvent;if(!c){$('eventArt').innerHTML=A.eventArt('moon');$('eventTitle').textContent='La casa espera';$('eventDescription').textContent='Al terminar turno revelas una carta. Nunca sabes quién escucha.';$('eventCode').textContent='I · 00';return}if(previousCard!==c.id){$('eventCard').classList.remove('just-drawn');void $('eventCard').offsetWidth;$('eventCard').classList.add('just-drawn');previousCard=c.id}$('eventArt').innerHTML=A.eventArt(c.art);$('eventTitle').textContent=c.name;$('eventDescription').textContent=c.flavor;$('eventCode').textContent=`${format(game.discard.length)} · ${format(game.turn)}`}
+function renderCard(){
+ const last=game.lastEvent;
+ const canonical=last?E.CARDS.find(x=>x.id===last.id):null;
+ const meta=C.describe(canonical);
+ const card=$('eventCard');card.dataset.family=meta.family;
+ card.setAttribute('aria-label',last?'Carta revelada: '+meta.name:'Mazo de eventos: ninguna carta revelada');
+ $('eventGlyph').textContent=meta.icon;$('eventType').textContent=meta.label;
+ $('eventArt').innerHTML=C.illustration(last?last.id:'silence',meta.family);
+ $('eventTitle').textContent=last?meta.name:'La casa espera';
+ $('eventDescription').textContent=last?meta.flavor:'Cada turno revela una nueva carta. Algo escucha al otro lado.';
+ $('eventEffect').textContent=meta.effect;
+ $('eventCode').textContent=last?`${format(game.discard.length)} · TURNO ${format(game.turn)}`:'SIN REVELAR';
+ if(last&&previousCard!==last.id){card.classList.remove('just-drawn');void card.offsetWidth;card.classList.add('just-drawn');previousCard=last.id}
+}
+function syncQuickButtons(){
+ for(const [quick,full] of [['mobileAttackBtn','axeBtn'],['mobileSearchBtn','searchBtn'],['mobileGuardBtn','guardBtn'],['mobileTurnBtn','endBtn']]){
+  const mobile=$(quick),original=$(full);if(!mobile||!original)continue;
+  mobile.disabled=original.disabled;
+  if(quick==='mobileAttackBtn')mobile.setAttribute('aria-pressed',String(attackMode==='axe'));
+  if(quick==='mobileGuardBtn')mobile.setAttribute('aria-pressed',String(game.guard===1));
+ }
+}
+
 function renderObjectives(){const c=E.currentChapter(game),o=E.currentObjective(game),closed=game.mode==='endless'?false:game.seals===c.seals;
  $('missionText').textContent=game.mode==='endless'?'Aguanta tantos turnos como puedas. Cada grieta cerrada retrasa a la oscuridad. Puedes evacuar en la Entrada a partir del turno 12.':c.description;
  const progress=game.mode==='endless'?game.totalSeals+' (activas: '+game.seals+'/'+game.sealSpots.length+')':game.seals+'/'+c.seals;
@@ -156,6 +182,10 @@ function init(){let storedProgress=parseInt(getStorage(PROGRESS)||'1',10);unlock
  if(game.ended&&game.won)unlocked=Math.max(unlocked,Math.min(8,game.chapter+1));else unlocked=Math.max(unlocked,game.chapter)}
  setStorage(PROGRESS,String(unlocked));render();$('board').addEventListener('click',boardClick);
  $('axeBtn').onclick=()=>setMode('axe');$('shotBtn').onclick=()=>setMode('shotgun');
+ $('mobileAttackBtn').onclick=()=>setMode('axe');
+ $('mobileSearchBtn').onclick=()=>act({type:'SEARCH'});
+ $('mobileGuardBtn').onclick=()=>act({type:'GUARD'});
+ $('mobileTurnBtn').onclick=()=>act({type:'END_TURN'});
  [['guardBtn','GUARD'],['searchBtn','SEARCH'],['restBtn','REST'],['sealBtn','SEAL'],['escapeBtn','ESCAPE'],['medkitBtn','HEAL'],['wardBtn','WARD'],['flareBtn','FLARE'],['barricadeBtn','BARRICADE'],['investigateBtn','INVESTIGATE'],['abilityBtn','ABILITY'],['endBtn','END_TURN']].forEach(([id,type])=>$(id).addEventListener('click',()=>act({type})));
  F.sync();$('fxBtn').onclick=()=>{F.toggle();showToast('Efectos visuales '+(F.enabled()?'activados.':'desactivados.'))};$('guideBtn').onclick=showRules;$('tutorialBtn').onclick=showTutorial;$('campaignBtn').onclick=showCampaign;$('endlessBtn').onclick=()=>showSetup(1,'endless');$('recordsBtn').onclick=showRecords;
  $('saveBtn').onclick=()=>showToast(persist()?'Partida guardada.':'No se ha podido guardar en este navegador.');

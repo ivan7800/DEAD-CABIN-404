@@ -1,3 +1,14 @@
+## 2.1.0 — Rediseño de cartas e interfaz (29-10-2026)
+- 24 ilustraciones vectoriales originales de cartas, con composiciones específicas para cada evento.
+- Efectos del motor mostrados en lenguaje claro y separados del texto de ambientación.
+- Categorías y marcos con paleta distinta para amenazas, perturbaciones, auxilios y suministros.
+- Carta principal ampliada, nueva proporción de arte, texto más legible y pie flexible.
+- Acciones agrupadas en combate/exploración/rituales, Defender con alerta contextual.
+- Navegación agrupada, inventario en tarjetas y barra rápida móvil con acciones sincronizadas.
+- Objetivos de misión priorizados frente a la crónica en pantallas estrechas.
+- Motor, balance, esquema de partidas guardadas v4 y reglas intactos.
+- PWA cache v2-1-0, nueva suite de pruebas y catálogo de 24 cartas para revisión visual.
+
 ## 2.0.0-candidate — Primera edición táctica
 - Acción DEFENDER, 1 PA, guardia no acumulable.
 - Golpe ritual del Guardián y el Corazón cada tercer turno con aviso de peligro.

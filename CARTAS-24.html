@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#101818">
+  <title>DEAD CABIN 404 — Archivo de las 24 cartas</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/edition21.css">
+  <style>
+    .archive-shell{max-width:1360px;margin:auto;padding:24px 18px 60px}
+    .archive-heading{display:flex;justify-content:space-between;gap:20px;align-items:center;border-bottom:1px solid #9c7759;padding:12px 0 22px;margin-bottom:24px}
+    .archive-heading h1{font:700 clamp(25px,4vw,46px) Georgia,serif;color:#f5deb9;margin:0}
+    .archive-heading p{color:#c4b29b;margin:7px 0 0;font-size:13px;max-width:650px}
+    .archive-heading a{color:#ffdaa3;font-weight:800;white-space:nowrap}
+    .archive-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:22px;align-items:start}
+    .archive-grid .event-card{min-width:0}.archive-grid .event-card[hidden]{display:none}
+    .archive-grid .card-copy{min-height:108px}
+    .archive-number{font-size:10px;color:#d8b786;margin-top:7px}
+    .archive-filter{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 24px}
+    .archive-filter button{background:#25302b;border:1px solid #74654f;border-radius:4px;color:#e6d2ae;padding:10px 14px;min-height:42px}
+    .archive-filter button[aria-pressed="true"]{background:#81503b;border-color:#f1ba82;color:white}
+    @media(max-width:1100px){.archive-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+    @media(max-width:800px){.archive-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}}
+    @media(max-width:560px){.archive-grid{grid-template-columns:1fr;max-width:420px;margin:auto}.archive-heading{display:block}.archive-heading a{display:inline-block;margin-top:12px}}
+  </style>
+  <script src="js/engine.js" defer></script>
+  <script src="js/card-ui.js" defer></script>
+</head>
+<body><main class="archive-shell">
+  <header class="archive-heading"><div><h1>ARCHIVO DE LAS 24 CARTAS</h1><p>Revisión artística y mecánica de los acontecimientos de DEAD CABIN 404 v2.1. Las ilustraciones originales no utilizan servicios externos. El efecto indicado procede de las reglas reales del juego.</p></div><a href="./index.html">VOLVER AL JUEGO</a></header>
+  <div class="archive-filter" id="filters" role="group" aria-label="Filtrar cartas">
+    <button type="button" data-show="all" aria-pressed="true">TODAS · 24</button>
+    <button type="button" data-show="threat" aria-pressed="false">AMENAZAS</button>
+    <button type="button" data-show="occult" aria-pressed="false">PERTURBACIONES</button>
+    <button type="button" data-show="hope" aria-pressed="false">ALIVIOS</button>
+    <button type="button" data-show="supply" aria-pressed="false">SUMINISTROS</button>
+  </div>
+  <div id="gallery" class="archive-grid" aria-label="Galería de cartas"></div>
+</main>
+<script>
+window.addEventListener('DOMContentLoaded',()=>{
+ const cards=window.DeadCabinEngine?.CARDS,ui=window.DeadCabinCardUI,holder=document.getElementById('gallery');
+ if(!cards||!ui){holder.textContent='Error al cargar el archivo de cartas.';return}
+ const frag=document.createDocumentFragment();
+ cards.forEach((c,i)=>{const m=ui.describe(c),article=document.createElement('article');article.className='event-card';article.dataset.family=m.family;
+ const head=document.createElement('div');head.className='card-head';const label=document.createElement('span');label.className='card-label';label.textContent='DEAD CABIN · ARCHIVO '+String(i+1).padStart(2,'0');const kind=document.createElement('span');kind.className='card-type';kind.textContent=m.label;head.append(label,kind);
+ const art=document.createElement('div');art.className='card-art';art.setAttribute('aria-hidden','true');art.innerHTML=ui.illustration(c.id,m.family);
+ const copy=document.createElement('div');copy.className='card-copy';const title=document.createElement('h4');title.textContent=m.name;const flavor=document.createElement('p');flavor.className='card-flavor';flavor.textContent=m.flavor;copy.append(title,flavor);
+ const effect=document.createElement('div');effect.className='card-effect';const kicker=document.createElement('span');kicker.className='card-effect-kicker';kicker.textContent='CONSECUENCIA';const strong=document.createElement('strong');strong.textContent=m.effect;effect.append(kicker,strong);
+ const footer=document.createElement('div');footer.className='card-footer';footer.textContent='DEAD CABIN 404 · '+String(i+1).padStart(2,'0')+' / 24';article.append(head,art,copy,effect,footer);frag.append(article)});
+ holder.append(frag);
+ document.getElementById('filters').addEventListener('click',e=>{const b=e.target.closest('[data-show]');if(!b)return;const family=b.dataset.show;for(const btn of document.querySelectorAll('[data-show]'))btn.setAttribute('aria-pressed',String(btn===b));for(const card of holder.children)card.hidden=family!=='all'&&card.dataset.family!==family});
+});
+</script></body></html>
