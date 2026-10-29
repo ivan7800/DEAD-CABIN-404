@@ -1,3 +1,25 @@
+# QA de DEAD CABIN 404 v2.3 (29-10-2026)
+
+**Alcance:** pruebas automatizadas reproducibles en el entorno, sin afirmar experiencia humana certificada.
+
+| Prueba | Resultado |
+|---|---|
+| `npm test` | 60/60 correctas |
+| Casos corruptos de estado v4 | 100/100 rechazados; compatibilidad del v4 antiguo preservada |
+| `python3 tests/browser_smoke.py` | Aprobado Chromium con rutas existentes |
+| `python3 tests/edition23_browser.py` | Aprobado Chromium 390/320 px, panel móvil, importación corrupta sin reemplazo, importación válida y persistencia |
+| `python3 tests/test_launcher.py` | Aprobado; rutas de servidor local |
+| `npm run build:single` | Generado HTML independiente |
+| `node scripts/audit-balance-1152.js` | 1.152 simulaciones, 761 victorias, 0 acciones rechazadas |
+
+La comparación base auditada v2.2 dio 735/1.152 con la misma estrategia y semillas. No es una tasa de victoria humana: requiere pruebas de balance con varios niveles de habilidad. El capítulo 8 continúa siendo exigente (19/48 Supervivencia y 7/48 Pesadilla con esta estrategia).
+
+**Limitaciones:** no se han ejecutado partidas humanas de los ocho capítulos, pruebas de lector de pantalla, WCAG AA formal, iPhone Safari real, Steam Deck, dispositivos Linux/Windows físicos ni pruebas PWA offline de extremo a extremo sobre HTTPS.
+
+---
+
+## QA v2.2 archivada
+
 # QA — DEAD CABIN 404 v2.2 · Evidencia reproducible
 
 ## Comprobaciones ejecutadas

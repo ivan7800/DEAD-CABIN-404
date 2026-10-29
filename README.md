@@ -1,8 +1,16 @@
-# DEAD CABIN 404 — Premium Táctica 2.2
+# DEAD CABIN 404 — Premium Táctica 2.3
 
 **Juego de mesa táctico de terror para un jugador, original y totalmente local.** Ocho capítulos, tres supervivientes, tres dificultades, 25 salas, 24 cartas de acontecimiento, 7 variantes de enemigo, modo infinito, encuentros narrativos y progreso guardado.
 
-## Qué cambia en 2.2
+## Qué cambia en 2.3 — Estabilidad y experiencia real
+
+- **Importación protegida:** validación profunda de los datos del guardado (incluidos eventos, enemigos, resultados del dado y registro de sucesos), restauración provisional en memoria y guardado solo si se puede representar sin errores. Rechaza archivos corruptos sin sustituir una partida válida. Se conserva el **formato v4**; no es necesario empezar de cero.
+- **Cartas sinceras:** el efecto comunicado corresponde a la variación de recursos realmente aplicada: por ejemplo, si la cordura está al máximo indica «Sin efecto» y si el tablero está lleno no anuncia criaturas que no aparecen.
+- **Panel móvil táctico cerca del tablero:** muestra salud, cordura, oscuridad, PA y el estado de la casilla. Incluye Sellar, Investigar, Escapar, Curar, Talismán, Habilidad, Bengala y acceso a todas las acciones. Todos los botones habilitan/deshabilitan con el motor.
+- **Ajustes prudentes de balance:** acechadores del capítulo 3 cada cinco turnos (antes cuatro); el capítulo 8 concede un margen moderado de oscuridad y reduce los aumentos ambientales adicionales. No altera jefes ni objetivos narrativos.
+- **Pruebas:** 60 pruebas Node (incluidos 100 guardados mutados), navegador Chromium 320/390, importación corrupta/legítima, lanzadores y 1.152 simulaciones heurísticas. Estas últimas pasaron de 735 a 761 victorias frente a la base auditada, sin acciones inválidas. No equivalen a sesiones de usuarios humanos.
+
+## Mejoras heredadas de 2.2
 
 - **Jefes con dos fases diferentes:** el Guardián hace barridos a salas contiguas; el Corazón emite un pulso radial de cordura y oscuridad. En fase II son más peligrosos. El panel de estado muestra salud, fase, próximo ritual y ventana de vulnerabilidad (+1 daño al acertar tras cada ritual).
 - **Misión 5 corregida:** los dos objetivos de purificación son habitaciones malditas desde el inicio, aunque no se revelan antes de explorarlas. Las partidas 2.1 cargadas siguen siendo compatibles y se corrigen al entrar a la sala pendiente.

@@ -6,7 +6,7 @@ p=Path(__file__).resolve().parents[1]
 source=(p/'index.html').read_text()
 source=re.sub(r'<link rel="stylesheet" href="css/[^"]+">','',source)
 source=re.sub(r'<script src="js/[^"]+" defer></script>','',source)
-source=source.replace('</head>','<style>'+ ''.join((p/'css'/name).read_text() for name in ['style.css','premium.css','cinematic.css','illustration.css','edition18.css','edition20.css','edition21.css','edition22.css']) +'</style></head>')
+source=source.replace('</head>','<style>'+ ''.join((p/'css'/name).read_text() for name in ['style.css','premium.css','cinematic.css','illustration.css','edition18.css','edition20.css','edition21.css','edition22.css','edition23.css']) +'</style></head>')
 scripts=[(p/'js'/name).read_text() for name in ['engine.js','art.js','premium-art.js','chapter-art.js','audio.js','feedback.js','card-ui.js','app.js','cinematic.js']]
 def boot(page,storage=None):
     page.set_content(source,wait_until='load')
