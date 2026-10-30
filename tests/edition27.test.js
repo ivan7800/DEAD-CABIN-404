@@ -1,0 +1,6 @@
+const test=require('node:test');const assert=require('node:assert/strict');const E=require('../js/engine.js');
+function setup(chapter,opts={}){const s=E.createGame(chapter,777,{difficulty:opts.difficulty||'normal'});s.pos=12;if(!s.revealed.includes(12))s.revealed.push(12);s.sealed=s.sealSpots.slice();s.seals=s.sealSpots.length;s.objectiveDone=s.objectiveSpots.slice();s.objectiveCount=E.currentObjective(s).target;s.enemies=[];s.bossKilled=true;s.doom=2;s.turn=3;s.ap=3;s.deck=['archive'];return s}
+test('Breather only activates at milestone on long late chapters',()=>{for(let ch=1;ch<=8;ch++){let s=setup(ch);assert.equal(E.exitBreather(s),[5,7,8].includes(ch),'chapter '+ch)}});
+test('Exit breather has visible log and reduces base growth, not card effects',()=>{let s=setup(7);assert.equal(E.dispatch(s,{type:'END_TURN'}),true);assert.equal(s.doom,2);assert.ok(s.log.some(l=>l.text.includes('ÚLTIMO REGRESO')));assert.ok(E.validate(s))});
+test('No breather before objective or at entrance',()=>{let s=setup(8);s.objectiveCount=0;assert.equal(E.exitBreather(s),false);s.objectiveCount=E.currentObjective(s).target;s.pos=E.ENTRANCE;assert.equal(E.exitBreather(s),false)});
+test('Nightmare breather removes at most one base doom',()=>{let s=setup(8,{difficulty:'nightmare'});assert.equal(E.exitBreather(s),true);E.dispatch(s,{type:'END_TURN'});assert.ok(E.validate(s))});
