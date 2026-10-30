@@ -1,11 +1,40 @@
-# Verificación v2.6
+# QA v2.8 — Balance y campañas encadenadas
 
-- Pruebas Node ejecutadas localmente en ZIP v2.6: **76/76 correctas**.
-- La rama de GitHub debe superar CI antes de ser fusionada.
-- Cada desenlace dispone de dos decisiones y evita reentrada hasta resolverlo.
-- Guardados v4 compatibles, sin prometer validación de dispositivos físicos o partidas humanas.
+## Evidencia reproducible
+
+- `npm test`: 83/83 pruebas Node superadas.
+- `python3 tests/test_launcher.py`: correcto en el entorno disponible.
+- `python3 tests/browser_smoke.py` y `python3 tests/edition23_browser.py`: correctos en Chromium emulado (escritorio y 320/390px), sin excepciones observadas.
+- `node scripts/audit-chain.js --write`: 108 campañas simuladas con 505 episodios, 27 campañas completas, 0 acciones inválidas. Historia: 22/36, Normal: 5/36, Pesadilla: 0/36.
+- Comparación con v2.7, mismas semillas: también 27/108 completas. El ajuste de defensa es táctico y verificable, pero **no mejora el porcentaje global de victorias del agente de prueba**.
+- `npm run build:single`: correcto.
+
+## Cambios de jugabilidad
+
+- Defender evita la pérdida de una unidad de oscuridad asociada al pulso del Corazón y reduce la pérdida de cordura.
+- En dificultad Pesadilla, al invocar al Corazón, se obtiene un talismán de emergencia exactamente una vez.
+- No se cambia `VERSION` de las partidas; se conserva el guardado v4.
+
+## Reservas
+
+La simulación es heurística: no son jugadores reales ni demuestra que la campaña sea divertida o justa. Pesadilla continúa sin victorias en 36 campañas encadenadas; se necesita rediseñar decisiones y playtests humanos. No se ha probado físicamente en iPhone, Steam Deck ni con tecnologías asistivas reales.
 
 ---
+
+### QA v2.5
+- Prueba de ocho decisiones especiales y sus alternativas prudentes.
+- Protección de tormenta de un solo uso.
+- Compatibilidad con guardados JSON v4.
+- Comprobación de interfaz, precarga offline y HTML independiente.
+
+## v2.4 · Verificación local (29-10-2026)
+
+- `npm test`: 65/65 superadas.
+- `python tests/browser_smoke.py`: Chromium escritorio, móvil 390/320px, sin errores JS observados.
+- `npm run build:single`: HTML independiente generado.
+- Ocho informes tácticos de capítulo, recompensas episódicas en capítulos 1/6/7.
+- Partidas: VERSION=4, sin alteración del esquema de persistencia.
+- Pendientes: partidas humanas completas, Safari real, Steam Deck, validación de balance v2.4.
 
 # QA de DEAD CABIN 404 v2.3 (29-10-2026)
 
@@ -76,3 +105,11 @@ La estrategia programada explora y prioriza objetivos, cura heridas, usa recurso
 - Auditoría de seguridad, restauración de datos y pruebas de regresión tras cada cambio.
 
 **Veredicto técnico:** candidato estable para publicación y pruebas externas, sin garantía de experiencia perfecta ni certificación de accesibilidad.
+
+## Validación v2.6 (29 octubre 2026)
+
+- `npm test`: 76/76 superadas. Se verificaron 16 variantes de final (8 capítulos × 2 decisiones), las restricciones de ESCAPAR, legados para siete capítulos y compatibilidad con partidas v4 sin el nuevo campo opcional.
+- `npm run build:single`: genera el HTML independiente correctamente.
+- `python tests/browser_smoke.py`: PASS escritorio y emulación táctil 390/320 px; final del capítulo 1, campaña, movimiento, d6, cartas, guardados, jefe, importación y ausencia de errores JavaScript observados.
+- **No se han probado en dispositivo físico** Safari iPhone, Steam Deck ni sesiones humanas completas de ocho capítulos. Tampoco se acredita una puntuación de 9,5/10.
+- Entrega local candidata; no se modifica `main` ni GitHub Pages.
