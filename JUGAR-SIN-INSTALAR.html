@@ -417,7 +417,7 @@ body{background:radial-gradient(ellipse 75% 45% at 40% 0%,#37413a44,transparent 
       <button id="endBtn" type="button" class="end-turn"><span>FINALIZAR TURNO</span><span class="end-arrow">➜</span></button>
       <div id="dieDisplay" class="die-display hidden" aria-live="polite"><div class="die-face" id="dieFace">⚅</div><div id="dieCaption">Lanzamiento</div></div>
     </section>
-    <section class="sheet inventory-sheet"><div class="section-head"><h3>INVENTARIO <span class="red-mark">// 03</span></h3><span>OBJETOS</span></div><div class="inventory-grid"><button type="button" id="medkitBtn" class="item"><span class="item-image med">✚</span><b>BOTIQUÍN</b><small id="medkitCount">× 1</small><em>+4 vida</em></button><button type="button" id="wardBtn" class="item"><span class="item-image ward">✧</span><b>TALISMÁN</b><small id="wardCount">× 1</small><em>+2 cordura</em></button><button type="button" id="flareBtn" class="item"><span class="item-image flare">✺</span><b>BENGALA</b><small id="flareCount">× 1</small><em>Luz y aturdimiento</em></button><button type="button" id="barricadeBtn" class="item"><span class="item-image barricade">▤</span><b>BARRICADA</b><small>CH. <span id="scrapCount">0</span></small><em>Protege la sala</em></button><div class="item static"><span class="item-image ammo">╫</span><b>CARTUCHOS</b><small id="ammoCount">× 5</small><em>Para disparar</em></div></div></section>
+    <section class="sheet inventory-sheet"><div class="section-head"><h3>INVENTARIO <span class="red-mark">// 03</span></h3><span>OBJETOS</span></div><div class="inventory-grid"><button type="button" id="medkitBtn" class="item"><span class="item-image med">✚</span><b>BOTIQUÍN</b><small id="medkitCount">× 1</small><em>+4 vida</em></button><button type="button" id="wardBtn" class="item"><span class="item-image ward">✧</span><b>TALISMÁN</b><small id="wardCount">× 1</small><em>+2 cordura · −2/4 oscuridad</em></button><button type="button" id="flareBtn" class="item"><span class="item-image flare">✺</span><b>BENGALA</b><small id="flareCount">× 1</small><em>Luz y aturdimiento</em></button><button type="button" id="barricadeBtn" class="item"><span class="item-image barricade">▤</span><b>BARRICADA</b><small>CH. <span id="scrapCount">0</span></small><em>Protege la sala</em></button><div class="item static"><span class="item-image ammo">╫</span><b>CARTUCHOS</b><small id="ammoCount">× 5</small><em>Para disparar</em></div></div></section>
     <section class="sheet card-section"><div class="section-head"><h3>MAZO DEL MAL <span class="red-mark">// 04</span></h3><span id="deckCount">18 CARTAS</span></div><div class="card-display">
         <div class="deck-back" aria-label="Mazo de acontecimientos"><div class="deck-ring" aria-hidden="true">✥<small>404</small></div><div class="deck-meta"><strong>EL MAZO DEL MAL</strong><span>UN PRESAGIO CADA TURNO</span></div></div>
         <article class="event-card" id="eventCard" data-family="dormant" aria-label="Última carta de acontecimiento">
@@ -569,10 +569,10 @@ function chapterForecast(s){
  case 2:return {label:'EL TEMPORAL',message:remaining>0?`Quedan ${remaining} pararrayos. La tormenta sumará oscuridad cada 3 turnos.`:'Pararrayos reparados: los próximos embates no añadirán oscuridad.',danger:remaining>0&&s.turn%3===0};
  case 3:return {label:'LOS CAZADORES',message:remaining>0?`Quedan ${remaining} acechadores por eliminar. Se refuerzan cada 5 turnos.`:'Has cazado a los tres acechadores requeridos. No bajes la guardia.',danger:s.turn%5===0};
  case 4:return {label:'EL GUARDIÁN',message:s.bossKilled?'El Guardián ha caído. Regresa a la Entrada.':s.bossSummoned?'Espera a que termine su barrido ritual para aprovechar su vulnerabilidad.':'Cerrar la última grieta despertará al Guardián.',danger:s.bossSummoned&&!s.bossKilled&&s.turn%3===0};
- case 5:return {label:'GEOMETRÍA ENFERMA',message:remaining>0?`Purifica ${remaining} salas marcadas. Cada 3 turnos puede enfermar otra habitación.`:'Purificación concluida. La casa aún puede corromper nuevas habitaciones.',danger:s.turn%3===0};
+ case 5:return {label:'GEOMETRÍA ENFERMA',message:remaining>0?`Purifica ${remaining} salas marcadas. Cada 3 turnos puede enfermar otra habitación.`:objectivesComplete(s)?'Ritual cerrado. Durante el regreso, cada tres turnos amortiguas 1 oscuridad base.':'Purificación concluida. Cierra las grietas restantes.',danger:s.turn%3===0};
  case 6:return {label:'EL ECO',message:remaining>0?`Recupera ${remaining} señales de radio. Descansar puede fallar: valora usar un talismán.`:'Mensajes recibidos. Cada cuatro turnos el silencio seguirá robando cordura.',danger:s.turn%4===0};
- case 7:return {label:'CUATRO NOMBRES',message:`Sellos ${s.seals}/4. La pérdida ritual de cordura llega cada 4 turnos.` ,danger:s.turn%4===0};
- case 8:return {label:'LA ÚLTIMA NOCHE',message:s.bossKilled?'El Corazón está destruido. Huye por la Entrada.':s.bossSummoned?'El pulso del Corazón se amplía en fase II. Busca la ventana de exposición.':`Sellos ${s.seals}/4: destrúyelos antes de afrontar al Corazón.`,danger:s.turn%3===0||s.turn%4===0};
+ case 7:return {label:'CUATRO NOMBRES',message:objectivesComplete(s)?'Los nombres están sellados: regresa a la Entrada; cada tres turnos reduces 1 oscuridad base.':`Sellos ${s.seals}/4. La pérdida ritual de cordura llega cada 4 turnos.` ,danger:s.turn%4===0};
+ case 8:return {label:'LA ÚLTIMA NOCHE',message:s.bossKilled?'El Corazón está destruido. Regresa a la Entrada: cada tres turnos amortiguas 1 oscuridad base.':s.bossSummoned?'El pulso del Corazón se amplía en fase II. Busca la ventana de exposición.':`Sellos ${s.seals}/4: destrúyelos antes de afrontar al Corazón.`,danger:s.turn%3===0||s.turn%4===0};
  default:return {label:'EXPEDIENTE',message:currentChapter(s).description,danger:false};
  }
 }
@@ -582,7 +582,7 @@ function bossThreat(s){
  const stats=ENEMY_TYPES[e.type],frenzy=e.hp<=Math.ceil(stats.hp/2),ritual=s.turn%3===0;
  const range=e.type==='heart'?(frenzy?2:1):1;
  const label=e.type==='heart'?'PULSO DEL CORAZÓN':'BARRIDO DEL GUARDIÁN';
- const detail=e.type==='heart'?`Onda a ${range} ${range===1?'sala':'salas'}: pierde ${frenzy?2:1} de cordura y +1 oscuridad. Defender reduce la pérdida mental.`:'Impacta en salas contiguas. El Guardián puede moverse '+(frenzy?'2':'1')+' salas. Defender reduce el daño.';
+ const detail=e.type==='heart'?`Onda a ${range} ${range===1?'sala':'salas'}: pierde ${frenzy?2:1} de cordura y +1 oscuridad. Defender reduce la pérdida mental y evita +1 oscuridad del pulso.`:'Impacta en salas contiguas. El Guardián puede moverse '+(frenzy?'2':'1')+' salas. Defender reduce el daño.';
  return {id:e.id,type:e.type,name:stats.label,hp:e.hp,maxHp:stats.hp,phase:frenzy?2:1,phaseLabel:frenzy?'FASE II · FRENESÍ':'FASE I · ACECHO',ritual,turnsUntil:(3-s.turn%3)%3,range,label,detail,exposed:e.exposedUntil===s.turn};
 }
 function doomLimit(s){const finale=s.mode==='campaign'&&s.chapter===8?(s.difficulty==='nightmare'?6:3):0;return s.mode==='endless'?30:Math.max(12,currentChapter(s).limit+DIFFICULTIES[s.difficulty].doomBonus+finale)}
@@ -670,11 +670,14 @@ function attack(s,id,weapon='axe'){if(!canUse(s)||!['axe','shotgun'].includes(we
  if(hit&&s.scrap>=3){dealt++;s.scrap-=3;addLog(s,'Arma reforzada: gastas 3 piezas, +1 daño.','combat')}
  e.hp-=dealt;s.lastRoll={value:d,hit,crit,weapon,damage:dealt};addLog(s,`${weapon==='axe'?'Hachazo':'Disparo'} contra ${ENEMY_TYPES[e.type].label}: dado ${d} · ${hit?`${dealt} daño${crit?' (crítico)':''}`:'fallo'}.`,hit?'combat':'danger');
  if(e.hp<=0){s.enemies=s.enemies.filter(x=>x.id!==id);s.kills++;s.score+=e.type==='boss'||e.type==='heart'?150:25;addLog(s,`${ENEMY_TYPES[e.type].label} eliminado.`,'loot');
+  // Pesadilla recompensa dominar combates en lugar de esperar pasivamente.
+  // No se crea estado adicional: se aprovecha el contador persistente de bajas.
+  if(s.mode==='campaign'&&s.difficulty==='nightmare'&&s.kills%2===0){const before=s.doom;s.doom=Math.max(0,s.doom-3);if(s.doom<before)addLog(s,`RACHA DE SUPERVIVENCIA · Dos amenazas eliminadas: −${before-s.doom} oscuridad.`,'loot')}
   if(e.type==='stalker'){s.killedStalkers++;if(s.chapter===3){s.objectiveCount=Math.min(3,s.killedStalkers);if(s.objectiveCount>=3)storyBeat(s,'objective')}}
   if(e.type==='boss'||e.type==='heart'){s.bossKilled=true;s.objectiveCount=1;storyBeat(s,'objective');s.doom=Math.max(0,s.doom-3);addLog(s,`El ${e.type==='heart'?'Corazón':'Guardián'} cae. La oscuridad retrocede.`, 'story')}}
  s.lastAction='Resolución de combate';check(s);return true}
 function heal(s){if(!canUse(s)||!s.medkits||s.hp===MAX_HP)return false;spend(s);s.medkits--;s.hp=Math.min(MAX_HP,s.hp+4);addLog(s,'Botiquín: +4 salud.','loot');s.lastAction='Botiquín';return true}
-function ward(s){if(!canUse(s)||!s.wards||(s.sanity===MAX_SANITY&&s.doom===0))return false;spend(s);s.wards--;s.sanity=Math.min(MAX_SANITY,s.sanity+2);s.doom=Math.max(0,s.doom-2);addLog(s,'Talismán: +2 cordura, −2 oscuridad.','loot');s.lastAction='Talismán';return true}
+function ward(s){if(!canUse(s)||!s.wards||(s.sanity===MAX_SANITY&&s.doom===0))return false;spend(s);s.wards--;s.sanity=Math.min(MAX_SANITY,s.sanity+2);s.doom=Math.max(0,s.doom-(s.mode==='campaign'&&s.difficulty==='nightmare'?4:2));addLog(s,`Talismán: +2 cordura, −${s.mode==='campaign'&&s.difficulty==='nightmare'?4:2} oscuridad (hasta el mínimo 0).`,'loot');s.lastAction='Talismán';return true}
 function flare(s){if(!canUse(s)||!s.flares)return false;spend(s);s.flares--;s.doom=Math.max(0,s.doom-1);
  for(const i of neighbors(s.pos)){if(!s.revealed.includes(i)){s.revealed.push(i);s.score+=3;addLog(s,`La bengala ilumina ${ROOM_NAMES[i]}.`,'loot')}}
  for(const e of s.enemies)if(dist(e.pos,s.pos)<=1)e.stunnedUntil=s.turn;
@@ -699,7 +702,12 @@ function seal(s){if(!canUse(s)||!s.sealSpots.includes(s.pos)||s.sealed.includes(
  if(s.mode==='campaign'&&s.chapter===7&&s.seals===2){s.doom=Math.max(0,s.doom-2);addLog(s,'Dos nombres resuenan al unísono: −2 oscuridad adicionales.','story')}
  if(s.mode==='endless'&&s.seals===s.sealSpots.length){const places=shuffle(s,Array.from({length:25},(_,i)=>i).filter(i=>i!==ENTRANCE)).slice(0,4);s.sealSpots=places;s.sealed=[];s.seals=0;addLog(s,'Has cerrado un círculo de cuatro grietas. Nacen cuatro grietas nuevas.','danger')}
  if(s.mode==='campaign'&&s.seals===currentChapter(s).seals&&['boss','final'].includes(currentChapter(s).pressure)&&!s.bossSummoned){const spots=s.revealed.filter(i=>i!==s.pos&&dist(i,s.pos)>=2);
-  if(spawn(s,s.chapter===8?'heart':'boss',spots.length?pick(s,spots):undefined)){s.bossSummoned=true;addLog(s,'Un cuerpo inmenso emerge de las vigas. Destrúyelo antes de escapar.','danger')}}
+  if(spawn(s,s.chapter===8?'heart':'boss',spots.length?pick(s,spots):undefined)){
+   s.bossSummoned=true;
+   if(s.chapter===8&&s.difficulty==='nightmare'){
+    s.wards++;addLog(s,'LA ÚLTIMA RESERVA · Hallas un talismán antes de enfrentar al Corazón (+1 talismán).','loot')
+   }
+   addLog(s,'Un cuerpo inmenso emerge de las vigas. Destrúyelo antes de escapar.','danger')}}
  check(s);if(!s.ended&&s.seals===1)storyBeat(s,'seal');return true}
 function objectivesComplete(s){return s.mode==='endless'?s.turn>=12:s.seals===currentChapter(s).seals&&s.objectiveCount>=currentObjective(s).target&&(currentObjective(s).type!=='boss'||s.bossKilled)}
 function escape(s){if(s.ended||s.pendingChoice||s.pos!==ENTRANCE||!objectivesComplete(s))return false;
@@ -769,10 +777,13 @@ function enemyPhase(s){for(const e of s.enemies){if(s.ended)break;if(e.stunnedUn
  if((e.type==='boss'||e.type==='heart')&&s.turn%3===0){
   const frenzy=e.hp<=Math.ceil(stats.hp/2),d=dist(e.pos,s.pos);
   if(e.type==='heart'&&d<=(frenzy?2:1)){
-   let mind=frenzy?2:1;s.doom++;if(useEcho(s,'echo-heart','Anticipas el latido del Corazón.'))mind=Math.max(0,mind-1);
-   if(s.guard===1){mind=Math.max(0,mind-1);s.guard=0;addLog(s,'DEFENSA: amortiguas el pulso de la casa.','combat')}
+   let mind=frenzy?2:1;let ritualDoom=1;
+   if(useEcho(s,'echo-heart','Anticipas el latido del Corazón.'))mind=Math.max(0,mind-1);
+   // La defensa preparada tiene una respuesta táctica explícita al pulso en el final.
+   if(s.guard===1){mind=Math.max(0,mind-1);ritualDoom=0;s.guard=0;addLog(s,'DEFENSA RITUAL: resistes el pulso y evitas +1 oscuridad.','combat')}
+   s.doom+=ritualDoom;
    if(mind)hurtMind(s,mind,'Pulso del Corazón');
-   addLog(s,`PULSO RITUAL · Radio ${frenzy?2:1}: +1 oscuridad. El Corazón queda expuesto hasta el próximo turno.`,'danger');
+   addLog(s,`PULSO RITUAL · Radio ${frenzy?2:1}: +${ritualDoom} oscuridad. El Corazón queda expuesto hasta el próximo turno.`,'danger');
    e.exposedUntil=s.turn+1;check(s);continue;
   }
   if(e.type==='boss'&&d===1){
@@ -791,8 +802,11 @@ function enemyPhase(s){for(const e of s.enemies){if(s.ended)break;if(e.stunnedUn
   if(ritual)addLog(s,`${stats.label} descarga un golpe ritual intensificado.`, 'danger');
   if(s.guard===1){harm=Math.max(0,harm-1);mind=Math.max(0,mind-1);s.guard=0;addLog(s,'DEFENSA: bloqueas parte del impacto.', 'combat')}
   if(harm)damage(s,harm,stats.label);if(mind)hurtMind(s,mind,stats.label);if(stats.doom)s.doom+=stats.doom}check(s)}}}
+function exitBreather(s){return s.mode==='campaign'&&[5,7,8].includes(s.chapter)&&objectivesComplete(s)&&s.pos!==ENTRANCE&&s.turn%3===0}
 function endTurn(s){if(s.ended||s.pendingChoice)return false;
- s.doom+=s.difficulty==='nightmare'?(s.mode==='campaign'&&s.chapter===8&&s.turn%3===0?1:2):s.difficulty==='story'&&s.turn%2===0?0:1;
+ const incoming=s.difficulty==='nightmare'?(s.mode==='campaign'&&s.turn%2===0?1:2):s.difficulty==='story'&&s.turn%2===0?0:1;
+ const breather=exitBreather(s);s.doom+=breather?Math.max(0,incoming-1):incoming;
+ if(breather)addLog(s,'ÚLTIMO REGRESO · Al cerrar el ritual, la casa vacila: −1 oscuridad de avance este turno. No detiene ataques ni eventos.','story');
  addLog(s,'La casa respira. La oscuridad avanza.','phase');applyCard(s);
  if(s.turn%3===0&&!s.enemies.some(e=>e.type==='boss'||e.type==='heart'))spawn(s,s.mode==='endless'&&s.turn>=12?'wraith':s.chapter>=3?'stalker':'possessed');
  if(s.mode==='campaign'){
@@ -859,7 +873,7 @@ function migrateLegacy(g){if(!g||g.version!==1||!Number.isInteger(g.pos)||g.pos<
  s.enemies=(Array.isArray(g.enemies)?g.enemies:[]).filter(e=>Number.isInteger(e.pos)&&s.revealed.includes(e.pos)).slice(0,9).map(e=>({id:s.nextId++,type:'possessed',pos:e.pos,hp:Math.max(1,Math.min(2,Math.floor(Number(e.hp)||2)))}));s.ended=Boolean(g.ended);s.won=Boolean(g.won);
  s.objectiveCount=s.seals===3?1:0;s.log=[];addLog(s,'Partida v0.2 importada: posición y recursos conservados.','help');return validate(s)?s:null}
 function achievementsFor(s){const found=[];if(s.won&&s.mode==='campaign')found.push('first');if(s.won&&s.chapter===4)found.push('mid');if(s.won&&s.chapter===8)found.push('end');if(s.won&&s.difficulty==='nightmare')found.push('hard');if(s.mode==='endless'&&s.turn>=15)found.push('long');if(s.won&&s.hp>=8)found.push('clean');if(s.encounterChoices.length>=4)found.push('stories');return found}
-return {CHAPTER_FINALES,CHAPTER_ECHOES,chapterForecast,VERSION,CHAPTERS,STORY_BEATS,ALL_ENCOUNTERS,ROOM_NAMES,ROOM_TYPES,ENEMY_TYPES,CARDS,SURVIVORS,DIFFICULTIES,ENCOUNTERS,ACHIEVEMENTS,SIDE_OBJECTIVES,ENTRANCE,MAX_HP,MAX_SANITY,SIZE,neighbors,dist,createGame,dispatch,validate,upgradeV3,migrateLegacy,currentChapter,currentObjective,bossThreat,doomLimit,objectivesComplete,hasShot,achievementsFor};
+return {exitBreather,CHAPTER_FINALES,CHAPTER_ECHOES,chapterForecast,VERSION,CHAPTERS,STORY_BEATS,ALL_ENCOUNTERS,ROOM_NAMES,ROOM_TYPES,ENEMY_TYPES,CARDS,SURVIVORS,DIFFICULTIES,ENCOUNTERS,ACHIEVEMENTS,SIDE_OBJECTIVES,ENTRANCE,MAX_HP,MAX_SANITY,SIZE,neighbors,dist,createGame,dispatch,validate,upgradeV3,migrateLegacy,currentChapter,currentObjective,bossThreat,doomLimit,objectivesComplete,hasShot,achievementsFor};
 });
 
 </script>
@@ -1212,7 +1226,7 @@ function chapterIntro(){const c=E.currentChapter(game),isEndless=game.mode==='en
 function showRules(){showModal({kicker:'MANUAL COMPLETO · EDICIÓN 2.2',title:'Reglamento de la noche',content:`
  <p>Juego de mesa táctico original para una persona, sin servidor. El motor usa un dado d6 reproducible y baraja de 24 cartas sin reposición hasta agotar el mazo.</p>
  <h3>1 · Misiones</h3><p>Revela el tablero de 5×5 entrando en losetas vecinas. Debes cerrar todas las grietas y resolver la <b>misión exclusiva</b> del capítulo (encontrar reliquias, reparar pararrayos, matar acechadores, purificar salas, recuperar señales de radio o vencer al jefe). Después regresa a la casilla 23 y pulsa Escapar. Cada capítulo tiene su propio límite de oscuridad.</p>
- <h3>2 · Tres puntos de acción</h3><ul><li><b>Mover:</b> pulsa habitación ortogonal adyacente, 1 PA; revela la sala.</li><li><b>Buscar:</b> 1 PA; una vez por habitación y sin enemigos dentro. Da cartuchos, botiquín, talismán, bengala, chatarra o cordura.</li><li><b>Investigar:</b> 1 PA en una sala con símbolo ◇, sin enemigos; completa objetivos especiales.</li><li><b>Hacha:</b> 1 PA; alcance 0–1, impacta con 4+ en un d6, hace 1 daño (+1 con 6).</li><li><b>Escopeta:</b> 1 PA +1 cartucho; alcance 0–2 en línea despejada y explorada, impacta con 3+, hace 2 daño (+1 con 6).</li><li><b>Sellar:</b> 1 PA sobre grieta ✥ sin enemigos; −1 cordura, −3 oscuridad.</li><li><b>Descansar:</b> 1 PA, +1 cordura. En capítulo 6 puede fallar.</li><li><b>Habilidad:</b> 1 PA, una vez por turno: explorar desde lejos, primeros auxilios o exorcismo.</li><li><b>Botiquín:</b> 1 PA, consume 1, +4 salud; <b>Talismán:</b> 1 PA, consume 1, +2 cordura y −2 oscuridad.</li><li><b>Bengala:</b> 1 PA, revela las cuatro salas contiguas, aturde enemigos cercanos y −1 oscuridad.</li><li><b>Barricada:</b> 1 PA +1 chatarra, frena al primer enemigo que entra en la sala.</li></ul>
+ <h3>2 · Tres puntos de acción</h3><ul><li><b>Mover:</b> pulsa habitación ortogonal adyacente, 1 PA; revela la sala.</li><li><b>Buscar:</b> 1 PA; una vez por habitación y sin enemigos dentro. Da cartuchos, botiquín, talismán, bengala, chatarra o cordura.</li><li><b>Investigar:</b> 1 PA en una sala con símbolo ◇, sin enemigos; completa objetivos especiales.</li><li><b>Hacha:</b> 1 PA; alcance 0–1, impacta con 4+ en un d6, hace 1 daño (+1 con 6).</li><li><b>Escopeta:</b> 1 PA +1 cartucho; alcance 0–2 en línea despejada y explorada, impacta con 3+, hace 2 daño (+1 con 6).</li><li><b>Sellar:</b> 1 PA sobre grieta ✥ sin enemigos; −1 cordura, −3 oscuridad.</li><li><b>Descansar:</b> 1 PA, +1 cordura. En capítulo 6 puede fallar.</li><li><b>Habilidad:</b> 1 PA, una vez por turno: explorar desde lejos, primeros auxilios o exorcismo.</li><li><b>Botiquín:</b> 1 PA, consume 1, +4 salud; <b>Talismán:</b> 1 PA, consume 1, +2 cordura y −2 oscuridad (−4 en Pesadilla de campaña).</li><li><b>Bengala:</b> 1 PA, revela las cuatro salas contiguas, aturde enemigos cercanos y −1 oscuridad.</li><li><b>Barricada:</b> 1 PA +1 chatarra, frena al primer enemigo que entra en la sala.</li></ul>
  <p><b>Defender:</b> gasta 1 PA. Reduce en 1 el daño de vida o cordura del primer impacto de la fase del mal. <b>El Guardián</b> golpea también salas contiguas cada tercer turno; <b>el Corazón</b> emite un pulso que quita cordura y añade oscuridad (radio 1, o 2 en fase II). Tras un ritual, el jefe queda <b>expuesto</b> durante tu siguiente turno y tus golpes acertados causan +1 daño. El panel del jefe anuncia la próxima ofensiva.</p><h3>3 · Combate y monstruos</h3><p>Hay poseídos, acechadores (2 movimientos), abominaciones (2 de daño), espectros (atraviesan espacios revelados y atacan cordura), parásitos (aumentan oscuridad) y dos jefes. Un arma reforzada gasta automáticamente 3 chatarras al golpear para causar +1 daño. Todos los ataques con dado están anotados en la crónica.</p>
  <h3>4 · Fase del mal</h3><p>Pulsa Fin de turno, aunque te queden PA. La oscuridad aumenta según la dificultad, se roba una carta, avanzan los efectos especiales, aparecen monstruos y cada enemigo actúa. Entonces recuperas 3 PA. En «Historia» la oscuridad sube más despacio; «Pesadilla» añade presión y precisión enemiga.</p>
  <h3>5 · Encuentros y campaña</h3><p>Cuatro habitaciones esconden decisiones narrativas con efectos reales. Hay ocho capítulos con misiones diferentes, tres supervivientes y tres dificultades. Cada victoria de campaña desbloquea el siguiente capítulo, con logros persistentes.</p>

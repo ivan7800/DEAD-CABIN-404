@@ -1,9 +1,52 @@
-## 2.6.0 — Desenlaces propios y continuidad de campaña (29-10-2026)
-- Ocho desenlaces interactivos y dos decisiones finales por expediente.
-- Siete tipos de legado pueden mejorar el siguiente capítulo; no se aplican dos veces.
-- Ecos de decisiones previas y guía táctica de cada capítulo conservados desde v2.4-v2.5.
-- Guardados v4 compatibles; versión de PWA y HTML independiente actualizados.
-- 76 pruebas Node aprobadas localmente en la candidata; pendientes pruebas humanas de campaña completa.
+## 2.10.1 — Pruebas de estrategia y comparativa de campañas
+- Comparación reproducible de dos políticas, con las mismas semillas.
+- Nueva prueba de integridad de políticas y documento de límites de la simulación.
+- Sin cambios en reglas ni en formato de guardado.
+
+## v2.10 — recursos y combate en Pesadilla
+- Los talismanes reducen hasta cuatro puntos de oscuridad en Pesadilla de campaña, frente a dos en otras dificultades.
+- Cada segunda eliminación de una criatura en Pesadilla de campaña reduce hasta tres puntos de oscuridad, incentivando combatir en vez de únicamente resistir.
+- Sin nuevos campos persistentes ni cambios en `VERSION=4`.
+- Revisión de equilibrio de las mismas 108 campañas automatizadas: Pesadilla pasa de 115 a 131 episodios alcanzados; las campañas completadas siguen en 2/36.
+
+## v2.9 — calibración conservadora de Pesadilla (candidata)
+
+- Diagnóstico de causa: 30/36 derrotas de Pesadilla procedían de la oscuridad; 16/36 campañas caían en el capítulo 1.
+- En modo campaña y dificultad Pesadilla el avance **base** de oscuridad pasa de 2 por turno a 1 en turnos pares, sin cambiar cartas, peligros, eventos ni ataques.
+- Misma campaña reproducible: 0/36 → 2/36 campañas completadas en Pesadilla, 81 → 115 episodios visitados. Historia y Normal se mantienen. No equivale a una validación con personas.
+- Guardados v4 y lanzadores compatibles.
+
+## v2.8.0 — Equilibrio final y pruebas de campaña
+
+- La acción Defender protege también de +1 oscuridad en el pulso ritual del Corazón, reforzando el contrajuego de la fase II.
+- En Pesadilla, la invocación del Corazón entrega un único talismán de emergencia; la dificultad sigue siendo exigente.
+- Batería de regresión para defensa ritual, invocación, guardados y simulación de campaña encadenada.
+- Caché PWA actualizada a v2.8.0.
+
+## 2.7.0 — Auditoría y ritmo del regreso
+
+- Revisión reproducible de 1.152 partidas sintéticas y contraste con la v2.6.
+- Los capítulos 5, 7 y 8 amortiguan una unidad de avance base de oscuridad cada tres turnos una vez completados los objetivos, durante el regreso a la Entrada. No se alteran cartas, combates ni fases de jefes.
+- Previsión táctica contextual y cuatro pruebas específicas.
+- Guardados v4 conservados.
+
+## 2.5.0 — Consecuencias de los ocho expedientes
+
+- La primera decisión narrativa de cada capítulo puede activar una resonancia táctica única.
+- Ocho efectos de un solo uso alteran tormentas, acechadores, jefes, mutaciones, silencio, rituales o pérdida de cordura.
+- La alternativa prudente preserva el efecto normal sin otorgar la resonancia.
+- La interfaz anticipa el efecto antes de escoger y muestra los ecos activos en el parte táctico.
+- Formato v4 preservado; las resonancias usan `blessings`, campo ya existente.
+- Nuevas pruebas de cobertura, reconstrucción del HTML independiente y caché de PWA v2.5.
+
+## 2.4.0 · Expedientes diferenciados
+
+- Avisos tácticos dinámicos, específicos de los ocho capítulos, con ventana de riesgo y contramedida.
+- Primer expediente: recompensa de cordura al recuperar la página.
+- Capítulo 6: la investigación por radio descubre cartuchos adicionales.
+- Capítulo 7: alivio de oscuridad al conseguir dos sellos.
+- Compatible con partidas v4, sin nuevos campos de guardado.
+- Test específico de pronósticos y recompensas; CSS responsive y PWA actualizadas.
 
 ## 2.3.0 — Seguridad de partidas, controles móviles y balance (29-10-2026)
 - Validación profunda de estados v4: registros de sucesos, enemigos, eventos, dados y límites de recursos.
@@ -96,3 +139,10 @@
 - PWA versionada (v1-7-0) y generador HTML sin instalación actualizado.
 - QA: 28 pruebas de motor + smoke real Chromium escritorio y móvil 390/320 (auditoría no exhaustiva).
 - El arte es SVG con volumen aparente; **no** es 3D ni fotorrealismo prerenderizado.
+
+
+## v2.6 — Ocho desenlaces con elecciones
+- Ocho escenas jugables de salida, una por capítulo, con dos desenlaces cada una.
+- El cierre se activa mediante ESCAPAR tras completar el objetivo y llegar a Entrada; una segunda pulsación cierra la expedición.
+- Siete desenlaces pueden otorgar recursos concretos en el siguiente capítulo, sin alterar el formato de guardado v4.
+- Cierre específico del capítulo 8, con opción de escribir o dejar en blanco la última página.

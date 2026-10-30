@@ -54,7 +54,7 @@ test('Corazón: onda radial distintiva de segunda fase, sin línea de visión',(
  E.dispatch(second,{type:'END_TURN'});E.dispatch(guarded,{type:'END_TURN'});
  assert.ok(second.log.some(x=>x.text.includes('PULSO RITUAL')));
  assert.equal(second.sanity,guarded.sanity-1);
- assert.equal(second.doom,guarded.doom);
+ assert.equal(second.doom,guarded.doom+1);
  assert.equal(second.enemies[0].exposedUntil,4);
  assert.ok(E.validate(second));
 });
@@ -74,8 +74,8 @@ test('UI de jefe, PWA, versión y HTML offline incluyen los módulos nuevos',()=
  const html=read('index.html'),js=read('js/app.js'),sw=read('sw.js'),builder=read('scripts/build-single.js');
  for(const id of ['bossPanel','bossName','bossPhase','bossHp','bossBar','bossIntent','bossDetail'])assert.ok(html.includes(`id="${id}"`));
  assert.match(js,/function renderBoss\(/);assert.match(js,/E\.bossThreat\(game\)/);
- assert.match(sw,/dead-cabin-404-v2-6-0/);assert.match(sw,/css\/edition22\.css/);
- assert.match(builder,/edition22\.css/);assert.equal(JSON.parse(read('package.json')).version,'2.6.0');
+ assert.match(sw,/dead-cabin-404-v2-10-0/);assert.match(sw,/css\/edition22\.css/);
+ assert.match(builder,/edition22\.css/);assert.equal(JSON.parse(read('package.json')).version,'2.10.0');
  assert.equal(E.VERSION,4,'No modificar formato de guardados para un campo opcional en los enemigos');
 });
 
