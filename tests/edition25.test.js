@@ -25,7 +25,7 @@ test('ecos sobreviven serialización JSON y lectura de partidas sin ecos',()=>{
 test('UI, PWA y HTML independiente incluyen las nuevas ayudas narrativas',()=>{
  const index=fs.readFileSync('index.html','utf8');const sw=fs.readFileSync('sw.js','utf8');
  const app=fs.readFileSync('js/app.js','utf8');assert.match(index,/edition25.css/);
- assert.match(sw,/v2-10-0/);assert.match(sw,/edition25.css/);assert.match(app,/CONSECUENCIA ESPECIAL/);
+ assert.match(sw,/v2-11-0/);assert.match(sw,/edition25.css/);assert.match(app,/CONSECUENCIA ESPECIAL/);
 });
 test('rastro borrado consume la protección en turno cinco',()=>{
  const s=E.createGame(3,300);s.pendingChoice='c3-0';E.dispatch(s,{type:'CHOOSE',option:0});
