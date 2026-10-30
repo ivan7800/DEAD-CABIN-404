@@ -1,3 +1,5 @@
+> **Última candidata: v3.0 RC6** — arte procedural, ambiente audiovisual, presagios por capítulo y mejoras de accesibilidad. Ver [notas RC6](RELEASE-v3.0-RC6.md).
+
 > **Versión candidata v3.0 RC2:** nueva escenografía contextual y escenas de encuentro; detalles en `RELEASE-v3.0-RC2.md`. No publicada en GitHub.
 
 ## v2.10.1 — Comparación reproducible de estrategias
