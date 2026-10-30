@@ -1,0 +1,5 @@
+const test=require('node:test');const assert=require('node:assert/strict');const fs=require('node:fs');const read=p=>fs.readFileSync(p,'utf8');
+test('RC6 conserva el foco del tablero al volver a dibujarlo',()=>{const a=read('js/app.js');assert.match(a,/focusedPos/);assert.match(a,/focus\(\{preventScroll:true\}\)/)});
+test('RC6 diálogos accesibles y atajos seguros',()=>{const a=read('js/app.js');assert.match(a,/aria-modal/);assert.match(a,/\['INPUT','TEXTAREA','SELECT','BUTTON'\]/)});
+test('RC6 recursos visuales en HTML, PWA y compilador',()=>{const h=read('index.html'),s=read('sw.js'),b=read('scripts/build-single.js'),c=read('css/edition30rc6.css');assert.match(h,/edition30rc6.css/);assert.match(s,/edition30rc6.css/);assert.match(b,/edition30rc6.css/);assert.match(c,/focus-visible/);assert.match(c,/prefers-reduced-motion/)});
+test('RC3 arte procedural y RC4 director audiovisual enlazados',()=>{const h=read('index.html');assert.match(h,/scene-art.js/);assert.match(h,/horror-director.js/);assert.match(read('js/scene-art.js'),/DeadCabinSceneArt/);assert.match(read('js/horror-director.js'),/DeadCabinHorrorDirector/)});
