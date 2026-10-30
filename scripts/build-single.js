@@ -15,6 +15,6 @@ source=source.replace(/<script>if \("serviceWorker" in navigator.*?<\/script>/s,
 const all=js.map(x=>`<script>\n${x.replace(/<\/script/gi,'<\\/script')}\n</script>`).join('\n');
 source=source.replace('</body>',all+'\n</body>');
 const output=path.resolve(root,'JUGAR-SIN-INSTALAR.html');fs.writeFileSync(output,source);
-const release=path.resolve(root,'..','DEAD-CABIN-404-v2.6-JUGAR.html');fs.writeFileSync(release,source);
+const release=path.resolve(root,'..','DEAD-CABIN-404-v2.10-JUGAR.html');fs.writeFileSync(release,source);
 console.log('Creado:',output,'('+Buffer.byteLength(source)+' bytes)');
 console.log('Creado:',release);
