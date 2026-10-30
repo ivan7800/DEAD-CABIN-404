@@ -2,7 +2,7 @@
    Viento filtrado, drones, crujidos, latidos, percusión y señales espectrales.
    Siempre opt-in: sin descarga externa, sin autoplay y con reducido consumo. */
 (function(root){'use strict';
-let ctx=null,master=null,atmos=null,noise=null,lowpass=null,enabled=false,tension=0,timer=null;
+let ctx=null,master=null,atmos=null,noise=null,lowpass=null,enabled=false,tension=0,timer=null,chapter=1,phase="calm",heartbeat=0;
 const nodes=[];
 function makeContext(){
  const AC=root.AudioContext||root.webkitAudioContext;if(!AC)return false;
@@ -44,8 +44,33 @@ function effect(name){if(!enabled)return;
  case 'defeat':tone(93,1.8,'sawtooth',.13,.24);tone(52,2,'sine',.13,.6,.12);noiseHit(.85,.11,220);break;
  case 'loot':tone(560,.22,'sine',.115,1.32);tone(740,.35,'triangle',.08,1,.14);break;
  }}
-function start(){try{if(!makeContext())return false;ctx.resume();enabled=true;clearInterval(timer);timer=setInterval(()=>{if(!enabled||document.hidden)return;const r=Math.random();if(r<.45){tone(45+Math.random()*36,.65+Math.random()*.4,'sawtooth',.015+Math.random()*.013,.45)}else if(r<.74){tone(660+Math.random()*160,.17,'sine',.013,.2);tone(90,.35,'triangle',.02,.48,.16)}else{noiseHit(.25,.03,200+Math.random()*250)}},14500);setTension(tension);return true}catch{return false}}
+const CHAPTER_SOUND=[null,{base:43,wind:190,beat:0},{base:39,wind:120,beat:0},{base:48,wind:310,beat:1},{base:33,wind:150,beat:0},{base:55,wind:260,beat:1},{base:36,wind:110,beat:0},{base:42,wind:420,beat:1},{base:29,wind:100,beat:1}];
+function cue(name){if(!enabled||!ctx)return;
+ switch(name){
+ case 'approach':tone(76,.9,'sine',.095,.41);tone(142,1.1,'triangle',.05,.67,.13);break;
+ case 'ritual':tone(94,1.6,'sawtooth',.12,.31);tone(63,1.9,'sine',.095,.48,.24);break;
+ case 'whisper':tone(520,.48,'sine',.019,.7);tone(690,.4,'sine',.014,.48,.18);break;
+ case 'heartbeat':tone(58,.16,'sine',.13,.7);tone(46,.22,'sine',.08,.65,.22);break;
+ case 'silence':silence(2.4);break;
+ }}
+function silence(seconds=2){if(!enabled||!ctx||!atmos)return;const now=ctx.currentTime;atmos.gain.cancelScheduledValues(now);atmos.gain.setValueAtTime(atmos.gain.value,now);atmos.gain.linearRampToValueAtTime(.005,now+.16);atmos.gain.setValueAtTime(.005,now+Math.min(4,Math.max(.5,seconds)));atmos.gain.linearRampToValueAtTime(.26+tension*.34,now+Math.min(4,Math.max(.5,seconds))+.9)}
+function setScene(nextChapter=1,nextPhase='calm'){
+ const c=Math.max(1,Math.min(8,Math.floor(Number(nextChapter)||1))),p=['calm','unease','danger','critical'].includes(nextPhase)?nextPhase:'calm';
+ const changed=c!==chapter,escalated=['calm','unease','danger','critical'].indexOf(p)>['calm','unease','danger','critical'].indexOf(phase);
+ chapter=c;phase=p;
+ if(ctx&&lowpass){const now=ctx.currentTime;lowpass.frequency.setTargetAtTime(CHAPTER_SOUND[c].wind+tension*180,now,1.2)}
+ if(changed&&enabled){silence(1.5);cue('whisper')}
+ else if(escalated&&enabled){if(p==='critical'){silence(1.2);cue('ritual')}else if(p==='danger')cue('approach')}
+}
+function start(){try{if(!makeContext())return false;ctx.resume();enabled=true;clearInterval(timer);timer=setInterval(()=>{if(!enabled||root.document?.hidden)return;
+ const r=Math.random(),base=CHAPTER_SOUND[chapter].base;
+ if(phase==='critical'&&++heartbeat%2===0){cue('heartbeat');return}
+ if(r<.35){tone(base+Math.random()*13,.8,'sawtooth',.015,.48)}
+ else if(r<.6){cue('whisper')}
+ else if(r<.76){noiseHit(.32,.025,CHAPTER_SOUND[chapter].wind+100)}
+ else if(CHAPTER_SOUND[chapter].beat&&phase!=='calm')cue('heartbeat');
+ },phase==='critical'?4800:11000);setTension(tension);setScene(chapter,phase);return true}catch{return false}}
 function stop(){enabled=false;clearInterval(timer);timer=null;if(ctx)ctx.suspend().catch(()=>{})}
-function setTension(value){tension=Math.max(0,Math.min(1,Number(value)||0));if(ctx&&atmos){const t=ctx.currentTime;atmos.gain.setTargetAtTime(.26+tension*.34,t,.7);if(lowpass)lowpass.frequency.setTargetAtTime(190+tension*230,t,.9)}}
-root.DeadCabinAudio={start,stop,effect,setTension,get enabled(){return enabled}};
+function setTension(value){tension=Math.max(0,Math.min(1,Number(value)||0));if(ctx&&atmos){const t=ctx.currentTime;atmos.gain.setTargetAtTime(.26+tension*.34,t,.7);if(lowpass)lowpass.frequency.setTargetAtTime(CHAPTER_SOUND[chapter].wind+tension*180,t,.9)}}
+root.DeadCabinAudio={start,stop,effect,setTension,setScene,cue,silence,get enabled(){return enabled},get chapter(){return chapter},get phase(){return phase}};
 })(globalThis);

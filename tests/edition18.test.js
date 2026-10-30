@@ -30,5 +30,5 @@ test('PWA and standalone builder include v1.8 assets',()=>{
   assert.ok(sw.includes(`'./${asset}'`),`PWA missing ${asset}`);
   assert.ok(builder.includes(path.basename(asset)),`Builder missing ${asset}`);
  }
- assert.match(sw,/dead-cabin-404-v3-0-rc2/);
+ assert.match(sw,/dead-cabin-404-v3-0-rc6/);
 });

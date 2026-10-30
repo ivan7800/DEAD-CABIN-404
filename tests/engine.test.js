@@ -78,8 +78,8 @@ test('simulación adversarial: 100 partidas con acciones aleatorias nunca rompe 
   if(enemies.length)actions.push({type:'ATTACK',id:enemies[0].id,weapon:'axe'});
   const idx=(seed*11+step*19)%actions.length;E.dispatch(s,actions[idx]);assert.ok(E.validate(s),`seed ${seed} step ${step}`)}
  }});
-test('16 escenas exclusivas de capítulo y 8 encuentros genéricos',()=>{
- assert.equal(E.ALL_ENCOUNTERS.length,32);
+test('Escenas de capítulo y conjunto ampliado de encuentros',()=>{
+ assert.equal(E.ALL_ENCOUNTERS.length,48);
  for(let c=1;c<=8;c++)assert.equal(E.STORY_BEATS[c].length,2);
  const s=mk(2,2026);s.encounterSpots=[];s.pos=s.sealSpots[0];s.revealed.push(s.pos);
  assert.equal(E.dispatch(s,{type:'SEAL'}),true);assert.equal(s.pendingChoice,'c2-0');
