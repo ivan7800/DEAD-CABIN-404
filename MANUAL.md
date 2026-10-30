@@ -54,7 +54,7 @@ Dispones de **3 PA**. Puedes usarlos en cualquier orden. En la mayoría de accio
 | Sellar grieta | 1 PA; −1 cordura, −3 oscuridad, +55 puntos. | Estar sobre símbolo ✥ activo y sin enemigos en esa habitación. |
 | Descansar | 1 PA; +1 cordura. | No estar a cordura máxima; en el capítulo 6 puede fallar con un d6 de 1–3 y provocar +1 oscuridad. |
 | Botiquín | 1 PA y 1 botiquín; +4 vida. | No estar a vida máxima. |
-| Talismán | 1 PA y 1 talismán; +2 cordura y −2 oscuridad. | Existe algún beneficio posible. |
+| Talismán | 1 PA y 1 talismán; +2 cordura y −2 oscuridad (−4 en Pesadilla de campaña). | Existe algún beneficio posible. |
 | Bengala | 1 PA y 1 bengala; revela las cuatro habitaciones adyacentes, aturde por una noche a los enemigos a distancia 0–1 y −1 oscuridad. | Tener al menos 1 bengala. |
 | Barricada | 1 PA y 1 chatarra; instala protección de un uso en la sala actual. | Sin enemigos en la sala y sin una barricada previa. |
 | Habilidad | 1 PA; efecto distinto según el superviviente. | Una vez por turno y requisitos de la habilidad. |
