@@ -1,12 +1,28 @@
-# DEAD CABIN 404 — Campaña narrativa v2.6
+## v2.10.1 — Comparación reproducible de estrategias
 
-**Versión 2.6.0.** Ocho desenlaces jugables (dos alternativas cada uno), ecos tácticos de decisión y pequeñas recompensas narrativas heredables al capítulo siguiente. Para cerrar un capítulo: cumple objetivos, vuelve a la Entrada, selecciona ESCAPAR, resuelve el clímax y vuelve a ESCAPAR. Los guardados v4 siguen siendo compatibles.
+Se incorpora `npm run audit:strategy` para contrastar una política táctica conservadora con la anterior en las mismas 108 campañas. Pesadilla mejora de 2/36 a 3/36 en este banco de pruebas, mientras el total de campañas completas permanece 29/108. Ver `QA-ESTRATEGIA-v2.10.1.md`. No implica certificación de equilibrio ni sustituye partidas humanas.
 
-## Calidad y límites
+## Candidata v2.10 — Contrajuego de recursos y combates
 
-Se verificaron 76 pruebas Node sobre el paquete local antes de la publicación; las pruebas de CI verifican el código integrado. Quedan pendientes partidas humanas completas, dispositivos físicos y equilibrado final de Pesadilla.
+En Pesadilla de campaña, los talismanes reducen hasta 4 puntos de oscuridad (en otras dificultades siguen reduciendo 2), y cada segunda criatura derrotada reduce hasta 3 puntos adicionales. El cambio ofrece alternativas tácticas a limitarse a sobrevivir turnos, sin alterar el formato de guardado v4. Las campañas heurísticas terminadas permanecen en 2/36 Pesadilla, pero los episodios alcanzados suben de 115 a 131 en las mismas 36 campañas. No equivale a validación humana.
 
----
+## Candidata v2.9 — Calibración de la oscuridad en Pesadilla
+
+En campaña Pesadilla, el avance base de oscuridad se reduce en uno los turnos pares. El resto de mecánicas y los guardados v4 no cambian. Las 108 campañas heurísticas pasan de 27 a 29 victorias, pero **Pesadilla continúa muy difícil (2/36)**. Consultar `AUDITORIA-PESADILLA-v2.9.md`.
+
+## Candidata v2.8 — Equilibrio final y campaña encadenada
+
+Ajustes de contrajuego para el Corazón y prueba reproducible de ocho capítulos encadenados. No es una certificación de partidas humanas; ver `QA.md` y `scripts/audit-chain.js`.
+
+## Estado candidato 2.7 — Revisión de ritmo de campaña
+
+Revisadas 1.152 simulaciones de los ocho capítulos. En 5, 7 y 8 se reduce puntualmente el avance base de oscuridad durante el regreso a la salida tras cumplir objetivos, sin alterar eventos ni combates. Consulta `AUDITORIA-CAMPANA-v2.7.md`.
+
+> **v2.5 candidata:** Cada expediente presenta una resonancia propia al elegir la primera opción de su primer encuentro especial. El efecto aparece antes de elegir y se muestra mientras sigue activo en el informe táctico. La segunda opción conserva sus recompensas habituales.
+
+## Novedades v2.4 (candidata local)
+
+Cada uno de los ocho capítulos presenta un pronóstico táctico dinámico, indicando amenazas, ritmo de peligro y contramedidas. Las investigaciones de los capítulos 1 y 6 y el ritual del capítulo 7 cuentan con recompensas propias. Se conserva el formato de guardado v4.
 
 # DEAD CABIN 404 — Premium Táctica 2.3
 
@@ -94,3 +110,9 @@ Las pruebas de navegador requieren Playwright Python y Chromium. El paquete no l
 - La barra rápida móvil comparte el estado de las acciones normales; no añade nuevas mecánicas.
 
 Proyecto original. **Licencia MIT** en `LICENSE`. Para cambios por versión, véase `CHANGELOG.md`. Para evidencia y pruebas pendientes, véase `QA.md`.
+
+## Novedades v2.6 — Desenlaces de los ocho capítulos
+
+Después de cerrar todas las grietas, completar el objetivo y regresar a **Entrada**, pulsa **ESCAPAR** para abrir el desenlace único de tu capítulo. Elige una de las dos salidas narrativas y pulsa **ESCAPAR** de nuevo para completar la expedición. La decisión final no consume puntos de acción.
+
+Las siete primeras expediciones pueden legar una pequeña ventaja material a la siguiente (un talismán, munición, un botiquín o una bengala); se transfiere únicamente mediante el botón **SIGUIENTE CAPÍTULO**. Se conserva el guardado v4: una partida guardada en una versión anterior sigue siendo válida. La escena final del capítulo 8 permite cerrar el libro o dejar la última página en blanco.
