@@ -1,11 +1,11 @@
 {
   "name": "dead-cabin-404",
-  "version": "2.11.0",
+  "version": "3.0.0-rc.2",
   "private": true,
   "license": "MIT",
   "description": "DEAD CABIN 404 — edición definitiva de juego de mesa digital de terror en solitario",
   "scripts": {
-    "test": "node --test tests/engine.test.js tests/assets.test.js tests/edition18.test.js tests/edition20.test.js tests/edition21.test.js tests/edition22.test.js tests/edition23.test.js tests/edition24.test.js tests/edition25.test.js tests/edition26.test.js tests/edition27.test.js tests/edition28.test.js tests/edition29.test.js tests/edition210.test.js tests/strategy.test.js tests/telemetry.test.js",
+    "test": "node --test tests/engine.test.js tests/assets.test.js tests/edition18.test.js tests/edition20.test.js tests/edition21.test.js tests/edition22.test.js tests/edition23.test.js tests/edition24.test.js tests/edition25.test.js tests/edition26.test.js tests/edition27.test.js tests/edition28.test.js tests/edition29.test.js tests/edition210.test.js tests/strategy.test.js tests/telemetry.test.js tests/tension.test.js tests/atmosphere.test.js",
     "build:single": "node scripts/build-single.js",
     "serve": "python -m http.server 8000",
     "audit:strategy": "node scripts/strategy-comparison.js --write"
