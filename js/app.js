@@ -1,7 +1,7 @@
 /* DEAD CABIN 404 · Controlador de interfaz: motor → DOM (sin dependencias). */
 (function(){'use strict';
-const E=globalThis.DeadCabinEngine,A=globalThis.DeadCabinArt,S=globalThis.DeadCabinAudio,CA=globalThis.DeadCabinChapterArt,F=globalThis.DeadCabinFeedback,C=globalThis.DeadCabinCardUI;
-if(!E||!A||!S||!CA||!F||!C){document.body.textContent='Error: faltan módulos del juego. Comprueba que has extraído el ZIP completo.';return}
+const E=globalThis.DeadCabinEngine,A=globalThis.DeadCabinArt,S=globalThis.DeadCabinAudio,CA=globalThis.DeadCabinChapterArt,F=globalThis.DeadCabinFeedback,C=globalThis.DeadCabinCardUI,T=globalThis.DeadCabinTelemetry;
+if(!E||!A||!S||!CA||!F||!C||!T){document.body.textContent='Error: faltan módulos del juego. Comprueba que has extraído el ZIP completo.';return}
 const $=id=>document.getElementById(id), SAVE='dead-cabin-404-v4', OLD_SAVE='dead-cabin-404-v3', PROGRESS='dead-cabin-404-campaign-v3', LEGACY='dead-cabin-404-v1', RECORDS='dead-cabin-404-records-v4';
 let training=false,trainingStage=0;let game,attackMode=null,unlocked=1,previousRevealed=[],previousCard='',lastModalFocus=null,toastTimer=null, records={games:0,wins:0,bestScore:0,bestTurn:0,achievements:[]};
 function escapeHtml(str){return String(str).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
@@ -40,7 +40,7 @@ async function importGame(file){
    unlocked=Math.max(unlocked,progress,game.chapter);setStorage(PROGRESS,String(unlocked));
    const r=backup.records;if(r&&Number.isInteger(r.games)&&r.games>=0&&Number.isInteger(r.wins)&&r.wins>=0){
     records={games:Math.max(records.games,r.games),wins:Math.max(records.wins,r.wins),bestScore:Math.max(records.bestScore,Number(r.bestScore)||0),bestTurn:Math.max(records.bestTurn,Number(r.bestTurn)||0),achievements:[...new Set([...records.achievements,...(Array.isArray(r.achievements)?r.achievements:[]).filter(x=>E.ACHIEVEMENTS.some(a=>a.id===x))])]};saveRecords()}
-   persist();
+   persist();T.record('IMPORT',game);
    if(game.pendingChoice)maybeEncounter();else if(game.ended)showEnding();else showToast('Partida importada y restaurada.');
   }},{label:'CANCELAR'}]});
 }
@@ -100,7 +100,7 @@ function showCampaign(){let html='<p>Ocho expedientes conectados, cada uno con o
  $('modalContent').querySelectorAll('[data-chapter]').forEach(b=>b.addEventListener('click',()=>{const n=Number(b.dataset.chapter);if(n<=unlocked)showSetup(n)}))}
 function showRecords(){const a=E.ACHIEVEMENTS.map(x=>`<div class="achievement ${records.achievements.includes(x.id)?'earned':''}"><span>${records.achievements.includes(x.id)?'✧':'◇'}</span><div><strong>${escapeHtml(x.label)}</strong><small>${escapeHtml(x.desc)}</small></div></div>`).join('');
  showModal({kicker:'ARCHIVO DEL SUPERVIVIENTE',title:'Estadísticas y logros',content:`<div class="records-grid"><div><strong>${records.games}</strong><span>PARTIDAS</span></div><div><strong>${records.wins}</strong><span>VICTORIAS</span></div><div><strong>${records.bestScore}</strong><span>MEJOR PUNTUACIÓN</span></div><div><strong>${records.bestTurn}</strong><span>RÉCORD INFINITO</span></div></div><h3>Insignias</h3><div class="achievements">${a}</div><p class="modal-callout">Las estadísticas se almacenan solo en este navegador. No existe clasificación en línea.</p>`,actions:[{label:'CONTINUAR',primary:true}]})}
-function startNew(n,options){const cfg=options||{survivor:game.survivor,difficulty:game.difficulty,mode:game.mode};game=E.createGame(n,undefined,cfg);attackMode=null;previousRevealed=[];previousCard='';persist();render();chapterIntro()}
+function startNew(n,options){const cfg=options||{survivor:game.survivor,difficulty:game.difficulty,mode:game.mode};game=E.createGame(n,undefined,cfg);attackMode=null;previousRevealed=[];previousCard='';T.record('NEW_GAME',game);persist();render();chapterIntro()}
 
 function statusMessage(){if(game.ended)return game.won?'Sobreviviste a la noche.':'La cabaña te reclama.';
  if(game.pendingChoice)return 'Un encuentro exige una decisión. Elige una de las dos opciones para continuar.';
@@ -203,14 +203,14 @@ function render(){if(!E.validate(game)){showToast('Error: estado de partida inv�
 function maybeEncounter(){if(!game.pendingChoice||game.ended)return;const scene=E.ALL_ENCOUNTERS.find(x=>x.id===game.pendingChoice);if(!scene)return;
  showModal({kicker:'ENCUENTRO · DECISIÓN IRREVERSIBLE',title:scene.name,lock:true,content:`<p class="modal-callout">${escapeHtml(scene.text)}</p><p>Tu elección modificará los recursos o los peligros de esta partida.</p>${scene.id===`c${game.chapter}-0`&&E.CHAPTER_ECHOES[game.chapter]?`<p class="echo-preview"><strong>CONSECUENCIA ESPECIAL:</strong> La primera elección activa «${escapeHtml(E.CHAPTER_ECHOES[game.chapter].name)}». ${escapeHtml(E.CHAPTER_ECHOES[game.chapter].effect)}</p>`:''}`,
  actions:scene.options.map((x,i)=>({label:x.label+' · '+x.description,primary:i===0,run:()=>act({type:'CHOOSE',option:i})}))})}
-function afterAction(type,before){persist();render();F.play(type,before,game);const result=game.lastRoll;
+function afterAction(type,before){T.record(type,game);persist();render();F.play(type,before,game);const result=game.lastRoll;
  switch(type){case 'ATTACK':S.effect(result&&result.hit?'hit':'roll');break;case 'MOVE':S.effect(game.revealed.length>before.revealed?'explore':'move');break;
  case 'END_TURN':S.effect('event');break;case 'SEAL':S.effect('seal');break;case 'SEARCH':case 'INVESTIGATE':case 'ABILITY':case 'HEAL':case 'WARD':case 'FLARE':S.effect('loot');break;}
  if(game.ended&&!before.ended){if(game.won&&game.mode==='campaign'){unlocked=Math.max(unlocked,Math.min(8,game.chapter+1));setStorage(PROGRESS,String(unlocked));S.effect('victory')}
  else S.effect('defeat');registerEnd();showEnding()}
  else if(game.pendingChoice)maybeEncounter()}
 function act(action){const before={revealed:game.revealed.length,ended:game.ended,hp:game.hp,sanity:game.sanity},done=E.dispatch(game,action);
- if(!done){showToast('Acción no disponible en este momento.');return false}trainingHint(action);attackMode=null;afterAction(action.type,before);return true}
+ if(!done){T.record(action.type,game,false);showToast('Acción no disponible en este momento.');return false}trainingHint(action);attackMode=null;afterAction(action.type,before);return true}
 
 function boardClick(e){const tile=e.target.closest('[data-pos]');if(!tile)return;const i=Number(tile.dataset.pos);if(attackMode){const target=game.enemies.find(x=>x.pos===i);if(target){act({type:'ATTACK',id:target.id,weapon:attackMode})}return}act({type:'MOVE',to:i})}
 function setMode(mode){if(game.ended||game.pendingChoice||game.ap===0)return;attackMode=attackMode===mode?null:mode;renderBoard();renderActions();if(attackMode)showToast('Selecciona la loseta roja del enemigo para atacar.')}
@@ -224,6 +224,8 @@ function showEnding(){const win=game.won,c=E.currentChapter(game),isEndless=game
  showModal({kicker:win?'HAS ESCAPADO · POR AHORA':'EL FINAL DE TU HISTORIA',title:win?'Sobreviviste a la noche':'La casa ha ganado',content,actions})}
 
 function confirmNew(){showModal({kicker:'LA CABAÑA OLVIDA',title:'¿Reiniciar el capítulo?',content:'<p>Se perderá el progreso de esta partida al comenzar una nueva. Los capítulos desbloqueados no se borrarán.</p>',actions:[{label:'SÍ, REINICIAR',primary:true,run:()=>startNew(game.chapter)},{label:'CANCELAR'}]})}
+function showQa(){const q=T.summary(),rows=q.byChapter.map(v=>`<tr><td>${v.chapter}</td><td>${v.actions}</td><td>${v.failed}</td><td>${v.turns}</td></tr>`).join('');
+ showModal({kicker:'DIAGNÓSTICO VOLUNTARIO',title:'Diario de experiencia',content:`<p>Esta función está <strong>${q.enabled?'ACTIVA':'DESACTIVADA'}</strong>. Guarda acciones y valores tácticos solo en este navegador. Nunca envía datos a ningún servidor y no cambia las partidas.</p><p>Eventos registrados: <b>${q.count} / ${q.max}</b> (los más antiguos se descartan al alcanzar el límite).</p><table class="qa-table"><thead><tr><th>Cap.</th><th>Acciones</th><th>Rechazos</th><th>Turnos</th></tr></thead><tbody>${rows}</tbody></table><p>No registra nombres personales, claves ni contenido narrativo escrito por el usuario. Al exportar, tú decides con quién compartir el archivo.</p>`,actions:[{label:q.enabled?'DETENER REGISTRO':'ACTIVAR REGISTRO',primary:true,run:()=>{T.setEnabled(!q.enabled);showQa()}},{label:'EXPORTAR JSON',run:()=>{const blob=new Blob([T.exportJson()],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='DEAD-CABIN-404-diagnostico.json';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);showToast('Diagnóstico exportado.')}},{label:'BORRAR REGISTRO',run:()=>showModal({title:'¿Eliminar el diario?',content:'<p>Esto elimina todos los eventos del diagnóstico y lo desactiva. Las partidas no se borran.</p>',actions:[{label:'ELIMINAR',primary:true,run:()=>{T.clear();showToast('Diagnóstico borrado.')}},{label:'CANCELAR'}]})},{label:'CERRAR'}]})}
 function init(){let storedProgress=parseInt(getStorage(PROGRESS)||'1',10);unlocked=Number.isInteger(storedProgress)?Math.max(1,Math.min(8,storedProgress)):1;
  try{const found=JSON.parse(getStorage(RECORDS));if(found&&typeof found==='object'&&Array.isArray(found.achievements)&&Number.isInteger(found.games)&&Number.isInteger(found.wins))records={games:found.games,wins:found.wins,bestScore:found.bestScore||0,bestTurn:found.bestTurn||0,achievements:found.achievements.filter(x=>E.ACHIEVEMENTS.some(a=>a.id===x))}}catch{}
  const loaded=loadSaved();if(!loaded)game=E.createGame(1);if(game.mode==='campaign'){
@@ -237,7 +239,7 @@ function init(){let storedProgress=parseInt(getStorage(PROGRESS)||'1',10);unlock
  for(const [quick,type] of [['mobileSealBtn','SEAL'],['mobileInvestigateBtn','INVESTIGATE'],['mobileEscapeBtn','ESCAPE'],['mobileHealBtn','HEAL'],['mobileWardBtn','WARD'],['mobileAbilityBtn','ABILITY'],['mobileFlareBtn','FLARE']])$(quick).onclick=()=>act({type});
  $('mobileMoreBtn').onclick=()=>{$('actionPanel').scrollIntoView({behavior:'smooth',block:'start'})};
  [['guardBtn','GUARD'],['searchBtn','SEARCH'],['restBtn','REST'],['sealBtn','SEAL'],['escapeBtn','ESCAPE'],['medkitBtn','HEAL'],['wardBtn','WARD'],['flareBtn','FLARE'],['barricadeBtn','BARRICADE'],['investigateBtn','INVESTIGATE'],['abilityBtn','ABILITY'],['endBtn','END_TURN']].forEach(([id,type])=>$(id).addEventListener('click',()=>act({type})));
- F.sync();$('fxBtn').onclick=()=>{F.toggle();showToast('Efectos visuales '+(F.enabled()?'activados.':'desactivados.'))};$('guideBtn').onclick=showRules;$('tutorialBtn').onclick=showTutorial;$('campaignBtn').onclick=showCampaign;$('endlessBtn').onclick=()=>showSetup(1,'endless');$('recordsBtn').onclick=showRecords;
+ F.sync();$('fxBtn').onclick=()=>{F.toggle();showToast('Efectos visuales '+(F.enabled()?'activados.':'desactivados.'))};$('guideBtn').onclick=showRules;$('tutorialBtn').onclick=showTutorial;$('campaignBtn').onclick=showCampaign;$('endlessBtn').onclick=()=>showSetup(1,'endless');$('recordsBtn').onclick=showRecords;$('qaBtn').onclick=showQa;
  $('saveBtn').onclick=()=>showToast(persist()?'Partida guardada.':'No se ha podido guardar en este navegador.');
  $('exportBtn').onclick=exportGame;$('importBtn').onclick=()=>$('importFile').click();
  $('importFile').addEventListener('change',async ev=>{const file=ev.target.files?.[0];ev.target.value='';await importGame(file)});
