@@ -1,0 +1,24 @@
+/* RC2: escenografía ambiental legible, sin animación obligatoria. */
+.ambient-scene{--ambient-tone:#ad9872;position:relative;display:grid;grid-template-columns:minmax(0,1fr) 1fr;gap:1rem;margin:1rem 0;padding:1.1rem 1.25rem;overflow:hidden;border:1px solid color-mix(in srgb,var(--ambient-tone) 45%,#292c2b);background:linear-gradient(125deg,#101b1d,#16191c 70%,#0b1011);box-shadow:inset 0 0 70px #0008;color:#ded8cc}
+.ambient-scene[data-mood=moss]{--ambient-tone:#82936c}.ambient-scene[data-mood=cyan]{--ambient-tone:#7ca9ae}.ambient-scene[data-mood=violet]{--ambient-tone:#a291ba}.ambient-scene[data-mood=crimson]{--ambient-tone:#b66d68}
+.ambient-scene[data-condition=enemy],.ambient-scene[data-condition=boss]{border-color:#b96960;box-shadow:inset 0 0 65px #52151970,0 0 18px #712b241a}
+.ambient-scene[data-condition=rift],.ambient-scene[data-condition=cursed]{border-color:#987caa}
+.ambient-kicker{font-size:.68rem;letter-spacing:.18em;color:var(--ambient-tone);font-weight:800}
+.ambient-scene h3{font-size:clamp(1.08rem,2.1vw,1.48rem);line-height:1.15;margin:.55rem 0;color:#f0e8d7;letter-spacing:.035em}
+.ambient-detail{font-size:.88rem;line-height:1.5;max-width:55ch;margin:0 0 .8rem}
+.ambient-whisper{border-left:2px solid var(--ambient-tone);padding-left:.75rem;font-size:.8rem;color:#b5b9b2;font-style:italic}
+.ambient-room-index{font-size:.66rem;letter-spacing:.12em;color:#aaa9a0}
+.ambient-illustration{position:relative;min-height:135px;isolation:isolate;background:radial-gradient(ellipse at 55% 75%,#858b7550,transparent 38%),linear-gradient(#1a2427,#070c0f);overflow:hidden;border:1px solid #7779}
+.ambient-illustration::before{content:'';position:absolute;inset:12% 28% 0;clip-path:polygon(35% 0,65% 0,100% 100%,0 100%);background:linear-gradient(#74746e66,#10191c 66%);filter:blur(1px)}
+.ambient-illustration::after{content:'';position:absolute;width:70%;height:85%;left:15%;top:8%;background:radial-gradient(ellipse at center,#f5cfa033,transparent 48%),repeating-linear-gradient(100deg,#0000 0 20px,#0004 21px 22px);clip-path:polygon(45% 3%,55% 3%,95% 95%,5% 95%);mix-blend-mode:screen;opacity:.75}
+.ambient-illustration[data-condition=enemy]::after,.ambient-illustration[data-condition=boss]::after{background:radial-gradient(ellipse at center,#c55a5888,#261217 52%,transparent 70%);opacity:1}
+.ambient-illustration[data-condition=rift]::after,.ambient-illustration[data-condition=cursed]::after{background:radial-gradient(ellipse at center,#9763c999,#201d30 52%,transparent 70%);opacity:1}
+.ambient-caption{position:absolute;bottom:.4rem;right:.55rem;font:700 .62rem monospace;color:#d0c4aa;text-shadow:0 1px 3px black;z-index:2}
+@media(max-width:690px){.ambient-scene{grid-template-columns:1fr;padding:.85rem}.ambient-illustration{min-height:105px;order:-1}}
+@media(prefers-reduced-motion:reduce){.ambient-scene,.ambient-illustration{animation:none!important;transition:none!important}}
+
+/* Encounters gain their own original cinematic seal; choices remain DOM buttons. */
+.encounter-cinematic{min-height:110px;position:relative;margin:0 0 1rem;background:radial-gradient(ellipse at 50% 70%,#9a504b55,transparent 36%),repeating-linear-gradient(130deg,#0000 0 30px,#0004 31px 32px),linear-gradient(130deg,#222b2d,#0e1417);border:1px solid #746052;display:grid;place-items:center;overflow:hidden}
+.encounter-seal{font-size:3.9rem;line-height:1;color:#b4826c;filter:drop-shadow(0 0 12px #a0453f);transform:rotate(-15deg)}
+.encounter-caption{position:absolute;bottom:.45rem;right:.6rem;letter-spacing:.12em;font-size:.6rem;color:#e3c4a1}
+@media(prefers-reduced-motion:reduce){.encounter-seal{filter:none}}

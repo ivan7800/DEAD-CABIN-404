@@ -46,7 +46,7 @@ test('panel táctico del móvil expone acciones críticas y está conectado a lo
 });
 
 test('versiones de PWA y empaquetado, compatibilidad de save v4 intacta',()=>{
- assert.equal(JSON.parse(read('package.json')).version,'2.11.0');assert.match(read('sw.js'),/dead-cabin-404-v2-11-0/);
+ assert.equal(JSON.parse(read('package.json')).version,'3.0.0-rc.2');assert.match(read('sw.js'),/dead-cabin-404-v3-0-rc2/);
  assert.match(read('sw.js'),/edition23.css/);assert.match(read('scripts/build-single.js'),/edition23.css/);
  assert.equal(E.VERSION,4);
 });

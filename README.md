@@ -1,3 +1,5 @@
+> **Versión candidata v3.0 RC2:** nueva escenografía contextual y escenas de encuentro; detalles en `RELEASE-v3.0-RC2.md`. No publicada en GitHub.
+
 ## v2.10.1 — Comparación reproducible de estrategias
 
 Se incorpora `npm run audit:strategy` para contrastar una política táctica conservadora con la anterior en las mismas 108 campañas. Pesadilla mejora de 2/36 a 3/36 en este banco de pruebas, mientras el total de campañas completas permanece 29/108. Ver `QA-ESTRATEGIA-v2.10.1.md`. No implica certificación de equilibrio ni sustituye partidas humanas.

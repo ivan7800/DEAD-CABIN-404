@@ -33,7 +33,7 @@ test('old v4 saves without legacy still pass and malformed legacy is rejected',(
  const broken=E.createGame(4,234);broken.legacy={from:3,kind:'mask'};assert.equal(E.validate(broken),false);
 });
 test('standalone and service worker version tracks release',()=>{
- assert.equal(require('../package.json').version,'2.11.0');
- const sw=fs.readFileSync('sw.js','utf8');assert.match(sw,/dead-cabin-404-v2-11-0/);
+ assert.equal(require('../package.json').version,'3.0.0-rc.2');
+ const sw=fs.readFileSync('sw.js','utf8');assert.match(sw,/dead-cabin-404-v3-0-rc2/);
  const app=fs.readFileSync('js/app.js','utf8');assert.match(app,/legacy:game\.legacy/);
 });
