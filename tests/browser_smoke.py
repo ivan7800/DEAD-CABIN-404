@@ -6,8 +6,8 @@ p=Path(__file__).resolve().parents[1]
 source=(p/'index.html').read_text()
 source=re.sub(r'<link rel="stylesheet" href="css/[^"]+">','',source)
 source=re.sub(r'<script src="js/[^"]+" defer></script>','',source)
-source=source.replace('</head>','<style>'+ ''.join((p/'css'/name).read_text() for name in ['style.css','premium.css','cinematic.css','illustration.css','edition18.css','edition20.css','edition21.css','edition22.css','edition23.css']) +'</style></head>')
-scripts=[(p/'js'/name).read_text() for name in ['engine.js','art.js','premium-art.js','chapter-art.js','audio.js','feedback.js','card-ui.js','app.js','cinematic.js']]
+source=source.replace('</head>','<style>'+ ''.join((p/'css'/name).read_text() for name in ['style.css','premium.css','cinematic.css','illustration.css','edition18.css','edition20.css','edition21.css','edition22.css','edition23.css','edition24.css','edition25.css','edition211.css']) +'</style></head>')
+scripts=[(p/'js'/name).read_text() for name in ['engine.js','art.js','premium-art.js','chapter-art.js','audio.js','feedback.js','card-ui.js','telemetry.js','app.js','cinematic.js']]
 def boot(page,storage=None):
     page.set_content(source,wait_until='load')
     page.evaluate("""(data) => {window.__storage={...data};Object.defineProperty(window,'localStorage',{configurable:true,value:{getItem:k=>window.__storage[k]??null,setItem:(k,v)=>{window.__storage[k]=String(v)},removeItem:k=>{delete window.__storage[k]}}})}""",storage or {})
@@ -109,6 +109,10 @@ with sync_playwright() as playwright:
     assert page.evaluate('window.__deadCabin.state.encounterChoices.length')==1
     # Chapter victory must include side objective
     page.evaluate('''() => {const s=window.__deadCabin.state;s.sealed=s.sealSpots.slice();s.seals=s.sealed.length;s.objectiveCount=1;s.pos=22;s.enemies=[];s.pendingChoice=null;}''')
+    page.evaluate('window.__deadCabin.act({type:"ESCAPE"})')
+    assert page.locator('#modalTitle').inner_text()=='La última página'
+    assert page.locator('#modal').get_attribute('data-locked')=='true'
+    page.get_by_role('button',name=re.compile('CONSERVAR LA PÁGINA')).click()
     page.evaluate('window.__deadCabin.act({type:"ESCAPE"})')
     assert page.locator('#modalTitle').inner_text()=='Sobreviviste a la noche'
     assert page.evaluate('window.__deadCabin.unlocked')==2

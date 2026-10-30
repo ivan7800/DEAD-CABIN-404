@@ -116,3 +116,6 @@ Proyecto original. **Licencia MIT** en `LICENSE`. Para cambios por versión, vé
 Después de cerrar todas las grietas, completar el objetivo y regresar a **Entrada**, pulsa **ESCAPAR** para abrir el desenlace único de tu capítulo. Elige una de las dos salidas narrativas y pulsa **ESCAPAR** de nuevo para completar la expedición. La decisión final no consume puntos de acción.
 
 Las siete primeras expediciones pueden legar una pequeña ventaja material a la siguiente (un talismán, munición, un botiquín o una bengala); se transfiere únicamente mediante el botón **SIGUIENTE CAPÍTULO**. Se conserva el guardado v4: una partida guardada en una versión anterior sigue siendo válida. La escena final del capítulo 8 permite cerrar el libro o dejar la última página en blanco.
+
+## v2.11 — Diario de experiencia opcional
+La opción **DIAGNÓSTICO** permite registrar y exportar un diario local voluntario para evaluar la campaña real. No existe telemetría remota. Consulte `QA-DIAGNOSTICO-v2.11.md`.

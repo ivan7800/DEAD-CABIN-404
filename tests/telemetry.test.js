@@ -1,0 +1,8 @@
+const {test}=require('node:test');const assert=require('node:assert/strict');const fs=require('node:fs');const vm=require('node:vm');const path=require('node:path');
+function init(saved){let stored=saved||null;const context={localStorage:{getItem:()=>stored,setItem:(k,v)=>{stored=v}},Date,JSON,globalThis:null};context.globalThis=context;vm.runInNewContext(fs.readFileSync(path.resolve(__dirname,'../js/telemetry.js'),'utf8'),context);return context.DeadCabinTelemetry}
+const state={chapter:8,turn:11,mode:'campaign',difficulty:'nightmare',survivor:'scout',hp:4,sanity:5,doom:19,ap:2,pos:3,enemies:[],seals:2,objectiveCount:1,ended:false,won:false};
+test('no recoge acciones sin consentimiento',()=>{let t=init();assert.equal(t.record('MOVE',state),false);assert.equal(t.summary().count,0)});
+test('consentimiento y anonimización por lista cerrada',()=>{let t=init();t.setEnabled(true);t.record('MOVE',{...state,privateName:'SECRETO'});assert.equal(t.summary().count,1);assert.ok(!t.exportJson().includes('SECRETO'))});
+test('marca las acciones rechazadas',()=>{let t=init();t.setEnabled(true);t.record('ATTACK',state,false);assert.equal(t.summary().byChapter[7].failed,1)});
+test('limita el historial y permite borrarlo sin tocar partidas',()=>{let t=init();t.setEnabled(true);for(let i=0;i<2503;i++)t.record('MOVE',state);assert.equal(t.summary().count,2500);t.clear();assert.equal(t.summary().count,0);assert.equal(t.enabled(),false)});
+test('rechaza comandos ajenos y snapshots incompletos',()=>{let t=init();t.setEnabled(true);assert.equal(t.record('TOKEN',state),false);assert.equal(t.record('MOVE',{...state,turn:Infinity}),true);assert.equal(t.summary().count,1)});
